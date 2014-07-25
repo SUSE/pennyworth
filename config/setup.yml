@@ -1,0 +1,15 @@
+ packages:
+   local:
+     - curl            # Needed to download remote packages
+     - iptables        # Needed by libvirt to configure network
+     - dnsmasq         # Needed by libvirt to configure network
+     - libxml2-devel   # Needed by libvirt plugin for Vagrant
+     - libxslt-devel   # Needed by libvirt plugin for Vagrant
+     - libvirt-devel   # Needed by libvirt plugin for Vagrant
+     - libvirt         # Needed to run VMs
+     - kvm             # Needed to run VMs
+     - expect          # Needed to automate interactive commands like ssh-copy-id
+   "13.1":
+     - libvirt-daemon-qemu  # Needed to run QEMU in 13.1
+   remote:
+     - https://dl.bintray.com/mitchellh/vagrant/vagrant_1.6.3_x86_64.rpm

@@ -1,0 +1,13 @@
+---
+base_opensuse13.1_kvm:
+  sources:
+    autoinst.xml: changed
+    definition.rb: 1e345450f1d7bef8d68331d95f206fed
+    postinstall.sh: e40f4e805919bcfec20f0a12a8a7dcfa
+  target: 115469c104dcc69455f321eb086ffb11
+base_opensuse12.3_kvm:
+  sources:
+    autoinst.xml: 9e6d1da4249c57b3750c43e7d9bac51b
+    definition.rb: 27b7c76c349165d9160011a68c3e716a
+    postinstall.sh: 7272f92d7d15b61c3ab892f16f69449f
+  target: e4e743b5340686d8488dbce54b5644d8
