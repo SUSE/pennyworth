@@ -1,0 +1,8 @@
+*.gem
+Gemfile.lock
+.bundle
+.vagrant
+iso
+*.box
+box_state.yaml
+import_state.yaml
