@@ -86,7 +86,7 @@ class ImportBaseCommand < BaseCommand
   private
 
   def fetch_remote_box_state_file
-    url = File.join(@remote_url, "box_state.yaml")
+    url = URLs.join(@remote_url, "box_state.yaml")
     Net::HTTP.get(URI.parse(url))
   end
 
@@ -103,7 +103,7 @@ class ImportBaseCommand < BaseCommand
     if options[:local]
       box_path = File.join(veewee_dir, box + ".box")
     else
-      box_path = File.join(@remote_url, options[:subdir], box + ".box")
+      box_path = URLs.join(@remote_url, options[:subdir], box + ".box")
     end
     @vagrant.add_box(box, box_path)
   end
