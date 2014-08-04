@@ -16,8 +16,17 @@
 # you may find current contact information at www.suse.com
 
 class SshKeysImporter
-  def self.import(ip, password)
+  def self.import(ip, password, identity_file = nil)
     tmp_file = Tempfile.new("pennyworth-ssh-key-importer")
+
+    cmd = "ssh-copy-id"
+    if identity_file
+      cmd << " -i \"#{identity_file}\""
+      cmd << " -o \"IdentityFile=#{identity_file}\""
+    end
+    cmd << " -o \"UserKnownHostsFile=/dev/null\""
+    cmd << " -o \"StrictHostKeyChecking=no\""
+    cmd << " root@#{ip}"
 
     # This temporary bash script copies the SSH keys to the host using
     # ssh-copy-id.
@@ -26,8 +35,7 @@ class SshKeysImporter
     tmp_file.write(<<-EOF
       #!/usr/bin/expect -f
 
-      spawn ssh-copy-id -o "UserKnownHostsFile=/dev/null" \
-        -o "StrictHostKeyChecking=no" root@#{ip}
+      spawn #{cmd}
       expect {
         -re ".*assword.*" {
           send "#{password}\\r"
@@ -35,10 +43,13 @@ class SshKeysImporter
             -re ".*assword.*" {
               exit 1
             }
-            "Number of key(s) added" {
+            -re ".*Number of key.*" {
               exit 0
             }
           }
+        }
+        -re ".*Number of key.*" {
+          exit 0
         }
         "skipped" {
           exit 2
