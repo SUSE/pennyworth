@@ -35,10 +35,13 @@ class SshKeysImporter
             -re ".*assword.*" {
               exit 1
             }
-            "Number of key(s) added" {
+            -re ".*Number of key.*" {
               exit 0
             }
           }
+        }
+        -re ".*Number of key.*" {
+          exit 0
         }
         "skipped" {
           exit 2
