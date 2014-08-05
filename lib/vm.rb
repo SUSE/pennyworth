@@ -71,7 +71,20 @@ class VM
     raise ExecutionFailed.new(message)
   end
 
+  # Copy a local file to the remote system.
+  #
+  # +source+:: Path to the local file
+  # +destination+:: Path to the remote file or directory. If +destination+ is a
+  #                 path, the same filename as +source+ will be used.
+  # +opts+:: Options to modify the attributes of the remote file.
+  #
+  #          Available options:
+  #          [owner]:: Owner of the file, e.g. "tux"
+  #          [group]:: Group of the file, e.g. "users"
+  #          [mode]:: Mode of the file, e.g. "600"
   def inject_file(source, destination, opts = {})
+    # Append filename (taken from +source+) to destination if it is a path, so
+    # that +destination+ is always the full target path including the filename.
     destination += File.basename(source) if destination.end_with?("/")
 
     Cheetah.run(
