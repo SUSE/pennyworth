@@ -66,6 +66,33 @@ describe VM do
       system.ip = "1.2.3.4"
       system.inject_file("/tmp/hosts", "/etc")
     end
+
+    it "copies the file and sets the owner" do
+      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/scp/) }
+      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/chown.*tux/) }
+
+      system = VM.new(nil)
+      system.ip = "1.2.3.4"
+      system.inject_file("/tmp/hosts", "/etc", owner: "tux")
+    end
+
+    it "copies the file and sets the group" do
+      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/scp/) }
+      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/chown.*:tux/) }
+
+      system = VM.new(nil)
+      system.ip = "1.2.3.4"
+      system.inject_file("/tmp/hosts", "/etc", group: "tux")
+    end
+
+    it "copies the file and sets the mode" do
+      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/scp/) }
+      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/chmod 600/) }
+
+      system = VM.new(nil)
+      system.ip = "1.2.3.4"
+      system.inject_file("/tmp/hosts", "/etc", mode: "600")
+    end
   end
 
   describe "#inject_directory" do

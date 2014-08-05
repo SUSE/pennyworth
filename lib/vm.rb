@@ -71,7 +71,9 @@ class VM
     raise ExecutionFailed.new(message)
   end
 
-  def inject_file(source, destination)
+  def inject_file(source, destination, opts = {})
+    destination += File.basename(source) if destination.end_with?("/")
+
     Cheetah.run(
       "scp",
       "-o",
@@ -81,6 +83,32 @@ class VM
       source,
       "root@#{@ip}:#{destination}"
     )
+
+    if opts[:owner] || opts[:group]
+      owner_group = opts[:owner] || ""
+      owner_group += ":#{opts[:group]}" if opts[:group]
+      Cheetah.run(
+        "ssh",
+        "-o",
+        "UserKnownHostsFile=/dev/null",
+        "-o",
+        "StrictHostKeyChecking=no",
+        "root@#{@ip}",
+        "chown -R #{owner_group} #{destination}"
+      )
+    end
+
+    if opts[:mode]
+      Cheetah.run(
+        "ssh",
+        "-o",
+        "UserKnownHostsFile=/dev/null",
+        "-o",
+        "StrictHostKeyChecking=no",
+        "root@#{@ip}",
+        "chmod #{opts[:mode]} #{destination}"
+      )
+    end
   rescue Cheetah::ExecutionFailed => e
     message = e.message
     message += "\nStandard output:\n #{e.stdout}\n"
