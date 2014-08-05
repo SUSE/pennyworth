@@ -71,7 +71,22 @@ class VM
     raise ExecutionFailed.new(message)
   end
 
-  def inject_file(source, destination)
+  # Copy a local file to the remote system.
+  #
+  # +source+:: Path to the local file
+  # +destination+:: Path to the remote file or directory. If +destination+ is a
+  #                 path, the same filename as +source+ will be used.
+  # +opts+:: Options to modify the attributes of the remote file.
+  #
+  #          Available options:
+  #          [owner]:: Owner of the file, e.g. "tux"
+  #          [group]:: Group of the file, e.g. "users"
+  #          [mode]:: Mode of the file, e.g. "600"
+  def inject_file(source, destination, opts = {})
+    # Append filename (taken from +source+) to destination if it is a path, so
+    # that +destination+ is always the full target path including the filename.
+    destination += File.basename(source) if destination.end_with?("/")
+
     Cheetah.run(
       "scp",
       "-o",
@@ -81,6 +96,32 @@ class VM
       source,
       "root@#{@ip}:#{destination}"
     )
+
+    if opts[:owner] || opts[:group]
+      owner_group = opts[:owner] || ""
+      owner_group += ":#{opts[:group]}" if opts[:group]
+      Cheetah.run(
+        "ssh",
+        "-o",
+        "UserKnownHostsFile=/dev/null",
+        "-o",
+        "StrictHostKeyChecking=no",
+        "root@#{@ip}",
+        "chown -R #{owner_group} #{destination}"
+      )
+    end
+
+    if opts[:mode]
+      Cheetah.run(
+        "ssh",
+        "-o",
+        "UserKnownHostsFile=/dev/null",
+        "-o",
+        "StrictHostKeyChecking=no",
+        "root@#{@ip}",
+        "chmod #{opts[:mode]} #{destination}"
+      )
+    end
   rescue Cheetah::ExecutionFailed => e
     message = e.message
     message += "\nStandard output:\n #{e.stdout}\n"
