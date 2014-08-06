@@ -178,7 +178,7 @@ class VM
         "-o",
         "StrictHostKeyChecking=no",
         "root@#{@ip}",
-        "chown -R #{owner_group} #{destination}/#{File.basename(source)}"
+        "chown -R #{owner_group} '#{destination}'"
       )
     end
   rescue Cheetah::ExecutionFailed => e

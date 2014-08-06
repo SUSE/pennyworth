@@ -104,6 +104,16 @@ describe VM do
       system.ip = "1.2.3.4"
       system.inject_directory("/tmp/hosts", "/etc")
     end
+
+    it "copies the directory and sets the user and group" do
+      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/mkdir -p/) }
+      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/scp/) }
+      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/chown -R user:group/) }
+
+      system = VM.new(nil)
+      system.ip = "1.2.3.4"
+      system.inject_directory("/tmp/hosts", "/etc", owner: "user", group: "group")
+    end
   end
 
 end
