@@ -28,7 +28,7 @@ class BaseCommand < Command
   def remote_base_images(subdir = "")
     return [] if !@remote_url || @remote_url.empty?
 
-    uri = URI.parse(File.join(@remote_url, subdir, "import_state.yaml"))
+    uri = URI.parse(URLs.join(@remote_url, subdir, "import_state.yaml"))
     response = Net::HTTP.get_response(uri)
     if response.is_a?(Net::HTTPSuccess)
       index = YAML.load(response.body)
