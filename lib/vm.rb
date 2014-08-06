@@ -148,6 +148,16 @@ class VM
 
   def inject_directory(source, destination, opts = {})
     Cheetah.run(
+      "ssh",
+      "-o",
+      "UserKnownHostsFile=/dev/null",
+      "-o",
+      "StrictHostKeyChecking=no",
+      "root@#{@ip}",
+      "mkdir -p '#{destination}'"
+    )
+
+    Cheetah.run(
       "scp",
       "-r",
       "-o",

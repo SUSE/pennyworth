@@ -97,7 +97,8 @@ describe VM do
 
   describe "#inject_directory" do
     it "calls scp with source and destination as arguments" do
-      expect(Cheetah).to receive(:run)
+      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/mkdir -p/) }
+      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/scp/) }
 
       system = VM.new(nil)
       system.ip = "1.2.3.4"
