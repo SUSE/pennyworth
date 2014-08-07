@@ -147,6 +147,13 @@ class VM
   end
 
   def inject_directory(source, destination, opts = {})
+    if opts[:owner] || opts[:group]
+      owner_group = opts[:owner] || ""
+      owner_group += ":#{opts[:group]}" if opts[:group]
+    end
+
+    chown_cmd = " && chown #{owner_group} '#{destination}'" if owner_group
+    mkdir_cmd = "test -d '#{destination}' || (mkdir -p '#{destination}' #{chown_cmd} )"
     Cheetah.run(
       "ssh",
       "-o",
@@ -154,7 +161,7 @@ class VM
       "-o",
       "StrictHostKeyChecking=no",
       "root@#{@ip}",
-      "mkdir -p '#{destination}'"
+      mkdir_cmd
     )
 
     Cheetah.run(
@@ -168,9 +175,7 @@ class VM
       "root@#{@ip}:#{destination}"
     )
 
-    if opts[:owner] || opts[:group]
-      owner_group = opts[:owner] || ""
-      owner_group += ":#{opts[:group]}" if opts[:group]
+    if owner_group
       Cheetah.run(
         "ssh",
         "-o",
@@ -178,7 +183,8 @@ class VM
         "-o",
         "StrictHostKeyChecking=no",
         "root@#{@ip}",
-        "chown -R #{owner_group} '#{destination}'"
+        "chown -R #{owner_group} " \
+          "#{File.join(destination, File.basename(source))}"
       )
     end
   rescue Cheetah::ExecutionFailed => e
