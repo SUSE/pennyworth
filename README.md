@@ -81,9 +81,9 @@ The following steps will make Pennyworth run on a vanilla openSUSE 13.1 system.
      option is “remembered”. If absent, Bundler would use its value from the
      last invocation (`test`).
 
-  6. **Log out and in again**
+  6. **Restart your system**
 
-     This refreshes information about current user's groups.
+     This refreshes information about current user's groups and network setup.
 
   7. **Done!**
 
