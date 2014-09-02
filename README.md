@@ -69,11 +69,7 @@ The following steps will make Pennyworth run on a vanilla openSUSE 13.1 system.
 
          $ bin/pennyworth setup
 
-  4. **Work around a libvirt [bug](https://bugzilla.novell.com/show_bug.cgi?id=859041)**
-
-         $ sudo zypper in -f libvirt-daemon
-
-  5. **Install remaining Gem dependencies**
+  4. **Install remaining Gem dependencies**
 
          $ bundle install --without ""
 
@@ -81,11 +77,11 @@ The following steps will make Pennyworth run on a vanilla openSUSE 13.1 system.
      option is “remembered”. If absent, Bundler would use its value from the
      last invocation (`test`).
 
-  6. **Restart your system**
+  5. **Restart your system**
 
      This refreshes information about current user's groups and network setup.
 
-  7. **Done!**
+  6. **Done!**
 
      You can now start using Pennyworth.
 
