@@ -36,7 +36,7 @@ describe VM do
       expect(Cheetah).to receive(:run).
         with(
           "ssh", "-o", "UserKnownHostsFile=/dev/null", "-o", "StrictHostKeyChecking=no",
-          "root@1.2.3.4", "LC_ALL=C", "su", "vagrant", "-c", "ls", "-l", "/etc/hosts",
+          "root@1.2.3.4", "LC_ALL=C", "su", "-l", "vagrant", "-c", "ls", "-l", "/etc/hosts",
           {:stdout=>:capture}).
         and_return(ssh_output)
 

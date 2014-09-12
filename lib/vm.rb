@@ -50,7 +50,7 @@ class VM
     escaped_args = args.map { |a| Shellwords.escape(a) }
 
     if user = options.delete(:as)
-      escaped_args = ["su", user, "-c"] + escaped_args
+      escaped_args = ["su", "-l", user, "-c"] + escaped_args
     end
 
     Cheetah.run(
