@@ -1,5 +1,7 @@
 # Pennyworth
 
+[![Code Climate](https://codeclimate.com/github/SUSE/pennyworth/badges/gpa.svg)](https://codeclimate.com/github/SUSE/pennyworth)
+
 Pennyworth is a tool for running integration tests inside a network of virtual
 machines. It allows the user to define virtual machines, build them as Vagrant
 boxes and run them using libvirt and kvm in a coordinated fashion in order to
