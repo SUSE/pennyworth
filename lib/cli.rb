@@ -48,14 +48,34 @@ class Cli
       raise
     when SignalException
       exit 1
-    when Cheetah::ExecutionFailed
-      STDERR.puts e.to_s
-      exit 1
     else
-      STDERR.puts e.to_s
-      exit 1
-    end
+      STDERR.puts "Pennyworth experienced an unexpected error. Please file a " \
+        "bug report at https://github.com/SUSE/pennyworth/issues/new.\n"
+      if e.is_a?(Cheetah::ExecutionFailed)
+        result = ""
+        result << "#{e.message}\n"
+        result << "\n"
 
+        if e.stderr && !e.stderr.empty?
+          result << "Error output:\n"
+          result << "#{e.stderr}\n"
+        end
+
+        if e.stdout && !e.stdout.empty?
+          result << "Standard output:\n"
+          result << "#{e.stdout}\n\n"
+        end
+
+        if e.backtrace && !e.backtrace.empty?
+          result << "Backtrace:\n"
+          result << "#{e.backtrace.join("\n")}\n\n"
+        end
+        STDERR.puts result
+        exit 1
+      else
+        raise
+      end
+    end
     true
   end
 
