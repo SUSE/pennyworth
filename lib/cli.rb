@@ -228,7 +228,7 @@ class Cli
   arg_name "IMAGE"
   command :boot do |c|
     c.action do |global_options,options,args|
-      image = shift_arg(args, "IMAGE")
+      image = File.expand_path(shift_arg(args, "IMAGE"))
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       BootCommand.new.execute(image)
     end
