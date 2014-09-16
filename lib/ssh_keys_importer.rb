@@ -15,6 +15,8 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
+require "tempfile"
+
 class SshKeysImporter
   def self.import(ip, password, identity_file = nil)
     tmp_file = Tempfile.new("pennyworth-ssh-key-importer")

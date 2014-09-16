@@ -40,7 +40,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.6"
   s.rubyforge_project         = "pennyworth"
 
-  s.add_dependency "thor", ">=0.14.0"
+  s.add_dependency "gli", "~> 2.11.0"
   s.add_dependency "cheetah"
   s.add_dependency "colorize"
   s.add_dependency "nokogiri"

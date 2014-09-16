@@ -18,7 +18,6 @@
 class ImportSshKeysCommand < Command
   def execute(ip, options)
     password = options[:password] || "linux"
-
     SshKeysImporter.import(ip, password)
   rescue => e
     log e.message
