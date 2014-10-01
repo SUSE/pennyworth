@@ -16,7 +16,6 @@
 # you may find current contact information at www.suse.com
 
 require "cheetah"
-require "tempfile"
 require "libvirt"
 
 require_relative "exceptions"

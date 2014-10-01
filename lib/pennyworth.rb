@@ -17,7 +17,7 @@
 
 require "rubygems"
 
-require "thor"
+require "gli"
 require "cheetah"
 require "yaml"
 require "colorize"

@@ -58,10 +58,5 @@ end
 Cli.settings = Settings.new
 
 begin
-  Cli.start(ARGV)
-rescue SystemExit
-  raise
-rescue Exception => e
-  $stderr.print print_exception(e).red
-  exit 1
+  Cli.run(ARGV)
 end
