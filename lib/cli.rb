@@ -112,7 +112,7 @@ class Cli
   arg_name "VM_NAME"
   command :status do |c|
     c.action do |global_options,options,args|
-      vm_name = shift_arg(args, "VM_NAME") if !args.empty?
+      vm_name = shift_arg(args, "VM_NAME", :optional => true)
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       StatusCommand.new.execute(vm_name)
     end
@@ -125,7 +125,7 @@ class Cli
   arg_name "IMAGE_NAME"
   command "build-base" do |c|
     c.action do |global_options,options,args|
-      image_name = shift_arg(args, "IMAGE_NAME") if !args.empty?
+      image_name = shift_arg(args, "IMAGE_NAME", :optional => true)
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       BuildBaseCommand.new(Cli.settings.veewee_dir).execute(image_name)
     end
@@ -142,7 +142,7 @@ class Cli
     c.switch [:local, :l], :default_value => false, :required => false, :negatable => false,
       :desc => "Import Vagrant base boxes from locally built VeeWee boxes"
     c.action do |global_options,options,args|
-      image_name = shift_arg(args, "IMAGE_NAME") if !args.empty?
+      image_name = shift_arg(args, "IMAGE_NAME", :optional => true)
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       if options[:local]
         if !global_options["definitions_dir"]
@@ -177,7 +177,7 @@ class Cli
     c.switch [:destroy], :default_value => false, :required => false, :negatable => false,
       :desc => "Destroy vagrant instance(s) before starting them."
     c.action do |global_options,options,args|
-      vm_name = shift_arg(args, "VM_NAME") if !args.empty?
+      vm_name = shift_arg(args, "VM_NAME", :optional => true)
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       UpCommand.new.execute(vm_name, options)
     end
@@ -190,7 +190,7 @@ class Cli
   arg_name "VM_NAME"
   command :down do |c|
     c.action do |global_options,options,args|
-      vm_name = shift_arg(args, "VM_NAME") if !args.empty?
+      vm_name = shift_arg(args, "VM_NAME", :optional => true)
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       DownCommand.new.execute(vm_name)
     end
