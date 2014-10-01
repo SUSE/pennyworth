@@ -80,8 +80,8 @@ class Cli
   end
 
 
-  def self.shift_arg(args, name)
-    if !res = args.shift
+  def self.shift_arg(args, name, options = {})
+    if !options[:optional] && !res = args.shift
       raise GLI::BadCommandLine.new("Pennyworth was called with missing argument #{name}.")
     end
     res
