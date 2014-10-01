@@ -79,15 +79,6 @@ class Cli
     true
   end
 
-
-  def self.shift_arg(args, name, options = {})
-    res = args.shift
-    if !options[:optional] && !res
-      raise GLI::BadCommandLine.new("Pennyworth was called with missing argument #{name}.")
-    end
-    res
-  end
-
   def self.settings
     @@settings
   end
@@ -113,7 +104,7 @@ class Cli
   arg_name "VM_NAME"
   command :status do |c|
     c.action do |global_options,options,args|
-      vm_name = shift_arg(args, "VM_NAME", :optional => true)
+      vm_name = args.shift
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       StatusCommand.new.execute(vm_name)
     end
@@ -126,7 +117,7 @@ class Cli
   arg_name "IMAGE_NAME"
   command "build-base" do |c|
     c.action do |global_options,options,args|
-      image_name = shift_arg(args, "IMAGE_NAME", :optional => true)
+      image_name = args.shift
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       BuildBaseCommand.new(Cli.settings.veewee_dir).execute(image_name)
     end
@@ -143,7 +134,7 @@ class Cli
     c.switch [:local, :l], :default_value => false, :required => false, :negatable => false,
       :desc => "Import Vagrant base boxes from locally built VeeWee boxes"
     c.action do |global_options,options,args|
-      image_name = shift_arg(args, "IMAGE_NAME", :optional => true)
+      image_name = args.shift
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       if options[:local]
         if !global_options["definitions_dir"]
@@ -178,7 +169,7 @@ class Cli
     c.switch [:destroy], :default_value => false, :required => false, :negatable => false,
       :desc => "Destroy vagrant instance(s) before starting them."
     c.action do |global_options,options,args|
-      vm_name = shift_arg(args, "VM_NAME", :optional => true)
+      vm_name = args.shift
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       UpCommand.new.execute(vm_name, options)
     end
@@ -191,7 +182,7 @@ class Cli
   arg_name "VM_NAME"
   command :down do |c|
     c.action do |global_options,options,args|
-      vm_name = shift_arg(args, "VM_NAME", :optional => true)
+      vm_name = args.shift
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       DownCommand.new.execute(vm_name)
     end
@@ -206,7 +197,12 @@ class Cli
     c.flag [:password, :p], :type => String, :required => false,
       :desc => "Password", :arg_name => "PASSWORD"
     c.action do |global_options,options,args|
-      ip = shift_arg(args, "IP")
+      if !args.empty?
+        ip = args.shift
+      else
+        raise GLI::BadCommandLine.new("Pennyworth was called with missing argument IP.")
+      end
+
       ImportSshKeysCommand.new.execute(ip, options)
     end
   end
@@ -229,7 +225,11 @@ class Cli
   arg_name "IMAGE"
   command :boot do |c|
     c.action do |global_options,options,args|
-      image = File.expand_path(shift_arg(args, "IMAGE"))
+      if !args.empty?
+        image = File.expand_path(args.shift)
+      else
+        raise GLI::BadCommandLine.new("Pennyworth was called with missing argument IMAGE.")
+      end
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       BootCommand.new.execute(image)
     end
@@ -242,7 +242,11 @@ class Cli
   arg_name "NAME"
   command :shutdown do |c|
     c.action do |global_options,options,args|
-      image = shift_arg(args, "IMAGE")
+      if !args.empty?
+        image = args.shift
+      else
+        raise GLI::BadCommandLine.new("Pennyworth was called with missing argument IMAGE.")
+      end
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       ShutdownCommand.new.execute(name)
     end
