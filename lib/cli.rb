@@ -200,7 +200,7 @@ class Cli
       if !args.empty?
         ip = args.shift
       else
-        raise GLI::BadCommandLine.new("Pennyworth was called with missing argument IP.")
+        raise GLI::BadCommandLine.new("You need to provide the IP of the target system as argument.")
       end
 
       ImportSshKeysCommand.new.execute(ip, options)
@@ -228,7 +228,7 @@ class Cli
       if !args.empty?
         image = File.expand_path(args.shift)
       else
-        raise GLI::BadCommandLine.new("Pennyworth was called with missing argument IMAGE.")
+        raise GLI::BadCommandLine.new("You need to provide the name of the image to boot as argument.")
       end
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       BootCommand.new.execute(image)
@@ -245,7 +245,7 @@ class Cli
       if !args.empty?
         image = args.shift
       else
-        raise GLI::BadCommandLine.new("Pennyworth was called with missing argument IMAGE.")
+        raise GLI::BadCommandLine.new("You need to provide the name of the VM to shutdown as argument.")
       end
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       ShutdownCommand.new.execute(name)
