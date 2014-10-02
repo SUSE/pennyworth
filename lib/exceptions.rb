@@ -19,5 +19,16 @@ class WrongPasswordException < StandardError; end
 class SshKeysAlreadyExistsException < StandardError; end
 class SshConnectionFailed < StandardError; end
 class CommandNotFoundError < StandardError; end
-class ExecutionFailed < StandardError; end
+
+class ExecutionFailed < StandardError
+  def initialize(e)
+    @message = e.message
+    @message += "\nStandard output:\n #{e.stdout}\n"
+    @message += "\nError output:\n #{e.stderr}\n"
+  end
+
+  def to_s
+    @message
+  end
+end
 

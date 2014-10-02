@@ -65,10 +65,7 @@ class VM
       options
     )
   rescue Cheetah::ExecutionFailed => e
-    message = e.message
-    message += "\nStandard output:\n #{e.stdout}\n"
-    message += "\nError output:\n #{e.stderr}\n"
-    raise ExecutionFailed.new(message)
+    raise ExecutionFailed(e)
   end
 
   # Copy a local file to the remote system.
@@ -123,10 +120,7 @@ class VM
       )
     end
   rescue Cheetah::ExecutionFailed => e
-    message = e.message
-    message += "\nStandard output:\n #{e.stdout}\n"
-    message += "\nError output:\n #{e.stderr}\n"
-    raise ExecutionFailed.new(message)
+    raise ExecutionFailed(e)
   end
 
   def extract_file(source, destination)
@@ -140,10 +134,7 @@ class VM
       destination
     )
   rescue Cheetah::ExecutionFailed => e
-    message = e.message
-    message += "\nStandard output:\n #{e.stdout}\n"
-    message += "\nError output:\n #{e.stderr}\n"
-    raise ExecutionFailed.new(message)
+    raise ExecutionFailed(e)
   end
 
   def inject_directory(source, destination, opts = {})
@@ -188,9 +179,6 @@ class VM
       )
     end
   rescue Cheetah::ExecutionFailed => e
-    message = e.message
-    message += "\nStandard output:\n #{e.stdout}\n"
-    message += "\nError output:\n #{e.stderr}\n"
-    raise ExecutionFailed.new(message)
+    raise ExecutionFailed(e)
   end
 end
