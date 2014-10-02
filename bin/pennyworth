@@ -19,42 +19,6 @@
 
 require_relative "../lib/pennyworth"
 
-def print_exception(e)
-  result = "\n"
-
-  if e.is_a?(Cheetah::ExecutionFailed)
-    result << "#{e.message}\n"
-    result << "\n"
-
-    if !e.stdout
-      result << "Standard output: (streamed away)\n"
-    elsif e.stdout.empty?
-      result << "Standard output: (none)\n"
-    else
-      result << "Standard output:\n"
-      result << "#{e.stdout}\n"
-    end
-
-    if !e.stderr
-      result << "Error output:    (streamed away)\n"
-    elsif e.stderr.empty?
-      result << "Error output:    (none)\n"
-    else
-      result << "Error output:\n"
-      result << "#{e.stderr}\n"
-    end
-  else
-    result << "#{e.class}: #{e.message} \n"
-    result << "\n"
-    result << "Backtrace:\n"
-    e.backtrace.each do |line|
-      result << "  #{line}\n"
-    end
-  end
-
-  result
-end
-
 Cli.settings = Settings.new
 
 begin
