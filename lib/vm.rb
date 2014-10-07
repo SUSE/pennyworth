@@ -65,7 +65,7 @@ class VM
       options
     )
   rescue Cheetah::ExecutionFailed => e
-    raise ExecutionFailed(e)
+    raise ExecutionFailed.new(e)
   end
 
   # Copy a local file to the remote system.
@@ -120,7 +120,7 @@ class VM
       )
     end
   rescue Cheetah::ExecutionFailed => e
-    raise ExecutionFailed(e)
+    raise ExecutionFailed.new(e)
   end
 
   def extract_file(source, destination)
@@ -134,7 +134,7 @@ class VM
       destination
     )
   rescue Cheetah::ExecutionFailed => e
-    raise ExecutionFailed(e)
+    raise ExecutionFailed.new(e)
   end
 
   def inject_directory(source, destination, opts = {})
@@ -179,6 +179,6 @@ class VM
       )
     end
   rescue Cheetah::ExecutionFailed => e
-    raise ExecutionFailed(e)
+    raise ExecutionFailed.new(e)
   end
 end

@@ -46,6 +46,16 @@ describe VM do
 
       expect(output).to eq (ssh_output)
     end
+
+    it "raises ExecutionFailed in case of errors" do
+      expect(Cheetah).to receive(:run).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
+
+      expect {
+        system = VM.new(nil)
+        system.ip = "1.2.3.4"
+        system.run_command("foo")
+      }.to raise_error(ExecutionFailed)
+    end
   end
 
   describe "#extract_file" do
