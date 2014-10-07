@@ -31,8 +31,8 @@ class Cli
     @@settings.verbose = !!global_options[:verbose]
     @@settings.silent = !!global_options[:silent]
     @@settings.definitions_dir = File.expand_path(
-      global_options[:definitions_dir]
-    ) if global_options[:definitions_dir]
+      global_options["definitions-dir"]
+    ) if global_options["definitions-dir"]
     true
   end
 
@@ -137,7 +137,7 @@ class Cli
       image_name = args.shift
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       if options[:local]
-        if !global_options["definitions_dir"]
+        if !Cli.settings.definitions_dir
           STDERR.puts "You need to specify a definitions directory when using --local."
           exit 1
         end
