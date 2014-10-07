@@ -40,7 +40,7 @@ EOT
       Dir.mktmpdir("vagrant_command_test") do |tmp_dir|
         dir = File.join(tmp_dir, "pennyworth")
         expect(Dir.exists?(dir)).to be(false)
-        expect_any_instance_of(Vagrant).to receive(:initialize).with(dir)
+        expect(Vagrant).to receive(:new).with(dir).and_call_original
         expect_any_instance_of(Vagrant).to receive(:run).with("init")
 
         VagrantCommand.setup_environment(dir)
