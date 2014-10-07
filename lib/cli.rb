@@ -25,7 +25,7 @@ class Cli
   switch [:help, :h], :negatable => false, :desc => "Show help"
   switch :verbose, :negatable => false, :desc => "Verbose"
   switch [:silent], :negatable => false, :desc => "Silent mode"
-  flag [:definitions_dir, :d], :desc => "Path to the directory containing Veewee and Vagrant definitions", :arg_name => "DEFINITIONS_DIR"
+  flag ["definitions-dir", :d], :desc => "Path to the directory containing Veewee and Vagrant definitions", :arg_name => "DEFINITIONS_DIR"
 
   pre do |global_options,command,options,args|
     @@settings.verbose = !!global_options[:verbose]
