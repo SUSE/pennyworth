@@ -62,7 +62,7 @@ The following steps will make Pennyworth run on a vanilla openSUSE 13.1 system.
   2. **Clone Pennyworth repository and install Gem dependencies required to run
      the setup**
 
-         $ git clone git@github.com:SUSE/pennyworth.git
+         $ git clone https://github.com/SUSE/pennyworth.git
          $ cd pennyworth
          $ bundle config build.nokogiri --use-system-libraries
          $ bundle install --without test
