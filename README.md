@@ -200,6 +200,11 @@ with the running machine (via SSH). It supports the following methods:
 
     Extracts a file from the VM into the machine running the specs.
 
+  * `test_and_print_results(user, command)`
+
+    Alternatively, you can use direct calls to
+    [Twopence](http://github.com/openSUSE/twopence), like the one above.
+
 All machines started by `start_system` are stopped when the RSpec example group
 containing the call is finished.
 
