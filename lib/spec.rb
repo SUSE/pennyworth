@@ -31,6 +31,9 @@ require_relative "spec_profiler"
 module Pennyworth
   module SpecHelper
     def start_system(opts)
+      opts = {
+        skip_ssh_setup: false
+      }.merge(opts)
       if opts[:box]
         runner = VagrantRunner.new(opts[:box], RSpec.configuration.vagrant_dir)
         password = "vagrant"
@@ -51,7 +54,9 @@ module Pennyworth
       measure("Boot machine '#{opts[:box] || opts[:image]}'") do
         system.start
       end
-      SshKeysImporter.import(system.ip, password)
+      if !opts[:skip_ssh_setup]
+        SshKeysImporter.import(system.ip, password)
+      end
 
       system
     end
