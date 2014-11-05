@@ -82,11 +82,11 @@ module Pennyworth
 
         # The output looks like this:
         #
-        #   Name                 State      Autostart
+        #    Name                 State      Autostart
         #   -----------------------------------------
-        #   default              active     no
+        #    default              active     no
         #
-        output.split("\n")[2..-1].find { |line| line =~ /^#{LIBVIRT_POOL_NAME}/ }
+        output.split("\n")[2..-1].detect { |line| line =~ /^\s*#{LIBVIRT_POOL_NAME}/ }
       end
     end
   end
