@@ -7,9 +7,11 @@
      - libxslt-devel   # Needed by libvirt plugin for Vagrant
      - libvirt-devel   # Needed by libvirt plugin for Vagrant
      - libvirt         # Needed to run VMs
-     - kvm             # Needed to run VMs
      - expect          # Needed to automate interactive commands like ssh-copy-id
    "13.1":
+     - kvm                  # Needed to run VMs
      - libvirt-daemon-qemu  # Needed to run QEMU in 13.1
+   "13.2":
+     - qemu-kvm             # Needed to run VMs
    remote:
      - https://dl.bintray.com/mitchellh/vagrant/vagrant_1.6.3_x86_64.rpm
