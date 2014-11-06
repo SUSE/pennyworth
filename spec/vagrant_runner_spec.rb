@@ -20,10 +20,9 @@ require 'spec_helper'
 describe VagrantRunner do
   describe "#start" do
     it "returns the IP address of the started system" do
-      runner = VagrantRunner.new("foo", RSpec.configuration.vagrant_dir)
+      runner = VagrantRunner.new("foo", RSpec.configuration.vagrant_dir, "libvirt")
 
-      expect_any_instance_of(Vagrant).to receive(:run).with("destroy", "foo")
-      expect_any_instance_of(Vagrant).to receive(:run).with("up", "foo")
+      allow_any_instance_of(Vagrant).to receive(:run)
       expect_any_instance_of(Vagrant).to receive(:ssh_config).with("foo") {
         {
           "foo" => {

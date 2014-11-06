@@ -16,13 +16,13 @@
 # you may find current contact information at www.suse.com
 
 class VagrantRunner
-  def initialize(box, vagrant_dir)
+  def initialize(box, vagrant_dir, provider)
     @box = box
-    @vagrant = Vagrant.new(vagrant_dir)
+    @vagrant = Vagrant.new(vagrant_dir, provider)
   end
 
   def start
-    @vagrant.run "destroy", @box
+    @vagrant.run "destroy", "-f", @box
     @vagrant.run "up", @box
 
     @vagrant.ssh_config(@box)[@box]["HostName"]

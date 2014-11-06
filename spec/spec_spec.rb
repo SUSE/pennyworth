@@ -39,10 +39,10 @@ describe Pennyworth::SpecHelper do
 
     it "starts the given vagrant boxes" do
       runner_one = double
-      expect(VagrantRunner).to receive(:new).with(system_one, anything) { runner_one }
+      expect(VagrantRunner).to receive(:new).with(system_one, anything, anything) { runner_one }
       expect(runner_one).to receive(:start)
       runner_two = double
-      expect(VagrantRunner).to receive(:new).with(system_two, anything) { runner_two }
+      expect(VagrantRunner).to receive(:new).with(system_two, anything, anything) { runner_two }
       expect(runner_two).to receive(:start)
       expect(SshKeysImporter).to receive(:import).twice
 

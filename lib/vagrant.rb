@@ -16,8 +16,9 @@
 # you may find current contact information at www.suse.com
 
 class Vagrant
-  def initialize(vagrant_dir)
+  def initialize(vagrant_dir, provider)
     @vagrant_dir = vagrant_dir
+    @provider = provider
   end
 
   def run(*args)
@@ -25,7 +26,7 @@ class Vagrant
     # because they can't find VirtualBox. The following code is a crude
     # workaround.
     Dir.chdir(@vagrant_dir) do
-      with_env "VAGRANT_DEFAULT_PROVIDER" => "libvirt" do
+      with_env "VAGRANT_DEFAULT_PROVIDER" => @provider do
         Cheetah.run "vagrant", *args
       end
     end

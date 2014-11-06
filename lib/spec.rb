@@ -32,11 +32,18 @@ module Pennyworth
   module SpecHelper
     def start_system(opts)
       opts = {
-        skip_ssh_setup: false
+        skip_ssh_setup: false,
+        provider: "libvirt",
+        password: "vagrant"
       }.merge(opts)
+
       if opts[:box]
-        runner = VagrantRunner.new(opts[:box], RSpec.configuration.vagrant_dir)
-        password = "vagrant"
+        runner = VagrantRunner.new(
+          opts[:box],
+          RSpec.configuration.vagrant_dir,
+          opts[:provider]
+        )
+        password = opts[:password]
       elsif opts[:image]
         runner = ImageRunner.new(opts[:image])
         password = "linux"
