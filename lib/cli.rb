@@ -131,29 +131,23 @@ class Cli
   command "import-base" do |c|
     c.flag [:url, :u], :type => String, :required => false,
       :desc => "URL of the remote server where the images will be imported from", :arg_name => "URL"
-    c.switch [:local, :l], :default_value => false, :required => false, :negatable => false,
-      :desc => "Import Vagrant base boxes from locally built VeeWee boxes"
     c.action do |global_options,options,args|
       image_name = args.shift
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
-      if options[:local]
+      if options[:url]
+        veewee_dir = File.expand_path("~/.pennyworth/veewee")
+        remote_url = options[:url]
+        opts = {
+          local: false,
+        }
+      else
         if !Cli.settings.definitions_dir
-          STDERR.puts "You need to specify a definitions directory when using --local."
+          STDERR.puts "You need to specify a definitions directory when not using --url."
           exit 1
         end
         veewee_dir = Cli.settings.veewee_dir
         opts = {
           local: true
-        }
-      else
-        if !options[:url]
-          STDERR.puts "You need to specify a URL when not using --local."
-          exit 1
-        end
-        veewee_dir = File.expand_path("~/.pennyworth/veewee")
-        remote_url = options[:url]
-        opts = {
-          local: false,
         }
       end
       ImportBaseCommand.new(veewee_dir, remote_url).execute(image_name, opts)

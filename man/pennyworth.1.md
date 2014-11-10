@@ -53,6 +53,14 @@ which boxes are available, which machines are running, etc.
 Build all required base images. If a specific name is given, only build this
 image.
 
+### import-base -- Import base images
+
+`pennyworth` import-base <image_name> [-u|--url]
+
+Import all required base images, that were built on this machine. If a specific
+name is given, only this image is imported. With the option url it is possible
+to import the images from a web server.
+
 
 ### up -- Start virtual machine
 
