@@ -51,7 +51,13 @@ which boxes are available, which machines are running, etc.
 `pennyworth` build-base <image_name>
 
 Build all required base images. If a specific name is given, only build this
-image.
+image. The available base images are defined in the veewee sub directory of the
+definitions directory given with the `--definitions-dir` option.
+
+Images are only rebuilt if the definitions have changed. The state is tracked in
+a file `box_state.yaml` stored in the veewee sub directory of the definitions
+directory. To unconditionally build all images delete this file.
+
 
 ### import-base -- Import base images
 
@@ -60,6 +66,14 @@ image.
 Import all required base images, that were built on this machine. If a specific
 name is given, only this image is imported. With the option url it is possible
 to import the images from a web server.
+
+The base images are imported into Vagrant and can then be used as a base for
+test VMs. The test VMs are defined in the Vagrantfiles in the vagrant sub
+directory of the definitions directory.
+
+Images are only imported if they have changed. The state is tracked in the file
+`~/.pennyworth/veewee/import_state.yaml`, which keeps the system wide state of
+images imported into Vagrant and their sources.
 
 
 ### up -- Start virtual machine
