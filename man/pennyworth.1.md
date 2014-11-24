@@ -72,8 +72,8 @@ test VMs. The test VMs are defined in the Vagrantfiles in the vagrant sub
 directory of the definitions directory.
 
 Images are only imported if they have changed. The state is tracked in the file
-`~/.pennyworth/veewee/import_state.yaml`, which keeps the system wide state of
-images imported into Vagrant and their sources.
+`~/.pennyworth/veewee/import_state.yaml`, which keeps track of the system wide
+state of images imported into Vagrant and their sources.
 
 
 ### up -- Start virtual machine
