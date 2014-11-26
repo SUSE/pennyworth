@@ -25,8 +25,8 @@ class Settings
     @definitions_dir = File.expand_path("~/.pennyworth")
   end
 
-  def veewee_dir
-    File.join(@definitions_dir, "/veewee")
+  def kiwi_dir
+    File.join(@definitions_dir, "/kiwi")
   end
 
   def vagrant_dir

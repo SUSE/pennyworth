@@ -17,7 +17,7 @@
 
 class ListCommand < BaseCommand
   def execute
-    if @veewee_dir
+    if @kiwi_dir
       puts "Vagrant box definitions managed by pennyworth:"
       local_base_images.each do |b|
         puts "  #{b}"

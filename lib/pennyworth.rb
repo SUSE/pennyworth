@@ -25,6 +25,7 @@ require "libvirt"
 require "nokogiri"
 require "digest"
 require "net/http"
+require "find"
 
 require_relative "version"
 require_relative "exceptions"

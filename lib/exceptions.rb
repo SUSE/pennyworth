@@ -19,6 +19,7 @@ class WrongPasswordException < StandardError; end
 class SshKeysAlreadyExistsException < StandardError; end
 class SshConnectionFailed < StandardError; end
 class CommandNotFoundError < StandardError; end
+class BuildFailed < StandardError; end
 
 class ExecutionFailed < StandardError
   def initialize(e)

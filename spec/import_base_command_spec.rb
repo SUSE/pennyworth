@@ -27,13 +27,13 @@ describe ImportBaseCommand do
   before(:each) do
     stub_request(:get, /example.com.*import_state.yaml/).
       with(headers: {'Accept'=>'*/*', 'User-Agent'=>'Ruby'}).
-      to_return(status: 200, body: File.read(File.join(test_data_dir, "/veewee5/import_state.yaml")), headers: {})
+      to_return(status: 200, body: File.read(File.join(test_data_dir, "/kiwi5/import_state.yaml")), headers: {})
   end
 
   context "without box state file" do
     before(:each) do
-      @veewee_dir = File.join(test_data_dir, "veewee")
-      @cmd = ImportBaseCommand.new(@veewee_dir, "http://example.com/pennyworth/")
+      @kiwi_dir = File.join(test_data_dir, "kiwi")
+      @cmd = ImportBaseCommand.new(@kiwi_dir, "http://example.com/pennyworth/")
       allow(Pennyworth::Libvirt).to receive(:ensure_libvirt_env_started)
       allow(@cmd).to receive(:log)
       allow(@cmd).to receive(:write_import_state_file) # Don't write state
@@ -42,7 +42,7 @@ describe ImportBaseCommand do
     it "imports a local box" do
       expect(@cmd).to receive(:base_image_clean).with("base_opensuse12.3_kvm")
       expect_any_instance_of(Vagrant).to receive(:run).with("box", "add",
-        "base_opensuse12.3_kvm", "#{@veewee_dir}/base_opensuse12.3_kvm.box",
+        "base_opensuse12.3_kvm", "#{@kiwi_dir}/base_opensuse12.3_kvm.box",
         "--force")
 
       @cmd.execute("base_opensuse12.3_kvm", :local => true)
@@ -65,14 +65,14 @@ describe ImportBaseCommand do
       end
 
       it "fetches the box state file from an url with a trailing slash" do
-        cmd = ImportBaseCommand.new(@veewee_dir, "http://example.com/pennyworth/")
+        cmd = ImportBaseCommand.new(@kiwi_dir, "http://example.com/pennyworth/")
         cmd.read_remote_box_state_file()
 
         assert_requested(@box_state_get)
       end
 
       it "fetches the box state file from an url without a trailing slash" do
-        cmd = ImportBaseCommand.new(@veewee_dir, "http://example.com/pennyworth")
+        cmd = ImportBaseCommand.new(@kiwi_dir, "http://example.com/pennyworth")
         cmd.read_remote_box_state_file()
 
         assert_requested(@box_state_get)
@@ -82,12 +82,12 @@ describe ImportBaseCommand do
 
   context "with box state file" do
     before(:each) do
-      @veewee_dir = File.join(test_data_dir, "veewee2")
-      @cmd = ImportBaseCommand.new(@veewee_dir)
+      @kiwi_dir = File.join(test_data_dir, "kiwi2")
+      @cmd = ImportBaseCommand.new(@kiwi_dir)
       allow(Pennyworth::Libvirt).to receive(:ensure_libvirt_env_started)
       allow(@cmd).to receive(:log)
       allow(@cmd).to receive(:fetch_remote_box_state_file).and_return(
-        File.read(File.join(@veewee_dir, "box_state.yaml")))
+        File.read(File.join(@kiwi_dir, "box_state.yaml")))
     end
 
     it "writes import state file" do
@@ -95,7 +95,7 @@ describe ImportBaseCommand do
       allow(@cmd).to receive(:vagrant)
       allow_any_instance_of(Vagrant).to receive(:run)
 
-      import_state_file = File.join(@veewee_dir,"import_state.yaml")
+      import_state_file = File.join(@kiwi_dir,"import_state.yaml")
 
       FileUtils.rm(import_state_file) if File.exist?(import_state_file)
 
@@ -116,8 +116,8 @@ base_opensuse12.3_kvm: e4e743b5340686d8488dbce54b5644d8
     it "reads remote box state file" do
       box_state = @cmd.read_remote_box_state_file
 
-      expect(box_state["base_opensuse12.3_kvm"]["sources"]["autoinst.xml"]).to eq(
-        "9e6d1da4249c57b3750c43e7d9bac51b")
+      expect(box_state["base_opensuse12.3_kvm"]["sources"]["config.sh"]).to eq(
+        "c6640ba00ab345b7491b836d517a637b")
       expect(box_state["base_opensuse13.1_kvm"]["target"]).to eq(
         "115469c104dcc69455f321eb086ffb11")
     end
@@ -125,13 +125,13 @@ base_opensuse12.3_kvm: e4e743b5340686d8488dbce54b5644d8
 
   context "with box and import state files" do
     before(:each) do
-      @veewee_dir = File.join(test_data_dir, "veewee3")
-      @cmd = ImportBaseCommand.new(@veewee_dir, "http://example.com/pennyworth/")
+      @kiwi_dir = File.join(test_data_dir, "kiwi3")
+      @cmd = ImportBaseCommand.new(@kiwi_dir, "http://example.com/pennyworth/")
       allow(Pennyworth::Libvirt).to receive(:ensure_libvirt_env_started)
       allow(@cmd).to receive(:log)
       allow(@cmd).to receive(:write_import_state_file) # Don't write state
       allow(@cmd).to receive(:fetch_remote_box_state_file).and_return(
-        File.read(File.join(@veewee_dir, "box_state.yaml")))
+        File.read(File.join(@kiwi_dir, "box_state.yaml")))
     end
 
     it "imports changed local box" do
@@ -165,8 +165,8 @@ base_opensuse12.3_kvm: e4e743b5340686d8488dbce54b5644d8
 
   context "without box state, but with import state files" do
     before(:each) do
-      @veewee_dir = File.join(test_data_dir, "veewee4")
-      @cmd = ImportBaseCommand.new(@veewee_dir)
+      @kiwi_dir = File.join(test_data_dir, "kiwi4")
+      @cmd = ImportBaseCommand.new(@kiwi_dir)
       allow(Pennyworth::Libvirt).to receive(:ensure_libvirt_env_started)
       allow(@cmd).to receive(:log)
     end
