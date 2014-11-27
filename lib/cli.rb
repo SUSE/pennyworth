@@ -25,7 +25,9 @@ class Cli
   switch [:help, :h], :negatable => false, :desc => "Show help"
   switch :verbose, :negatable => false, :desc => "Verbose"
   switch [:silent], :negatable => false, :desc => "Silent mode"
-  flag ["definitions-dir", :d], :desc => "Path to the directory containing Veewee and Vagrant definitions", :arg_name => "DEFINITIONS_DIR"
+  flag ["definitions-dir", :d],
+    :desc => "Path to the directory containing Kiwi and Vagrant definitions",
+    :arg_name => "DEFINITIONS_DIR"
 
   pre do |global_options,command,options,args|
     @@settings.verbose = !!global_options[:verbose]
@@ -117,14 +119,11 @@ class Cli
   arg_name "IMAGE_NAME"
   command "build-base" do |c|
     c.flag [:kiwi_tmp_dir, :k], :type => String, :required => false,
-      :desc => "Temporary KIWI directory for building the Vagrant box.", :arg_name => "KIWI-TMP-Dir"
+      :desc => "Temporary KIWI directory for building the Vagrant box.",
+      :arg_name => "KIWI-TMP-Dir"
     c.action do |global_options,options,args|
       image_name = args.shift
-      if options[:kiwi_tmp_dir]
-        tmp_dir = options[:kiwi_tmp_dir]
-      else
-        tmp_dir = "/tmp/kiwi-vagrant-build-environment"
-      end
+      tmp_dir = options[:kiwi_tmp_dir] || "/tmp/pennyworth-kiwi-builds"
       BuildBaseCommand.new(Cli.settings.kiwi_dir).execute(tmp_dir, image_name)
     end
   end
@@ -141,7 +140,7 @@ class Cli
       image_name = args.shift
       VagrantCommand.setup_environment(@@settings.vagrant_dir)
       if options[:url]
-        kiwi_dir = File.expand_path("~/.pennyworth/veewee")
+        kiwi_dir = File.expand_path("~/.pennyworth/kiwi")
         remote_url = options[:url]
         opts = {
           local: false,

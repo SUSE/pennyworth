@@ -61,7 +61,7 @@ class BaseCommand < Command
     source_dir = File.join(@kiwi_dir, "definitions", box_name)
     Find.find(source_dir) do |file|
       next if File.directory?(file)
-      relative_path = file.gsub(/^#{File.join(source_dir, "/")}/,"")
+      relative_path = file.gsub(/^#{File.join(source_dir, "/")}/, "")
       sources[relative_path] = Digest::MD5.file(file).hexdigest
     end
     sources

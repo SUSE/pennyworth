@@ -64,7 +64,7 @@ class BuildBaseCommand < BaseCommand
     begin
       Cheetah.run "sudo", "/usr/sbin/kiwi", "--build", description_dir,
         "--destdir", tmp_dir, "--logfile", "#{logfile}",
-        :stdout=>:capture
+        :stdout => :capture
       rescue Cheetah::ExecutionFailed => e
         raise ExecutionFailed.new(e)
       end
@@ -77,7 +77,7 @@ class BuildBaseCommand < BaseCommand
         from_file = File.join(tmp_dir, image)
         to_file = description_dir.gsub(/\/$/,"") + ".box"
         begin
-          Cheetah.run "sudo", "mv", from_file, to_file, :stdout=>:capture
+          Cheetah.run "sudo", "mv", from_file, to_file, :stdout => :capture
         rescue Cheetah::ExecutionFailed => e
           raise ExecutionFailed.new(e)
         end
@@ -90,12 +90,13 @@ class BuildBaseCommand < BaseCommand
   def base_image_cleanup_build(tmp_dir)
     if (tmp_dir.start_with?("/tmp/"))
       begin
-        Cheetah.run "sudo", "rm", "-r", tmp_dir, :stdout=>:capture
+        Cheetah.run "sudo", "rm", "-r", tmp_dir, :stdout => :capture
         rescue Cheetah::ExecutionFailed => e
           raise ExecutionFailed.new(e)
         end
     else
-      log " Warning: The KIWI tmp dir #{tmp_dir} was outside of '/tmp' so it wasn't removed!"
+      log " Warning: The KIWI tmp dir #{tmp_dir} was outside of '/tmp' so it" \
+        " wasn't removed!"
     end
   end
 end

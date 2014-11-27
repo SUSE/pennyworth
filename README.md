@@ -107,7 +107,7 @@ All these tasks are driven by commands described in the [Usage](#usage) section.
 ### Defining and Building Machines
 
 To define and build machines, Pennyworth uses
-[Veewee](https://github.com/jedi4ever/veewee).
+[Kiwi](https://github.com/openSUSE/kiwi).
 
 When a machine is built, the resulting Vagrant box can be uploaded to a web
 server (manually). Pennyworth running on some other machine can then import it

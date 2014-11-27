@@ -122,7 +122,7 @@ class SetupCommand < Command
       :group => "qemu"
   end
 
-  # Veewee build fails because Veewee can't find arp when run as a normal user.
+  # Pennyworth build fails because Pennyworth can't find arp when run as a normal user.
   # This is a crude workaround.
   def allow_arp_access
     log "Making arp command available for normal users..."

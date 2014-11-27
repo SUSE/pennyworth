@@ -25,18 +25,6 @@ class ListCommand < BaseCommand
       puts
     end
 
-    puts "Downloaded distribution ISOs:"
-    iso_path = File.expand_path("../../../veewee/iso",__FILE__)
-    if Dir.exists?(iso_path)
-      Dir.entries(iso_path).each do |entry|
-	next if entry =~ /^\./
-	puts "  #{entry}"
-      end
-    else
-      puts "  Nothing there"
-    end
-    puts
-
     puts "Available Vagrant boxes:"
     VagrantCommand.new.list.each do |box|
       puts "  #{box}"
