@@ -23,8 +23,8 @@ test environment based on this machines.
     Run in verbose mode.
 
   * `-d`,`--definitions-dir=DEFINITIONS_DIR`:
-    Specify the path to the directory containing Veewee and Vagrant
-    definitions. The directory needs to contain `veewee/` and `vagrant/`
+    Specify the path to the directory containing Kiwi and Vagrant
+    definitions. The directory needs to contain `kiwi/` and `vagrant/`
     subdirectories. Default is `~/.pennyworth`.
 
 
@@ -51,11 +51,11 @@ which boxes are available, which machines are running, etc.
 `pennyworth` build-base <image_name>
 
 Build all required base images. If a specific name is given, only build this
-image. The available base images are defined in the `veewee` sub directory of the
+image. The available base images are defined in the `kiwi` sub directory of the
 definitions directory given with the `--definitions-dir` option.
 
 Images are only rebuilt if the definitions have changed. The state is tracked in
-a file `box_state.yaml` stored in the `veewee` sub directory of the definitions
+a file `box_state.yaml` stored in the `kiwi` sub directory of the definitions
 directory. To unconditionally build all images delete this file.
 
 
@@ -72,7 +72,7 @@ test VMs. The test VMs are defined in the Vagrantfiles in the `vagrant` sub
 directory of the definitions directory.
 
 Images are only imported if they have changed. The state is tracked in the file
-`~/.pennyworth/veewee/import_state.yaml`, which keeps track of the system wide
+`~/.pennyworth/kiwi/import_state.yaml`, which keeps track of the system wide
 state of images imported into Vagrant and their sources.
 
 

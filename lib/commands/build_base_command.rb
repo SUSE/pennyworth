@@ -17,18 +17,18 @@
 
 class BuildBaseCommand < BaseCommand
 
-  def initialize(veewee_dir)
+  def initialize(kiwi_dir)
     super
   end
 
-  def execute(image_name = nil)
+  def execute(tmp_dir, image_name = nil)
     Pennyworth::Libvirt.ensure_libvirt_env_started
 
     box_state = read_local_box_state_file
     images = process_base_image_parameter(local_base_images, image_name)
     log "Creating base images..."
     images.each do |image|
-      Dir.chdir veewee_dir do
+      Dir.chdir kiwi_dir do
         log
         log "--- #{image} ---"
         source_state = read_box_sources_state(image)
@@ -36,12 +36,12 @@ class BuildBaseCommand < BaseCommand
            source_state && box_state[image]["sources"] == source_state
           log "  Sources not changed, skipping build"
         else
+          description_dir = File.join(kiwi_dir, "definitions", image)
           log "  Building base image..."
-          base_image_create(image)
-          log "  Validating base image..."
-          base_image_halt(image)
+          base_image_create(description_dir, tmp_dir)
           log "  Exporting image as box for vagrant..."
-          base_image_export(image)
+          base_image_export(description_dir, tmp_dir)
+          base_image_cleanup_build(tmp_dir)
 
           box_state[image] = {
             "sources" => source_state,
@@ -55,21 +55,48 @@ class BuildBaseCommand < BaseCommand
 
   private
 
-  # Creates a KVM image from the according Veewee definitions.
-  # See pennyworth/veewee/definitions for the definitions we use.
-  def base_image_create(box)
-    Cheetah.run "veewee", "kvm", "build", box, "--force", "--auto"
+  # Creates a KVM image from the according Kiwi description.
+  # See pennyworth/kiwi/definitions for the definitions we use.
+  def base_image_create(description_dir, tmp_dir)
+    FileUtils.mkdir_p(tmp_dir)
+    logfile = "#{tmp_dir}/kiwi-terminal-output.log"
+    log "    The build log is available under #{logfile}"
+    begin
+      Cheetah.run "sudo", "/usr/sbin/kiwi", "--build", description_dir,
+        "--destdir", tmp_dir, "--logfile", "#{logfile}",
+        :stdout => :capture
+      rescue Cheetah::ExecutionFailed => e
+        raise ExecutionFailed.new(e)
+      end
   end
 
-  # Stops the KVM image which was brought up by Veewee during the Veewee build.
-  def base_image_halt(box)
-    Cheetah.run "veewee", "kvm", "halt", box
+  def base_image_export(description_dir, tmp_dir)
+    Dir.chdir(tmp_dir) do
+      image = Dir.glob("*.box").first
+      if image
+        from_file = File.join(tmp_dir, image)
+        to_file = description_dir.gsub(/\/$/, "") + ".box"
+        begin
+          Cheetah.run "sudo", "mv", from_file, to_file, :stdout => :capture
+        rescue Cheetah::ExecutionFailed => e
+          raise ExecutionFailed.new(e)
+        end
+      else
+        raise BuildFailed, "The built image couldn't be found."
+      end
+    end
   end
 
-  # Bundles the built KVM image into a Vagrant .box file using Veewee so that
-  # it can be imported by Vagrant.
-  def base_image_export(box)
-    Cheetah.run "veewee", "kvm", "export", box, "--force"
+  def base_image_cleanup_build(tmp_dir)
+    if tmp_dir.start_with?("/tmp/")
+      begin
+        Cheetah.run "sudo", "rm", "-r", tmp_dir, :stdout => :capture
+        rescue Cheetah::ExecutionFailed => e
+          raise ExecutionFailed.new(e)
+        end
+    else
+      log " Warning: The KIWI tmp dir #{tmp_dir} was outside of '/tmp' so it" \
+        " wasn't removed!"
+    end
   end
-
 end

@@ -20,7 +20,6 @@ source "https://rubygems.org"
 gemspec
 
 group :test do
-  gem 'veewee', '=0.3.12'
   gem 'rspec', '~> 3.0'
   gem 'webmock'
 end

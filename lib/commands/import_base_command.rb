@@ -57,7 +57,7 @@ class ImportBaseCommand < BaseCommand
   end
 
   def read_import_state_file
-    import_state_file = File.join(veewee_dir,"import_state.yaml")
+    import_state_file = File.join(kiwi_dir, "import_state.yaml")
     if File.exist? import_state_file
       import_state = YAML.load_file(import_state_file)
     else
@@ -67,9 +67,9 @@ class ImportBaseCommand < BaseCommand
   end
 
   def write_import_state_file(import_state)
-    FileUtils.mkdir_p(veewee_dir) unless Dir.exists?(veewee_dir)
+    FileUtils.mkdir_p(kiwi_dir) unless Dir.exists?(kiwi_dir)
 
-    File.open(File.join(veewee_dir,"import_state.yaml"), "w") do |f|
+    File.open(File.join(kiwi_dir, "import_state.yaml"), "w") do |f|
       f.write(import_state.to_yaml)
     end
   end
@@ -101,7 +101,7 @@ class ImportBaseCommand < BaseCommand
   # environments.
   def base_image_import(box, options)
     if options[:local]
-      box_path = File.join(veewee_dir, box + ".box")
+      box_path = File.join(kiwi_dir, box + ".box")
     else
       box_path = URLs.join(@remote_url, options[:subdir], box + ".box")
     end

@@ -17,11 +17,11 @@
 
 class BaseCommand < Command
 
-  attr_reader :veewee_dir
+  attr_reader :kiwi_dir
 
-  def initialize(veewee_dir, remote_url = nil)
+  def initialize(kiwi_dir, remote_url = nil)
     super()
-    @veewee_dir = veewee_dir
+    @kiwi_dir = kiwi_dir
     @remote_url = remote_url
   end
 
@@ -40,7 +40,7 @@ class BaseCommand < Command
   end
 
   def local_base_images
-    Dir.glob(File.join(@veewee_dir, "definitions/*")).
+    Dir.glob(File.join(@kiwi_dir, "definitions", "*")).
       select { |f| File.directory?(f) }.
       map { |d| File.basename(d) }
   end
@@ -58,16 +58,17 @@ class BaseCommand < Command
 
   def read_box_sources_state(box_name)
     sources = Hash.new
-    source_dir = File.join(@veewee_dir, "definitions", box_name)
-    Dir.entries(source_dir).sort.each do |file|
-      next if file =~ /^\./
-      sources[file] = Digest::MD5.file(File.join(source_dir, file)).hexdigest
+    source_dir = File.join(@kiwi_dir, "definitions", box_name)
+    Find.find(source_dir) do |file|
+      next if File.directory?(file)
+      relative_path = file.gsub(/^#{File.join(source_dir, "/")}/, "")
+      sources[relative_path] = Digest::MD5.file(file).hexdigest
     end
     sources
   end
 
   def read_box_target_state(box_name)
-    box_file = File.join(@veewee_dir, box_name) + ".box"
+    box_file = File.join(@kiwi_dir, box_name) + ".box"
     if File.exist?(box_file)
       target_state = Digest::MD5.file(box_file).hexdigest
     end
@@ -75,13 +76,13 @@ class BaseCommand < Command
   end
 
   def write_box_state_file(box_state)
-    File.open(File.join(@veewee_dir, "box_state.yaml"), "w") do |f|
+    File.open(File.join(@kiwi_dir, "box_state.yaml"), "w") do |f|
       f.write(box_state.to_yaml)
     end
   end
 
   def read_local_box_state_file
-    box_state_file = File.join(@veewee_dir, "box_state.yaml")
+    box_state_file = File.join(@kiwi_dir, "box_state.yaml")
     if File.exist? box_state_file
       box_state = YAML.load_file(box_state_file)
     else
