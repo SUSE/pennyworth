@@ -36,11 +36,10 @@ class BuildBaseCommand < BaseCommand
            source_state && box_state[image]["sources"] == source_state
           log "  Sources not changed, skipping build"
         else
-          description_dir = File.join(kiwi_dir, "definitions", image)
           log "  Building base image..."
-          base_image_create(description_dir, tmp_dir)
+          base_image_create(File.join(kiwi_dir, "definitions", image), tmp_dir)
           log "  Exporting image as box for vagrant..."
-          base_image_export(description_dir, tmp_dir)
+          base_image_export(File.join(kiwi_dir, image), tmp_dir)
           base_image_cleanup_build(tmp_dir)
 
           box_state[image] = {
@@ -70,12 +69,12 @@ class BuildBaseCommand < BaseCommand
       end
   end
 
-  def base_image_export(description_dir, tmp_dir)
+  def base_image_export(kiwi_dir, tmp_dir)
     Dir.chdir(tmp_dir) do
       image = Dir.glob("*.box").first
       if image
         from_file = File.join(tmp_dir, image)
-        to_file = description_dir.gsub(/\/$/, "") + ".box"
+        to_file = kiwi_dir.gsub(/\/$/, "") + ".box"
         begin
           Cheetah.run "sudo", "mv", from_file, to_file, :stdout => :capture
         rescue Cheetah::ExecutionFailed => e
