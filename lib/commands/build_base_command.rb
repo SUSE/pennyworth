@@ -75,7 +75,7 @@ class BuildBaseCommand < BaseCommand
       image = Dir.glob("*.box").first
       if image
         from_file = File.join(tmp_dir, image)
-        to_file = description_dir.gsub(/\/$/,"") + ".box"
+        to_file = description_dir.gsub(/\/$/, "") + ".box"
         begin
           Cheetah.run "sudo", "mv", from_file, to_file, :stdout => :capture
         rescue Cheetah::ExecutionFailed => e
@@ -88,7 +88,7 @@ class BuildBaseCommand < BaseCommand
   end
 
   def base_image_cleanup_build(tmp_dir)
-    if (tmp_dir.start_with?("/tmp/"))
+    if tmp_dir.start_with?("/tmp/")
       begin
         Cheetah.run "sudo", "rm", "-r", tmp_dir, :stdout => :capture
         rescue Cheetah::ExecutionFailed => e

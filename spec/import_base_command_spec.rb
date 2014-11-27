@@ -27,7 +27,8 @@ describe ImportBaseCommand do
   before(:each) do
     stub_request(:get, /example.com.*import_state.yaml/).
       with(headers: {'Accept'=>'*/*', 'User-Agent'=>'Ruby'}).
-      to_return(status: 200, body: File.read(File.join(test_data_dir, "/kiwi5/import_state.yaml")), headers: {})
+      to_return(status: 200, body: File.read(File.join(test_data_dir,
+        "/kiwi5/import_state.yaml")), headers: {})
   end
 
   context "without box state file" do
@@ -95,7 +96,7 @@ describe ImportBaseCommand do
       allow(@cmd).to receive(:vagrant)
       allow_any_instance_of(Vagrant).to receive(:run)
 
-      import_state_file = File.join(@kiwi_dir,"import_state.yaml")
+      import_state_file = File.join(@kiwi_dir, "import_state.yaml")
 
       FileUtils.rm(import_state_file) if File.exist?(import_state_file)
 
