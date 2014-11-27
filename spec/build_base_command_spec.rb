@@ -87,6 +87,8 @@ EOT
     end
 
     it "preserves the state data of other boxes on build-base" do
+      allow(Pennyworth::Libvirt).to receive(:ensure_libvirt_env_started)
+
       # Don't actually build
       allow(@cmd).to receive(:base_image_create)
       allow(@cmd).to receive(:base_image_export)
@@ -122,6 +124,7 @@ EOT
     end
 
     it "rebuilds box with changed sources" do
+      allow(Pennyworth::Libvirt).to receive(:ensure_libvirt_env_started)
       allow(@cmd).to receive(:log) # Don't print to stdout
       allow(@cmd).to receive(:write_box_state_file) # Don't actually write data
 
@@ -132,6 +135,7 @@ EOT
     end
 
     it "doesn't rebuild box with unchanged sources" do
+      allow(Pennyworth::Libvirt).to receive(:ensure_libvirt_env_started)
       allow(@cmd).to receive(:log) # Don't print to stdout
       allow(@cmd).to receive(:write_box_state_file) # Don't actually write data
 
