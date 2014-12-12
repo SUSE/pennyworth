@@ -50,30 +50,30 @@ echo 'second error line' >&2
   end
 
   it "can capture output to a variable" do
-    $out = $vm.run_command("ls -l /", :stdout => :capture)
+    $out = $vm.run_command("ls -l /", stdout: :capture)
     expect($out).to match(/ etc$/)
   end
 
   it "can capture errors to a variable" do
-    $err = $vm.run_command("./helper.sh", :stderr => :capture)
+    $err = $vm.run_command("./helper.sh", stderr: :capture)
     expect($err).to include("first error line\nsecond error line\n")
   end
 
   it "can capture output and errors to a variable" do
-    $out, $err = $vm.run_command("./helper.sh", :stdout => :capture, :stderr => :capture)
+    $out, $err = $vm.run_command("./helper.sh", stdout: :capture, stderr: :capture)
     expect($out).to eq("first output line\nsecond output line\n")
     expect($err).to include("first error line\nsecond error line\n")
   end
 
   it "does escape shell variables" do
-    $out = $vm.run_command("echo -n $HOME", :stdout => :capture)
+    $out = $vm.run_command("echo -n $HOME", stdout: :capture)
     # '$HOME' and not '/home/testuser'!
     expect($out).to eq("$HOME")
   end
 
   it "can capture output to a file" do
     File.open("/tmp/out_test.txt", "w") do |file|
-      $vm.run_command("./helper.sh", :stdout => file)
+      $vm.run_command("./helper.sh", stdout: file)
     end
     File.open("/tmp/out_test.txt", "rb") do |file|
       expect(file.read).to eq("first output line\nsecond output line\n")
@@ -83,7 +83,7 @@ echo 'second error line' >&2
 
   it "can capture errors to a file" do
     File.open("/tmp/err_test.txt", "w") do |file|
-      $vm.run_command("./helper.sh", :stderr => file)
+      $vm.run_command("./helper.sh", stderr: file)
     end
     File.open("/tmp/err_test.txt", "rb") do |file|
       expect(file.read).to end_with("first error line\nsecond error line\n")
@@ -96,19 +96,19 @@ echo 'second error line' >&2
       $vm.run_command("ls -l /bang")
       $out = "We should not reach this point."
     rescue ExecutionFailed => e
-      $out = e.message()
+      $out = e.message
     end
     expect($out).to end_with("ls: cannot access /bang: No such file or directory\n\n")
   end
 
 #  it "can take input from a string variable" do
-#    $out = $vm.run_command("cat", :stdin => "Hello\nWorld!\n", :stdout => :capture)
+#    $out = $vm.run_command("cat", stdin: "Hello\nWorld!\n", stdout: :capture)
 #    expect($out).to eq("Hello\nWorld!\n")
 #  end
 
   it "can take input from a file" do
     File.open("/etc/passwd", "r") do |pw_file|
-      $out = $vm.run_command("cat", :stdin => pw_file, :stdout => :capture)
+      $out = $vm.run_command("cat", stdin: pw_file, stdout: :capture)
       expect($out).to match(/^root:x:0:0:root/)
     end
   end

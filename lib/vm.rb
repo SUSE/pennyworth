@@ -30,7 +30,7 @@ class VM
   # through SSH, but Twopence can use other methods, for example virtio.
   # Find a way to extract the virtio-serial information from the VM,
   # when it exists, so we can pass it over to Twopence.
-  def start()
+  def start
     @ip = @runner.start
     @target = Twopence::init("ssh:#{@ip}")
   end
@@ -87,7 +87,7 @@ class VM
 
     # Redirect standard input
     if input
-      saved_stdin = $stdin.dup()
+      saved_stdin = $stdin.dup
       if input.is_a? File
         $stdin.reopen(input)
       elsif input.is_a? String
@@ -117,20 +117,23 @@ class VM
     if rc != 0
       out = ""
       err = "Twopence local error"
-      e = Cheetah::ExecutionFailed.new(args_string, rc, out, err,
-        "Execution of \"#{args_string}\" failed with status #{rc}:\n")
+      e = Cheetah::ExecutionFailed.new(
+            args_string, rc, out, err,
+            "Execution of \"#{args_string}\" failed with status #{rc}:\n")
       raise ExecutionFailed.new(e)
     end
     if major != 0
       out = ""
       err = "Twopence remote error"
-      e = Cheetah::ExecutionFailed.new(args_string, major, out, err,
-        "Execution of \"#{args_string}\" failed with status #{major}:\n")
+      e = Cheetah::ExecutionFailed.new(
+            args_string, major, out, err,
+            "Execution of \"#{args_string}\" failed with status #{major}:\n")
       raise ExecutionFailed.new(e)
     end
     if minor != 0
-      e = Cheetah::ExecutionFailed.new(args_string, minor, out, err,
-        "Execution of \"#{args_string}\" failed with status #{minor}:\n")
+      e = Cheetah::ExecutionFailed.new(
+            args_string, minor, out, err,
+            "Execution of \"#{args_string}\" failed with status #{minor}:\n")
       raise ExecutionFailed.new(e)
     end
 
@@ -196,16 +199,18 @@ class VM
       command = ""
       out = ""
       err = "Twopence local error"
-      e = Cheetah::ExecutionFailed.new(command, rc, out, err,
-        "Transfer of \"#{source}\" to \"#{destination}\" failed with status #{rc}:\n")
+      e = Cheetah::ExecutionFailed.new(
+            command, rc, out, err,
+            "Transfer of \"#{source}\" to \"#{destination}\" failed with status #{rc}:\n")
       raise ExecutionFailed.new(e)
     end
     if major != 0
       command = ""
       out = ""
       err = "Twopence remote error"
-      e = Cheetah::ExecutionFailed.new(command, major, out, err,
-        "Transfer of \"#{source}\" to \"#{destination}\" failed with status #{major}:\n")
+      e = Cheetah::ExecutionFailed.new(
+            command, major, out, err,
+            "Transfer of \"#{source}\" to \"#{destination}\" failed with status #{major}:\n")
       raise ExecutionFailed.new(e)
     end
 
@@ -215,20 +220,23 @@ class VM
       if rc != 0
         out = ""
         err = "Twopence local error"
-        e = Cheetah::ExecutionFailed.new(command, rc, out, err,
-          "Execution of \"#{command}\" failed with status #{rc}:\n")
+        e = Cheetah::ExecutionFailed.new(
+              command, rc, out, err,
+              "Execution of \"#{command}\" failed with status #{rc}:\n")
         raise ExecutionFailed.new(e)
       end
       if major != 0
         out = ""
         err = "Twopence remote error"
-        e = Cheetah::ExecutionFailed.new(command, major, out, err,
-          "Execution of \"#{command}\" failed with status #{major}:\n")
+        e = Cheetah::ExecutionFailed.new(
+              command, major, out, err,
+              "Execution of \"#{command}\" failed with status #{major}:\n")
         raise ExecutionFailed.new(e)
       end
       if minor != 0
-        e = Cheetah::ExecutionFailed.new(command, minor, out, err,
-          "Execution of \"#{command}\" failed with status #{minor}:\n")
+        e = Cheetah::ExecutionFailed.new(
+              command, minor, out, err,
+              "Execution of \"#{command}\" failed with status #{minor}:\n")
         raise ExecutionFailed.new(e)
       end
     end
@@ -264,16 +272,18 @@ class VM
       command = ""
       out = ""
       err = "Twopence local error"
-      e = Cheetah::ExecutionFailed.new(command, rc, out, err,
-        "Transfer of \"#{source}\" to \"#{destination}\" failed with status #{rc}:\n")
+      e = Cheetah::ExecutionFailed.new(
+            command, rc, out, err,
+            "Transfer of \"#{source}\" to \"#{destination}\" failed with status #{rc}:\n")
       raise ExecutionFailed.new(e)
     end
     if major != 0
       command = ""
       out = ""
       err = "Twopence remote error"
-      e = Cheetah::ExecutionFailed.new(command, major, out, err,
-        "Transfer of \"#{source}\" to \"#{destination}\" failed with status #{major}:\n")
+      e = Cheetah::ExecutionFailed.new(
+            command, major, out, err,
+            "Transfer of \"#{source}\" to \"#{destination}\" failed with status #{major}:\n")
       raise ExecutionFailed.new(e)
     end
   end
