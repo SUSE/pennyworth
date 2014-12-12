@@ -26,10 +26,6 @@ class TwopenceVM
     @runner = runner
   end
 
-  # TODO: currently, the rspec helpers communicate with the VM machine
-  # through SSH, but Twopence can use other methods, for example virtio.
-  # Find a way to extract the virtio-serial information from the VM,
-  # when it exists, so we can pass it over to Twopence.
   def start
     @ip = @runner.start
     @target = Twopence::init("ssh:#{@ip}")
@@ -288,7 +284,6 @@ class TwopenceVM
     end
   end
 
-# TBD ******************************************************************** TBD
   def inject_directory(source, destination, opts = {})
     if opts[:owner] || opts[:group]
       owner_group = opts[:owner] || ""

@@ -45,9 +45,8 @@ echo 'second error line' >&2
     File.delete("/tmp/SuSE-release")
   end
 
-  it "can inject directories" do
-# TBD
-  end
+#  it "can inject directories" do
+#  end
 
   it "can capture output to a variable" do
     $out = $vm.run_command("ls -l /", stdout: :capture)
