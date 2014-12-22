@@ -19,6 +19,8 @@ require "pennyworth"
 require "spec"
 require "webmock/rspec"
 
+Dir[File.expand_path("../../spec/support/*.rb", __FILE__)].each { |f| require f }
+
 bin_path = File.expand_path( "../../bin/", __FILE__ )
 
 if ENV['PATH'] !~ /#{bin_path}/
