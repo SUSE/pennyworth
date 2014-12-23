@@ -34,7 +34,13 @@ describe ImageRunner do
   }
   let(:runner) { ImageRunner.new("/path/to/image") }
 
-  it_behaves_like "a runner"
+  describe "runner" do
+    before(:each) do
+      allow(Libvirt).to receive(:open)
+    end
+
+    it_behaves_like "a runner"
+  end
 
   describe "#start" do
     it "returns the IP address from the lease file" do
