@@ -46,8 +46,12 @@ test_host:
   address: host.example.com
 EOT
     stub_request(:get, "http://remote.example.com/pennyworth/hosts.yaml").
-      with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
-      to_return(:status => 200, :body => body, :headers => {})
+      with(:headers => {
+        "Accept" => "*/*",
+        "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+        "User-Agent" => "Ruby"
+      }).
+      to_return(status: 200, body: body, headers: {})
 
     config_dir = given_directory
 

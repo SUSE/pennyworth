@@ -39,8 +39,12 @@ describe CliHostController do
 
       it "fetches configuration file" do
         stub_request(:get, "http://remote.example.com/pennyworth/hosts.yaml").
-          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
-          to_return(:status => 200, :body => "xx", :headers => {})
+          with(:headers => {
+            "Accept" => "*/*",
+            "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+            "User-Agent" => "Ruby"
+          }).
+          to_return(status: 200, body: "xx", headers: {})
 
         config_file = File.join(@config_dir, "hosts.yaml")
         expect(File.exist?(config_file)).to be(false)

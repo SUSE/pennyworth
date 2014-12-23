@@ -260,14 +260,14 @@ class Cli
     c.desc "fetch host configuration"
     c.arg :url
     c.command :setup do |sc|
-      sc.action do |global_options, options, args|
+      sc.action do |_, _, args|
         Cli.host_controller.setup(args[0])
       end
     end
 
     c.desc "list available hosts"
     c.command :list do |sc|
-      sc.action do |global_options, options, args|
+      sc.action do
         Cli.host_controller.list
       end
     end
@@ -275,7 +275,7 @@ class Cli
     c.desc "lock host"
     c.arg :host_name
     c.command :lock do |sc|
-      sc.action do |global_options, options, args|
+      sc.action do |_, _, args|
         Cli.host_controller.lock(args[0])
       end
     end
