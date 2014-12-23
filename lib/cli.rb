@@ -250,4 +250,34 @@ class Cli
       ShutdownCommand.new.execute(name)
     end
   end
+
+  def self.host_controller
+    CliHostController.new("~/.pennyworth", STDOUT)
+  end
+
+  desc "manage test hosts"
+  command :host do |c|
+    c.desc "fetch host configuration"
+    c.arg :url
+    c.command :setup do |sc|
+      sc.action do |global_options, options, args|
+        Cli.host_controller.setup(args[0])
+      end
+    end
+
+    c.desc "list available hosts"
+    c.command :list do |sc|
+      sc.action do |global_options, options, args|
+        Cli.host_controller.list
+      end
+    end
+
+    c.desc "lock host"
+    c.arg :host_name
+    c.command :lock do |sc|
+      sc.action do |global_options, options, args|
+        Cli.host_controller.lock(args[0])
+      end
+    end
+  end
 end
