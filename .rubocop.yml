@@ -4,3 +4,15 @@ Style/StringLiterals:
 
 Style/NegatedIf:
   Enabled: false
+
+Metrics/LineLength:
+  Max: 100
+
+Style/Blocks:
+  Enabled: false
+
+Style/AlignParameters:
+  Enabled: false
+
+Style/CollectionMethods:
+  Enabled: false
