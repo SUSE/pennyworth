@@ -180,7 +180,7 @@ Boxes, images and systems have the following requirements:
   * the public ssh key of the user running pennyworth/rspec tests in /root/.ssh.authorized_keys
 
 For boxes handled by pennyworth the ssh key is copied into the target when creating the box,
-for images or real systems this has to be done manually and can easily be done by running 
+for images or real systems this has to be done manually by e.g. running 
 `ssh-copy-id root@<TARGET_SYSTEM>`.
 
 The `start_system` method returns a `VM` instance, which can be used to interact
