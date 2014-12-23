@@ -24,6 +24,7 @@ require_relative "pennyworth_libvirt"
 require_relative "vagrant"
 require_relative "vagrant_runner"
 require_relative "image_runner"
+require_relative "host_runner"
 require_relative "ssh_keys_importer"
 require_relative "vm"
 require_relative "spec_profiler"
@@ -69,6 +70,7 @@ RSpec.configure do |config|
   config.include(Pennyworth::SpecHelper)
   config.add_setting :pennyworth_mode, default: false
   config.add_setting :vagrant_dir, default: ""
+  config.add_setting :hosts_file, default: "~/.pennyworth/hosts.yaml"
 
   config.before(:all) do
     unless RSpec.configuration.pennyworth_mode
