@@ -177,7 +177,7 @@ All target systems have the following requirements:
 
 For boxes handled by pennyworth the ssh key is copied into the target when creating the box,
 for images or real systems this has to be done manually. This can easily done by running 
-`ssh-copy-id root@$target_system`.
+`ssh-copy-id root@<TARGET_SYSTEM>`.
 
 The `start_system` method returns a `VM` instance, which can be used to interact
 with the running machine (via SSH). It supports the following methods:
