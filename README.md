@@ -169,7 +169,11 @@ end
 The `start_system` method can either start an existing Vagrant box or a generic
 VM image runnable by libvirt. To start a Vagrant box, pass its name using the
 `box` option. To start a generic VM image, pass its path using the `image`
-option.
+option and for connecting to a real machine, pass it using the `system` option. 
+All target systems have the following requirements:
+
+  * open ssh port and running openssh daemon
+  * the public ssh key of the user running pennyworth/rspec tests in /root/.ssh.authorized_keys
 
 The `start_system` method returns a `VM` instance, which can be used to interact
 with the running machine (via SSH). It supports the following methods:
