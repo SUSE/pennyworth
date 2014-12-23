@@ -26,7 +26,7 @@ describe HostRunner do
 
   describe "#initialize" do
     it "fails with error, if host is not known" do
-      expect{
+      expect {
         HostRunner.new("invalid_name", File.join(test_data_dir, "hosts.yaml"))
       }.to raise_error(InvalidHostError)
     end
