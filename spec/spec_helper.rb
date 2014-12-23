@@ -27,6 +27,10 @@ if ENV['PATH'] !~ /#{bin_path}/
   ENV['PATH'] = bin_path + File::PATH_SEPARATOR + ENV['PATH']
 end
 
+def test_data_dir
+  File.expand_path("../data/", __FILE__)
+end
+
 RSpec.configure do |config|
   # In the pennyworth unit tests we don't want to actually run images only test
   # pennyworth and its rspec helper. Thus we have to disable the libvirt setup
@@ -35,11 +39,9 @@ RSpec.configure do |config|
   # disabled in pennyworth mode as well.
   config.add_setting :pennyworth_mode, default: false
   config.add_setting :vagrant_dir
+  config.add_setting :hosts_file
 
   config.vagrant_dir = File.expand_path("../../vagrant", __FILE__)
+  config.hosts_file = File.join(test_data_dir, "hosts.yaml")
   config.pennyworth_mode = true
-end
-
-def test_data_dir
-  File.expand_path("../data/", __FILE__)
 end

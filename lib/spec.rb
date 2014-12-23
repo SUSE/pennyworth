@@ -40,6 +40,8 @@ module Pennyworth
       elsif opts[:image]
         runner = ImageRunner.new(opts[:image])
         password = "linux"
+      elsif opts[:host]
+        runner = HostRunner.new(opts[:host], RSpec.configuration.hosts_file)
       end
 
       raise "No image specified." unless runner
@@ -54,7 +56,7 @@ module Pennyworth
       measure("Boot machine '#{opts[:box] || opts[:image]}'") do
         system.start
       end
-      if !opts[:skip_ssh_setup]
+      if !opts[:skip_ssh_setup] && !opts[:host]
         SshKeysImporter.import(system.ip, password)
       end
 

@@ -74,5 +74,22 @@ describe Pennyworth::SpecHelper do
       # doubles which triggers an ugly warning message
       self.class.hooks[:after][:context].clear
     end
+
+    it "starts the given host" do
+      runner = double
+      expect(runner).to receive(:start)
+      expect(HostRunner).to receive(:new).
+        with("test_host", RSpec.configuration.hosts_file).
+        and_return(runner)
+      expect(SshKeysImporter).to_not receive(:import)
+
+      expect {
+        start_system(host: "test_host")
+      }.to change { self.class.hooks[:after][:context].size }.by(1)
+
+      # Reset after(:context) hooks, otherwise pennyworth will try to shutdown our
+      # doubles which triggers an ugly warning message
+      self.class.hooks[:after][:context].clear
+    end
   end
 end
