@@ -15,7 +15,7 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require 'spec_helper'
+require "spec_helper"
 
 describe HostRunner do
   let(:runner) {

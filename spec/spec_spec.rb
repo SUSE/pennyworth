@@ -51,8 +51,8 @@ describe Pennyworth::SpecHelper do
         start_system(box: system_two)
       }.to change { self.class.hooks[:after][:context].size }.by(2)
 
-      # Reset after(:context) hooks, otherwise pennyworth will try to shutdown our
-      # doubles which triggers an ugly warning message
+      # Reset after(:context) hooks, otherwise pennyworth will try to shutdown
+      # our doubles which triggers an ugly warning message
       self.class.hooks[:after][:context].clear
     end
 
@@ -70,8 +70,8 @@ describe Pennyworth::SpecHelper do
         start_system(image: image_two)
       }.to change { self.class.hooks[:after][:context].size }.by(2)
 
-      # Reset after(:context) hooks, otherwise pennyworth will try to shutdown our
-      # doubles which triggers an ugly warning message
+      # Reset after(:context) hooks, otherwise pennyworth will try to shutdown
+      # our doubles which triggers an ugly warning message
       self.class.hooks[:after][:context].clear
     end
 
@@ -87,8 +87,8 @@ describe Pennyworth::SpecHelper do
         start_system(host: "test_host")
       }.to change { self.class.hooks[:after][:context].size }.by(1)
 
-      # Reset after(:context) hooks, otherwise pennyworth will try to shutdown our
-      # doubles which triggers an ugly warning message
+      # Reset after(:context) hooks, otherwise pennyworth will try to shutdown
+      # our doubles which triggers an ugly warning message
       self.class.hooks[:after][:context].clear
     end
   end

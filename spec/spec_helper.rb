@@ -19,7 +19,9 @@ require "pennyworth"
 require "spec"
 require "webmock/rspec"
 
-Dir[File.expand_path("../../spec/support/*.rb", __FILE__)].each { |f| require f }
+Dir[File.expand_path("../../spec/support/*.rb", __FILE__)].each do |f|
+  require f
+end
 
 bin_path = File.expand_path( "../../bin/", __FILE__ )
 
