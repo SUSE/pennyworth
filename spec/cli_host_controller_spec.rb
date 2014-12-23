@@ -75,7 +75,7 @@ describe CliHostController do
       end
 
       it "acquires lock for host" do
-        expect(@out).to receive(:puts).with(/test_host/)
+        expect(@out).to receive(:puts).with(/to be implemented/)
 
         expect(@controller.lock("test_host")).to be(true)
       end

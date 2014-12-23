@@ -47,6 +47,7 @@ class CliHostController
       raise GLI::BadCommandLine.new("Please provide a host name argument")
     end
 
-    @out.puts "Lock host '#{host_name}'"
+    @out.puts "Locking host '#{host_name}' to be implemented..."
+    true
   end
 end
