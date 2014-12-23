@@ -15,38 +15,39 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-class CliHostController
-  def initialize(config_dir, output)
-    @config_dir = config_dir
-    @out = output
+class HostConfig
+  attr_reader :hosts
+
+  def initialize(config_dir)
+    @config_dir = File.expand_path(config_dir)
   end
 
-  def setup(url)
-    if !url
-      raise GLI::BadCommandLine.new("Please provide a URL argument")
-    end
+  def config_file
+    File.join(@config_dir, "hosts.yaml")
+  end
 
-    @out.puts "Setup from '#{url}'"
+  def read
+    yaml = YAML.load_file(config_file)
+    if yaml
+      @hosts = yaml.keys
+    else
+      raise HostFileError.new("Could not parse YAML in file '#{config_file}'")
+    end
+  end
+
+  def fetch(url)
+    file_url = url + "/pennyworth/hosts.yaml"
+    body = nil
     begin
-      HostConfig.new(@config_dir).fetch(url)
-    rescue HostFileError => e
-      @out.puts "Error: #{e}"
-    end
-  end
-
-  def list
-    host_config = HostConfig.new(@config_dir)
-    host_config.read
-    host_config.hosts.each do |host|
-      @out.puts host
-    end
-  end
-
-  def lock(host_name)
-    if !host_name
-      raise GLI::BadCommandLine.new("Please provide a host name argument")
+      open(file_url, "rb") do |u|
+        body = u.read
+      end
+    rescue OpenURI::HTTPError
+      raise HostFileError.new("Unable to fetch from '#{file_url}'")
     end
 
-    @out.puts "Lock host '#{host_name}'"
+    File.open(config_file, "w") do |f|
+      f.write(body)
+    end
   end
 end

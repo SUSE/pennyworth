@@ -38,9 +38,13 @@ describe CliHostController do
       end
 
       it "fetches configuration file" do
+        stub_request(:get, "http://remote.example.com/pennyworth/hosts.yaml").
+          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+          to_return(:status => 200, :body => "xx", :headers => {})
+
         config_file = File.join(@config_dir, "hosts.yaml")
         expect(File.exist?(config_file)).to be(false)
-        @controller.setup("remote.example.com")
+        @controller.setup("http://remote.example.com")
         expect(File.exist?(config_file)).to be(true)
       end
     end
@@ -51,14 +55,15 @@ describe CliHostController do
       @config_dir = given_directory do
         given_file("hosts.yaml")
       end
-      out = double
-      allow(out).to receive(:puts)
-      @controller = CliHostController.new(@config_dir, out)
+      @out = double
+      @controller = CliHostController.new(@config_dir, @out)
     end
 
     describe "#list" do
       it "lists host" do
-        expect(@controller.list).to eq(["a"])
+        expect(@out).to receive(:puts).with("test_host")
+
+        @controller.list
       end
     end
 
@@ -70,6 +75,8 @@ describe CliHostController do
       end
 
       it "acquires lock for host" do
+        expect(@out).to receive(:puts).with(/test_host/)
+
         expect(@controller.lock("test_host")).to be(true)
       end
     end

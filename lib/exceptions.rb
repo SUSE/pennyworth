@@ -21,6 +21,7 @@ class SshConnectionFailed < StandardError; end
 class CommandNotFoundError < StandardError; end
 class BuildFailed < StandardError; end
 class InvalidHostError < StandardError; end
+class HostFileError < StandardError; end
 
 class ExecutionFailed < StandardError
   def initialize(e)
