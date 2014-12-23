@@ -17,7 +17,11 @@
 
 class HostRunner
   def initialize(host_name, host_config_file)
-    hosts = YAML.load_file(host_config_file)
+    hosts = YAML.load_file(File.expand_path(host_config_file))
+    host = hosts[host_name]
+    if !host
+      raise InvalidHostError.new("Invalid host name: '#{host_name}'")
+    end
     @ip = hosts[host_name]["address"]
   end
 

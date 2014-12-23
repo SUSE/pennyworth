@@ -24,6 +24,14 @@ describe HostRunner do
 
   it_behaves_like "a runner"
 
+  describe "#initialize" do
+    it "fails with error, if host is not known" do
+      expect{
+        HostRunner.new("invalid_name", File.join(test_data_dir, "hosts.yaml"))
+      }.to raise_error(InvalidHostError)
+    end
+  end
+
   describe "#start" do
     it "returns the IP address of the started system" do
       expect(runner.start).to eq("host.example.com")
