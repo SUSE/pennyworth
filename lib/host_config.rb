@@ -16,23 +16,31 @@
 # you may find current contact information at www.suse.com
 
 class HostConfig
-  attr_reader :hosts
+  attr_reader :config_file
 
-  def initialize(config_dir)
-    @config_dir = File.expand_path(config_dir)
+  def self.for_directory(config_dir)
+    HostConfig.new(File.join(config_dir, "hosts.yaml"))
   end
 
-  def config_file
-    File.join(@config_dir, "hosts.yaml")
+  def initialize(config_file)
+    @config_file = File.expand_path(config_file)
   end
 
   def read
     yaml = YAML.load_file(config_file)
-    if yaml
-      @hosts = yaml.keys
+    if yaml && yaml["hosts"]
+      @hosts = yaml["hosts"]
     else
       raise HostFileError.new("Could not parse YAML in file '#{config_file}'")
     end
+  end
+
+  def hosts
+    @hosts.keys
+  end
+
+  def host(host_name)
+    @hosts[host_name]
   end
 
   def fetch(url)

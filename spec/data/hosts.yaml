@@ -1,3 +1,4 @@
 ---
-test_host:
-  address: host.example.com
+hosts:
+ test_host:
+   address: host.example.com

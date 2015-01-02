@@ -22,8 +22,14 @@ include GivenFilesystemSpecHelpers
 describe HostConfig do
   use_given_filesystem
 
+  it "creates config object for config dir" do
+    config_dir = given_directory
+    host_config = HostConfig.for_directory(config_dir)
+    expect(host_config.config_file).to eq(File.join(config_dir, "hosts.yaml"))
+  end
+
   it "reads config file" do
-    host_config = HostConfig.new(test_data_dir)
+    host_config = HostConfig.for_directory(test_data_dir)
     host_config.read
     expect(host_config.hosts).to eq(["test_host"])
   end
@@ -32,18 +38,26 @@ describe HostConfig do
     config_dir = given_directory
     File.write(File.join(config_dir, "hosts.yaml"), "")
 
-    host_config = HostConfig.new(config_dir)
+    host_config = HostConfig.for_directory(config_dir)
 
     expect {
       host_config.read
     }.to raise_error HostFileError
   end
 
+  it "returns host" do
+    host_config = HostConfig.for_directory(test_data_dir)
+    host_config.read
+    expect(host_config.host("test_host")).
+      to eq({"address" => "host.example.com"})
+  end
+
   it "fetches remote config" do
     body = <<EOT
 ---
-test_host:
-  address: host.example.com
+hosts:
+  test_host:
+    address: host.example.com
 EOT
     stub_request(:get, "http://remote.example.com/pennyworth/hosts.yaml").
       with(:headers => {
@@ -55,7 +69,7 @@ EOT
 
     config_dir = given_directory
 
-    host_config = HostConfig.new(config_dir)
+    host_config = HostConfig.for_directory(config_dir)
     host_config.fetch("http://remote.example.com")
 
     expect(File.read(File.join(config_dir, "hosts.yaml"))).to eq(body)

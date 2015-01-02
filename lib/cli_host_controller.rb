@@ -28,14 +28,14 @@ class CliHostController
 
     @out.puts "Setup from '#{url}'"
     begin
-      HostConfig.new(@config_dir).fetch(url)
+      HostConfig.for_directory(@config_dir).fetch(url)
     rescue HostFileError => e
       @out.puts "Error: #{e}"
     end
   end
 
   def list
-    host_config = HostConfig.new(@config_dir)
+    host_config = HostConfig.for_directory(@config_dir)
     host_config.read
     host_config.hosts.each do |host|
       @out.puts host
