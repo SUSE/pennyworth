@@ -166,17 +166,30 @@ describe "my pet feature" do
 end
 ```
 
-The `start_system` method can either start an existing Vagrant box or a generic
-VM image runnable by libvirt. To start a Vagrant box, pass its name using the
-`box` option. To start a generic VM image, pass its path using the `image`
-option.
+The `start_system` method can either start an existing Vagrant box, a generic
+VM image runnable by libvirt or connect to an already running system. 
+
+ * To start a Vagrant box, pass its name using the `box` option 
+ * To start a generic VM image, pass its path using the `image` option
+ * For connecting to a running system, pass its hostname using the `host` option. 
+
+Boxes, images and systems have the following requirements:
+
+  * ssh port is configured to be open in the firewall
+  * activated sshd service
+  * the public ssh key of the user running pennyworth/rspec tests in /root/.ssh.authorized_keys
+
+For boxes handled by pennyworth the ssh key is copied into the target when creating the box,
+for images or hosts this has to be done manually by e.g. running 
+`ssh-copy-id root@<HOST>`.
 
 The `start_system` method returns a `VM` instance, which can be used to interact
 with the running machine (via SSH). It supports the following methods:
 
   * `stop`
 
-    Stops the machine.
+    Stops or disconnects the system. This stops running boxes or images and disconnects from 
+    running systems.
 
   * `run_command(command, *args, options = {})`
     `run_command(command_and_args, options = {})`
