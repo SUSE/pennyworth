@@ -78,10 +78,28 @@ describe CliHostController do
         }.to raise_error(GLI::BadCommandLine)
       end
 
-      it "acquires lock for host" do
-        expect(@out).to receive(:puts).with(/to be implemented/)
+      it "raises error when host is not in configuration file" do
+        expect {
+          @controller.lock("invalid name")
+        }.to raise_error(LockError)
+      end
 
-        expect(@controller.lock("test_host")).to be(true)
+      it "acquires lock for host" do
+        expect_any_instance_of(LockService).to receive(:request_lock).
+          with("test_host").and_return(true)
+        expect(@out).to receive(:puts).with(/test_host/)
+        expect_any_instance_of(LockService).to receive(:keep_lock)
+
+        @controller.lock("test_host")
+      end
+
+      it "fails to acquire lock for host" do
+        expect_any_instance_of(LockService).to receive(:request_lock).
+          with("test_host").and_return(false)
+        expect(@out).to receive(:puts).with(/test_host/)
+        expect_any_instance_of(LockService).to_not receive(:keep_lock)
+
+        @controller.lock("test_host")
       end
     end
   end

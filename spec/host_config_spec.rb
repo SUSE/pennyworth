@@ -55,7 +55,7 @@ describe HostConfig do
   it "returns lock server address" do
     host_config = HostConfig.for_directory(test_data_dir)
     host_config.read
-    expect(host_config.lock_server_address).to eq("lock.example.com")
+    expect(host_config.lock_server_address).to eq("lock.example.com:9999")
   end
 
   it "fetches remote config" do
