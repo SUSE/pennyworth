@@ -34,6 +34,9 @@ describe HostRunner do
 
   describe "#start" do
     it "returns the IP address of the started system" do
+      expect_any_instance_of(LockService).to receive(:request_lock).
+        and_return(true)
+
       expect(runner.start).to eq("host.example.com")
     end
   end
