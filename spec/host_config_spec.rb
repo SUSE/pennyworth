@@ -52,6 +52,12 @@ describe HostConfig do
       to eq({"address" => "host.example.com"})
   end
 
+  it "returns lock server address" do
+    host_config = HostConfig.for_directory(test_data_dir)
+    host_config.read
+    expect(host_config.lock_server_address).to eq("lock.example.com")
+  end
+
   it "fetches remote config" do
     body = <<EOT
 ---

@@ -1,4 +1,5 @@
 ---
+lock_server_address: lock.example.com
 hosts:
  test_host:
    address: host.example.com

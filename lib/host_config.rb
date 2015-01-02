@@ -16,7 +16,7 @@
 # you may find current contact information at www.suse.com
 
 class HostConfig
-  attr_reader :config_file
+  attr_reader :config_file, :lock_server_address
 
   def self.for_directory(config_dir)
     HostConfig.new(File.join(config_dir, "hosts.yaml"))
@@ -30,6 +30,7 @@ class HostConfig
     yaml = YAML.load_file(config_file)
     if yaml && yaml["hosts"]
       @hosts = yaml["hosts"]
+      @lock_server_address = yaml["lock_server_address"]
     else
       raise HostFileError.new("Could not parse YAML in file '#{config_file}'")
     end
