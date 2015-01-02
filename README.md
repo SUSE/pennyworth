@@ -154,7 +154,7 @@ require "<pennyworth-dir>/lib/spec"
 
 Replace `<pennyworth-dir>` with a directory into which you installed Pennyworth.
 
-In your specs, you can now use the `start_system` method to start a VM:
+In your specs, you can now use the `start_system` method to start a VM, e.g.:
 
 ```ruby
 describe "my pet feature" do
@@ -167,11 +167,62 @@ end
 ```
 
 The `start_system` method can either start an existing Vagrant box, a generic
-VM image runnable by libvirt or connect to an already running system. 
+VM image runnable by libvirt or connect to an already running system. The method
+returns an object, which can be used to access the system for testing.
 
- * To start a Vagrant box, pass its name using the `box` option 
- * To start a generic VM image, pass its path using the `image` option
- * For connecting to a running system, pass its hostname using the `host` option. 
+#### Using Vagrant VMs
+
+To start a Vagrant VM, pass its name using the `box` option. The name is looked
+up in the `Vagrantfile` in the directory provided with the `config.vagrant_dir`
+option in RSpec.
+
+#### Using generic VM images
+
+To start a generic VM image, pass its file path using the `image` option. The
+image is ran in KVM and made available for accessing it for tests.
+
+#### Using existing hosts
+
+For connecting to an existing running system, pass the name of the system with
+the `host` option. The name is looked up in a configuration file, which by
+default is `~/.pennyworth/hosts.yaml`. The system is accessed with the address
+stored in this file, so that the same name can be used in the tests, even when
+the actual system used for tests is changing.
+
+To prevent tests running simultaneously on the same machine to interfere with
+each other, there is a locking mechanism, which automatically makes sure that
+only one test is running on a system at the same time. For this to work a lock
+service is required. The address of the lock service is also defined in the
+`hosts.yaml` configuration file. The lock service has to conform to the API
+implemented by [glockd](https://github.com/apokalyptik/glockd) and has to run
+at the address specified in the configuration file.
+
+To simplify setup of tests with existing hosts, there are some helper commands
+in the pennyworth command line application. Get an overview by running
+`pennyworth host`.
+
+To initially set up the test infrastrucure run
+
+    pennyworth host setup http://ci.example.org
+
+This will copy the `hosts.yaml` configuration file from
+`http://ci.example.com/pennyworth/hosts.yaml` to your local configuration so
+that it is picked up by Pennyworth automatically. This makes it easy to
+distribute a common configuration between several systems and users.
+
+An example for the configuration file is:
+
+```yaml
+---
+lock_server_address: lockserver.example.org:9999
+hosts:
+  test_host_1:
+    address: host1.example.org
+  test_host_2:
+    address: host2.example.org
+```
+
+#### Accessing test systems
 
 Boxes, images and systems have the following requirements:
 
