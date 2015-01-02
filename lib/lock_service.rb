@@ -48,4 +48,12 @@ class LockService
     # Ctrl-C.
     sleep
   end
+
+  def release_lock(lock_name)
+    if !@sockets.has_key?(lock_name)
+      raise LockError.new("Lock '#{lock_name}' doesn't exist")
+    end
+    @sockets[lock_name].close
+    @sockets.delete(lock_name)
+  end
 end
