@@ -28,14 +28,14 @@ class CliHostController
 
     @out.puts "Setup from '#{url}'"
     begin
-      HostConfig.new(@config_dir).fetch(url)
+      HostConfig.for_directory(@config_dir).fetch(url)
     rescue HostFileError => e
       @out.puts "Error: #{e}"
     end
   end
 
   def list
-    host_config = HostConfig.new(@config_dir)
+    host_config = HostConfig.for_directory(@config_dir)
     host_config.read
     host_config.hosts.each do |host|
       @out.puts host
@@ -47,7 +47,20 @@ class CliHostController
       raise GLI::BadCommandLine.new("Please provide a host name argument")
     end
 
-    @out.puts "Locking host '#{host_name}' to be implemented..."
-    true
+    host_config = HostConfig.for_directory(@config_dir)
+    host_config.read
+    if !host_config.host(host_name)
+      raise LockError.new("Host name #{host_name} doesn't exist in " +
+        "configuration file '#{host_config.config_file}'")
+    end
+
+    locker = LockService.new(host_config.lock_server_address)
+    if locker.request_lock(host_name)
+      @out.puts "Lock acquired for host '#{host_name}'"
+
+      locker.keep_lock
+    else
+      @out.puts "Failed to acquire lock for host '#{host_name}'"
+    end
   end
 end

@@ -22,6 +22,7 @@ class CommandNotFoundError < StandardError; end
 class BuildFailed < StandardError; end
 class InvalidHostError < StandardError; end
 class HostFileError < StandardError; end
+class LockError < StandardError; end
 
 class ExecutionFailed < StandardError
   def initialize(e)
@@ -34,4 +35,3 @@ class ExecutionFailed < StandardError
     @message
   end
 end
-
