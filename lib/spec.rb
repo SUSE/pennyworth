@@ -17,6 +17,7 @@
 
 require "cheetah"
 require "libvirt"
+require "socket"
 
 require_relative "exceptions"
 require_relative "helper"
@@ -26,6 +27,7 @@ require_relative "vagrant_runner"
 require_relative "image_runner"
 require_relative "host_config"
 require_relative "host_runner"
+require_relative "lock_service"
 require_relative "ssh_keys_importer"
 require_relative "vm"
 require_relative "spec_profiler"
@@ -55,7 +57,7 @@ module Pennyworth
         system.stop
       end
 
-      measure("Boot machine '#{opts[:box] || opts[:image]}'") do
+      measure("Boot machine '#{opts[:box] || opts[:image] || opts[:host]}'") do
         system.start
       end
       if !opts[:skip_ssh_setup] && !opts[:host]
