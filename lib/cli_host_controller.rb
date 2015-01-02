@@ -51,7 +51,7 @@ class CliHostController
     host_config.read
     if !host_config.host(host_name)
       raise LockError.new("Host name #{host_name} doesn't exist in " +
-        "configuration file")
+        "configuration file '#{host_config.config_file}'")
     end
 
     locker = LockService.new(host_config.lock_server_address)
