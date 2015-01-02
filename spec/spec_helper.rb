@@ -18,11 +18,20 @@
 require "pennyworth"
 require "spec"
 require "webmock/rspec"
+require "given_filesystem/spec_helpers"
+
+Dir[File.expand_path("../../spec/support/*.rb", __FILE__)].each do |f|
+  require f
+end
 
 bin_path = File.expand_path( "../../bin/", __FILE__ )
 
 if ENV['PATH'] !~ /#{bin_path}/
   ENV['PATH'] = bin_path + File::PATH_SEPARATOR + ENV['PATH']
+end
+
+def test_data_dir
+  File.expand_path("../data/", __FILE__)
 end
 
 RSpec.configure do |config|
@@ -33,11 +42,9 @@ RSpec.configure do |config|
   # disabled in pennyworth mode as well.
   config.add_setting :pennyworth_mode, default: false
   config.add_setting :vagrant_dir
+  config.add_setting :hosts_file
 
   config.vagrant_dir = File.expand_path("../../vagrant", __FILE__)
+  config.hosts_file = File.join(test_data_dir, "hosts.yaml")
   config.pennyworth_mode = true
-end
-
-def test_data_dir
-  File.expand_path("../data/", __FILE__)
 end

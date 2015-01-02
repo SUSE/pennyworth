@@ -24,6 +24,7 @@ require_relative "pennyworth_libvirt"
 require_relative "vagrant"
 require_relative "vagrant_runner"
 require_relative "image_runner"
+require_relative "host_runner"
 require_relative "ssh_keys_importer"
 require_relative "vm"
 require_relative "spec_profiler"
@@ -40,6 +41,8 @@ module Pennyworth
       elsif opts[:image]
         runner = ImageRunner.new(opts[:image])
         password = "linux"
+      elsif opts[:host]
+        runner = HostRunner.new(opts[:host], RSpec.configuration.hosts_file)
       end
 
       raise "No image specified." unless runner
@@ -54,7 +57,7 @@ module Pennyworth
       measure("Boot machine '#{opts[:box] || opts[:image]}'") do
         system.start
       end
-      if !opts[:skip_ssh_setup]
+      if !opts[:skip_ssh_setup] && !opts[:host]
         SshKeysImporter.import(system.ip, password)
       end
 
@@ -67,6 +70,7 @@ RSpec.configure do |config|
   config.include(Pennyworth::SpecHelper)
   config.add_setting :pennyworth_mode, default: false
   config.add_setting :vagrant_dir, default: ""
+  config.add_setting :hosts_file, default: "~/.pennyworth/hosts.yaml"
 
   config.before(:all) do
     unless RSpec.configuration.pennyworth_mode

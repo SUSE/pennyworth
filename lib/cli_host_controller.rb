@@ -15,26 +15,39 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require 'spec_helper'
+class CliHostController
+  def initialize(config_dir, output)
+    @config_dir = config_dir
+    @out = output
+  end
 
-describe VagrantRunner do
-  let(:runner) { VagrantRunner.new("foo", RSpec.configuration.vagrant_dir) }
-
-  it_behaves_like "a runner"
-
-  describe "#start" do
-    it "returns the IP address of the started system" do
-      expect_any_instance_of(Vagrant).to receive(:run).with("destroy", "foo")
-      expect_any_instance_of(Vagrant).to receive(:run).with("up", "foo")
-      expect_any_instance_of(Vagrant).to receive(:ssh_config).with("foo") {
-        {
-          "foo" => {
-            "HostName" => "1.2.3.4"
-          }
-        }
-      }
-
-      expect(runner.start).to eq("1.2.3.4")
+  def setup(url)
+    if !url
+      raise GLI::BadCommandLine.new("Please provide a URL argument")
     end
+
+    @out.puts "Setup from '#{url}'"
+    begin
+      HostConfig.new(@config_dir).fetch(url)
+    rescue HostFileError => e
+      @out.puts "Error: #{e}"
+    end
+  end
+
+  def list
+    host_config = HostConfig.new(@config_dir)
+    host_config.read
+    host_config.hosts.each do |host|
+      @out.puts host
+    end
+  end
+
+  def lock(host_name)
+    if !host_name
+      raise GLI::BadCommandLine.new("Please provide a host name argument")
+    end
+
+    @out.puts "Locking host '#{host_name}' to be implemented..."
+    true
   end
 end

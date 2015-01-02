@@ -15,26 +15,39 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require 'spec_helper'
+class HostConfig
+  attr_reader :hosts
 
-describe VagrantRunner do
-  let(:runner) { VagrantRunner.new("foo", RSpec.configuration.vagrant_dir) }
+  def initialize(config_dir)
+    @config_dir = File.expand_path(config_dir)
+  end
 
-  it_behaves_like "a runner"
+  def config_file
+    File.join(@config_dir, "hosts.yaml")
+  end
 
-  describe "#start" do
-    it "returns the IP address of the started system" do
-      expect_any_instance_of(Vagrant).to receive(:run).with("destroy", "foo")
-      expect_any_instance_of(Vagrant).to receive(:run).with("up", "foo")
-      expect_any_instance_of(Vagrant).to receive(:ssh_config).with("foo") {
-        {
-          "foo" => {
-            "HostName" => "1.2.3.4"
-          }
-        }
-      }
+  def read
+    yaml = YAML.load_file(config_file)
+    if yaml
+      @hosts = yaml.keys
+    else
+      raise HostFileError.new("Could not parse YAML in file '#{config_file}'")
+    end
+  end
 
-      expect(runner.start).to eq("1.2.3.4")
+  def fetch(url)
+    file_url = url + "/pennyworth/hosts.yaml"
+    body = nil
+    begin
+      open(file_url, "rb") do |u|
+        body = u.read
+      end
+    rescue OpenURI::HTTPError
+      raise HostFileError.new("Unable to fetch from '#{file_url}'")
+    end
+
+    File.open(config_file, "w") do |f|
+      f.write(body)
     end
   end
 end

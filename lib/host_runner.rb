@@ -15,26 +15,20 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require 'spec_helper'
-
-describe VagrantRunner do
-  let(:runner) { VagrantRunner.new("foo", RSpec.configuration.vagrant_dir) }
-
-  it_behaves_like "a runner"
-
-  describe "#start" do
-    it "returns the IP address of the started system" do
-      expect_any_instance_of(Vagrant).to receive(:run).with("destroy", "foo")
-      expect_any_instance_of(Vagrant).to receive(:run).with("up", "foo")
-      expect_any_instance_of(Vagrant).to receive(:ssh_config).with("foo") {
-        {
-          "foo" => {
-            "HostName" => "1.2.3.4"
-          }
-        }
-      }
-
-      expect(runner.start).to eq("1.2.3.4")
+class HostRunner
+  def initialize(host_name, host_config_file)
+    hosts = YAML.load_file(File.expand_path(host_config_file))
+    host = hosts[host_name]
+    if !host
+      raise InvalidHostError.new("Invalid host name: '#{host_name}'")
     end
+    @ip = hosts[host_name]["address"]
+  end
+
+  def start
+    @ip
+  end
+
+  def stop
   end
 end
