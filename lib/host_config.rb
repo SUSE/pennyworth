@@ -55,6 +55,7 @@ class HostConfig
       raise HostFileError.new("Unable to fetch from '#{file_url}'")
     end
 
+    FileUtils.mkdir_p(File.dirname(config_file))
     File.open(config_file, "w") do |f|
       f.write(body)
     end
