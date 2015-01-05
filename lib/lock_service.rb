@@ -61,7 +61,7 @@ class LockService
     @sockets.delete(lock_name)
   end
 
-  def is_locked?(lock_name)
+  def locked?(lock_name)
     socket(lock_name).puts("i #{lock_name}")
     response = socket(lock_name).gets
     if response =~ /^1/
@@ -72,7 +72,7 @@ class LockService
   end
 
   def info(lock_name)
-    if is_locked?(lock_name)
+    if locked?(lock_name)
       socket(lock_name).puts("d #{lock_name}")
       response = socket(lock_name).gets
       response =~ /^#{lock_name}: (.*):/
