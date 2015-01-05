@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2014 SUSE LLC
+# Copyright (c) 2013-2015 SUSE LLC
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of version 3 of the GNU General Public License as
@@ -277,6 +277,14 @@ class Cli
     c.command :lock do |sc|
       sc.action do |_, _, args|
         Cli.host_controller.lock(args[0])
+      end
+    end
+
+    c.desc "show information about host"
+    c.arg :host_name
+    c.command :info do |sc|
+      sc.action do |_, _, args|
+        Cli.host_controller.info(args[0])
       end
     end
   end

@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2014 SUSE LLC
+# Copyright (c) 2013-2015 SUSE LLC
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of version 3 of the GNU General Public License as
@@ -73,7 +73,9 @@ EOT
       }).
       to_return(status: 200, body: body, headers: {})
 
-    config_dir = given_directory
+    config_base_dir = given_directory
+
+    config_dir = File.join(config_base_dir, ".pennyworth")
 
     host_config = HostConfig.for_directory(config_dir)
     host_config.fetch("http://remote.example.com")

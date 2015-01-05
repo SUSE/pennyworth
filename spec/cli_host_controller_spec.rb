@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2014 SUSE LLC
+# Copyright (c) 2013-2015 SUSE LLC
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of version 3 of the GNU General Public License as
@@ -96,6 +96,8 @@ describe CliHostController do
       it "fails to acquire lock for host" do
         expect_any_instance_of(LockService).to receive(:request_lock).
           with("test_host").and_return(false)
+        expect_any_instance_of(LockService).to receive(:info).
+          with("test_host").and_return("'test_host' locked by 1.2.3.4")
         expect(@out).to receive(:puts).with(/test_host/)
         expect_any_instance_of(LockService).to_not receive(:keep_lock)
 
