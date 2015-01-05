@@ -279,5 +279,13 @@ class Cli
         Cli.host_controller.lock(args[0])
       end
     end
+
+    c.desc "show information about host"
+    c.arg :host_name
+    c.command :info do |sc|
+      sc.action do |_, _, args|
+        Cli.host_controller.info(args[0])
+      end
+    end
   end
 end

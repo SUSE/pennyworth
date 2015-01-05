@@ -64,4 +64,32 @@ describe LockService do
 
     lock_service.release_lock("my_test")
   end
+
+  it "returns locked status" do
+    socket = double
+    expect(TCPSocket).to receive(:new).and_return(socket)
+
+    expect(socket).to receive(:puts).with("i my_test")
+    expect(socket).to receive(:gets).
+      and_return("1 Lock Is Locked: my_test")
+
+    expect(socket).to receive(:puts).with("d my_test")
+    expect(socket).to receive(:gets).
+      and_return("my_test: 172.16.254.1:49716")
+
+    expect(lock_service.info("my_test")).
+      to eq "'my_test' is locked by 172.16.254.1"
+  end
+
+  it "returns unlocked status" do
+    socket = double
+    expect(TCPSocket).to receive(:new).and_return(socket)
+
+    expect(socket).to receive(:puts).with("i my_test")
+    expect(socket).to receive(:gets).
+      and_return("0 Lock Not Locked: my_test")
+
+    expect(lock_service.info("my_test")).
+      to eq "'my_test' is not locked"
+  end
 end

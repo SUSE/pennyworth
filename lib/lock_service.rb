@@ -56,4 +56,33 @@ class LockService
     @sockets[lock_name].close
     @sockets.delete(lock_name)
   end
+
+  def is_locked?(lock_name)
+    if !@sockets.has_key?(lock_name)
+      @sockets[lock_name] = TCPSocket.new(@lock_server_host, @lock_server_port)
+    end
+    @sockets[lock_name].puts("i #{lock_name}")
+    response = @sockets[lock_name].gets
+    if response =~ /^1/
+      return true
+    else
+      return false
+    end
+  end
+
+  def info(lock_name)
+    if !@sockets.has_key?(lock_name)
+      @sockets[lock_name] = TCPSocket.new(@lock_server_host, @lock_server_port)
+    end
+
+    if is_locked?(lock_name)
+      @sockets[lock_name].puts("d #{lock_name}")
+      response = @sockets[lock_name].gets
+      response =~ /^#{lock_name}: (.*):/
+      client = $1
+      return "'#{lock_name}' is locked by #{client}"
+    else
+      return "'#{lock_name}' is not locked"
+    end
+  end
 end
