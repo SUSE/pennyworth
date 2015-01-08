@@ -54,18 +54,28 @@ class HostRunner
 
   private
 
-  # Tries to connect to the remote system as root (without a password or passphrase)
-  # and raises an Machinery::Errors::SshConnectionFailed exception when it's not successful.
+  # Makes sure the we can connect to the remote system as root (without a
+  # password or passphrase) and that all required binaries are available.
   def connect
-    Cheetah.run "ssh", "-q", "-o", "BatchMode=yes", "root@#{@ip}"
+    begin
+      Cheetah.run "ssh", "-q", "-o", "BatchMode=yes", "root@#{@ip}"
+    rescue Cheetah::ExecutionFailed
+      raise SshConnectionFailed.new(
+        "Could not establish SSH connection to host '#{@ip}'. Please make sure that " \
+        "you can connect non-interactively as root, e.g. using ssh-agent.\n\n" \
+        "To copy your default ssh key to the machine run:\n" \
+        "ssh-copy-id root@#{@ip}"
+      )
+    end
+
+    begin
+      Cheetah.run "snapper", "--help"
+    rescue Cheetah::ExecutionFailed
+      raise CommandNotFoundError.new(
+        "Snapper needs to be installed on the test system '#{@ip}' for the automatic cleanup."
+      )
+    end
     @connected = true
-  rescue Cheetah::ExecutionFailed
-    raise SshConnectionFailed.new(
-      "Could not establish SSH connection to host '#{@ip}'. Please make sure that " \
-      "you can connect non-interactively as root, e.g. using ssh-agent.\n\n" \
-      "To copy your default ssh key to the machine run:\n" \
-      "ssh-copy-id root@#{@ip}"
-    )
   end
 
   def run_command(*cmd)
