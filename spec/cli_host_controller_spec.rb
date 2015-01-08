@@ -65,6 +65,7 @@ describe CliHostController do
 
     describe "#list" do
       it "lists host" do
+        allow(@out).to receive(:puts)
         expect(@out).to receive(:puts).with("test_host")
 
         @controller.list

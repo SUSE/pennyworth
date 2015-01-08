@@ -23,10 +23,21 @@ class HostRunner
     host_config.read
     host = host_config.host(host_name)
     if !host
-      raise InvalidHostError.new("Invalid host name: '#{host_name}'")
+      raise InvalidHostError.new("Host '#{host_name}' is not defined in '#{config_file}'")
     end
+
     @ip = host["address"]
     @base_snapshot_id = host["base_snapshot_id"]
+    if !@ip
+      raise InvalidHostError.new(
+        "Missing 'address' field for host '#{host_name}' in '#{config_file}'"
+      )
+    end
+    if !@base_snapshot_id
+      raise InvalidHostError.new(
+        "Missing 'base_snapshot_id' field for host '#{host_name}' in '#{config_file}'"
+      )
+    end
 
     @locker = LockService.new(host_config.lock_server_address)
   end

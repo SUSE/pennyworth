@@ -30,6 +30,18 @@ describe HostRunner do
         HostRunner.new("invalid_name", File.join(test_data_dir, "hosts.yaml"))
       }.to raise_error(InvalidHostError)
     end
+
+    it "fails with error, if address is not set" do
+      expect {
+        HostRunner.new("missing_address", File.join(test_data_dir, "hosts.yaml"))
+      }.to raise_error(InvalidHostError)
+    end
+
+    it "fails with error, if base_snapshot_id is not set" do
+      expect {
+        HostRunner.new("missing_snapshot_id", File.join(test_data_dir, "hosts.yaml"))
+      }.to raise_error(InvalidHostError)
+    end
   end
 
   describe "#start" do
