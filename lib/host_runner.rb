@@ -55,7 +55,9 @@ class HostRunner
   end
 
   def stop
-    cleanup if @connected
+    if @connected && !ENV["SKIP_CLEANUP"]
+      cleanup
+    end
     @locker.release_lock(@host_name)
   end
 
