@@ -49,7 +49,7 @@ describe HostConfig do
     host_config = HostConfig.for_directory(test_data_dir)
     host_config.read
     expect(host_config.host("test_host")).
-      to eq("address" => "host.example.com")
+      to eq("address" => "host.example.com", "base_snapshot_id" => 5)
   end
 
   it "returns lock server address" do
