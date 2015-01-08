@@ -201,7 +201,7 @@ To simplify setup of tests with existing hosts, there are some helper commands
 in the pennyworth command line application. Get an overview by running
 `pennyworth host`.
 
-To initially set up the test infrastrucure run
+To initially set up the test infrastructure run
 
     pennyworth host setup http://ci.example.org
 
@@ -209,6 +209,18 @@ This will copy the `hosts.yaml` configuration file from
 `http://ci.example.com/pennyworth/hosts.yaml` to your local configuration so
 that it is picked up by Pennyworth automatically. This makes it easy to
 distribute a common configuration between several systems and users.
+
+Pennyworth automatically cleans up the hosts after running the tests using
+snapper snapshots. The snapshot which the system is rolled back to is specified
+by the `base_snapshot_id` of the host entries. Before rolling back a new
+snapshot named `pennyworth` is created which can be used for debugging test
+failures.
+
+In some cases (e.g. while working on a test) the automatic rollback might not be
+desired. It can easily be disabled temporarily by setting the `SKIP_CLEANUP`
+environment variable, e.g.
+
+    SKIP_CLEANUP=true rspec
 
 An example for the configuration file is:
 
@@ -218,8 +230,10 @@ lock_server_address: lockserver.example.org:9999
 hosts:
   test_host_1:
     address: host1.example.org
+    base_snapshot_id: 2
   test_host_2:
     address: host2.example.org
+    base_snapshot_id: 34
 ```
 
 #### Accessing test systems
@@ -231,7 +245,7 @@ Boxes, images and systems have the following requirements:
   * the public ssh key of the user running pennyworth/rspec tests in /root/.ssh.authorized_keys
 
 For boxes handled by pennyworth the ssh key is copied into the target when creating the box,
-for images or hosts this has to be done manually by e.g. running 
+for images or hosts this has to be done manually by e.g. running
 `ssh-copy-id root@<HOST>`.
 
 The `start_system` method returns a `VM` instance, which can be used to interact
@@ -239,7 +253,7 @@ with the running machine (via SSH). It supports the following methods:
 
   * `stop`
 
-    Stops or disconnects the system. This stops running boxes or images and disconnects from 
+    Stops or disconnects the system. This stops running boxes or images and disconnects from
     running systems.
 
   * `run_command(command, *args, options = {})`
