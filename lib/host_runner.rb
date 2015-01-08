@@ -48,6 +48,8 @@ class HostRunner
     end
 
     connect
+    check_cleanup_capabilities if !ENV["SKIP_CLEANUP"]
+
     @ip
   end
 
@@ -68,21 +70,21 @@ class HostRunner
   private
 
   # Makes sure the we can connect to the remote system as root (without a
-  # password or passphrase) and that all required binaries are available.
+  # password or passphrase)
   def connect
-    begin
-      Cheetah.run "ssh", "-q", "-o", "BatchMode=yes", "root@#{@ip}"
-    rescue Cheetah::ExecutionFailed
-      raise SshConnectionFailed.new(
-        "Could not establish SSH connection to host '#{@ip}'. Please make sure that " \
-        "you can connect non-interactively as root, e.g. using ssh-agent.\n\n" \
-        "To copy your default ssh key to the machine run:\n" \
-        "ssh-copy-id root@#{@ip}"
-      )
-    end
+    Cheetah.run "ssh", "-q", "-o", "BatchMode=yes", "root@#{@ip}"
+  rescue Cheetah::ExecutionFailed
+    raise SshConnectionFailed.new(
+      "Could not establish SSH connection to host '#{@ip}'. Please make sure that " \
+      "you can connect non-interactively as root, e.g. using ssh-agent.\n\n" \
+      "To copy your default ssh key to the machine run:\n" \
+      "ssh-copy-id root@#{@ip}"
+    )
+  end
 
+  def check_cleanup_capabilities
     begin
-      Cheetah.run "snapper", "--help"
+      run_command "snapper", "--help"
     rescue Cheetah::ExecutionFailed
       raise CommandNotFoundError.new(
         "Snapper needs to be installed on the test system '#{@ip}' for the automatic cleanup."

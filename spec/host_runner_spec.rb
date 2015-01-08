@@ -49,6 +49,7 @@ describe HostRunner do
       expect_any_instance_of(LockService).to receive(:request_lock).
         and_return(true)
       expect(runner).to receive(:connect)
+      expect(runner).to receive(:check_cleanup_capabilities)
 
       expect(runner.start).to eq("host.example.com")
     end
