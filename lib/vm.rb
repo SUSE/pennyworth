@@ -33,39 +33,7 @@ class VM
   end
 
   def run_command(*args)
-    # When ssh executes commands, it passes them through shell expansion.
-    # For example, compare
-    #
-    #   $ echo '$HOME'
-    #   $HOME
-    #
-    # with
-    #
-    #   $ ssh localhost echo '$HOME'
-    #   /home/dmajda
-    #
-    # To mitigate that and maintain usual Cheetah semantics, we need to
-    # protect the command and its arguments using another layer of escaping.
-    options = args.last.is_a?(Hash) ? args.pop : {}
-    escaped_args = args.map { |a| Shellwords.escape(a) }
-
-    if user = options.delete(:as)
-      escaped_args = ["su", "-l", user, "-c"] + escaped_args
-    end
-
-    Cheetah.run(
-      "ssh",
-      "-o",
-      "UserKnownHostsFile=/dev/null",
-      "-o",
-      "StrictHostKeyChecking=no",
-      "root@#{@ip}",
-      "LC_ALL=C",
-      *escaped_args,
-      options
-    )
-  rescue Cheetah::ExecutionFailed => e
-    raise ExecutionFailed.new(e)
+    command_runner.run(*args)
   end
 
   # Copy a local file to the remote system.
@@ -97,27 +65,11 @@ class VM
     if opts[:owner] || opts[:group]
       owner_group = opts[:owner] || ""
       owner_group += ":#{opts[:group]}" if opts[:group]
-      Cheetah.run(
-        "ssh",
-        "-o",
-        "UserKnownHostsFile=/dev/null",
-        "-o",
-        "StrictHostKeyChecking=no",
-        "root@#{@ip}",
-        "chown -R #{owner_group} #{destination}"
-      )
+      command_runner.run "chown", "-R", owner_group, destination
     end
 
     if opts[:mode]
-      Cheetah.run(
-        "ssh",
-        "-o",
-        "UserKnownHostsFile=/dev/null",
-        "-o",
-        "StrictHostKeyChecking=no",
-        "root@#{@ip}",
-        "chmod #{opts[:mode]} #{destination}"
-      )
+      command_runner.run "chmod", opts[:mode], destination
     end
   rescue Cheetah::ExecutionFailed => e
     raise ExecutionFailed.new(e)
@@ -145,15 +97,8 @@ class VM
 
     chown_cmd = " && chown #{owner_group} '#{destination}'" if owner_group
     mkdir_cmd = "test -d '#{destination}' || (mkdir -p '#{destination}' #{chown_cmd} )"
-    Cheetah.run(
-      "ssh",
-      "-o",
-      "UserKnownHostsFile=/dev/null",
-      "-o",
-      "StrictHostKeyChecking=no",
-      "root@#{@ip}",
-      mkdir_cmd
-    )
+
+    command_runner.run mkdir_cmd, skip_escape: true
 
     Cheetah.run(
       "scp",
@@ -167,18 +112,15 @@ class VM
     )
 
     if owner_group
-      Cheetah.run(
-        "ssh",
-        "-o",
-        "UserKnownHostsFile=/dev/null",
-        "-o",
-        "StrictHostKeyChecking=no",
-        "root@#{@ip}",
-        "chown -R #{owner_group} " \
-          "#{File.join(destination, File.basename(source))}"
-      )
+      command_runner.run "chown", "-R", owner_group, File.join(destination, File.basename(source))
     end
   rescue Cheetah::ExecutionFailed => e
     raise ExecutionFailed.new(e)
+  end
+
+  private
+
+  def command_runner
+    @command_runner ||= RemoteCommandRunner.new(@ip)
   end
 end

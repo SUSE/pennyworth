@@ -54,10 +54,11 @@ class HostRunner
   end
 
   def cleanup
-    run_command "snapper", "create", "-c", "number", "--pre-number", @base_snapshot_id.to_s,
+    remote = RemoteCommandRunner.new(@ip)
+    remote.run "snapper", "create", "-c", "number", "--pre-number", @base_snapshot_id.to_s,
       "--description", "pennyworth_snapshot"
-    run_command "snapper", "undochange", "#{@base_snapshot_id}..0"
-    run_command "bash", "-c", "reboot &"
+    remote.run "snapper", "undochange", "#{@base_snapshot_id}..0"
+    remote.run "bash", "-c", "reboot &"
   end
 
   def stop
@@ -84,25 +85,12 @@ class HostRunner
 
   def check_cleanup_capabilities
     begin
-      run_command "snapper", "--help"
+      RemoteCommandRunner.new(@ip).run "snapper", "--help"
     rescue Cheetah::ExecutionFailed
       raise CommandNotFoundError.new(
         "Snapper needs to be installed on the test system '#{@ip}' for the automatic cleanup."
       )
     end
     @connected = true
-  end
-
-  def run_command(*cmd)
-    Cheetah.run(
-      "ssh",
-      "-o",
-      "UserKnownHostsFile=/dev/null",
-      "-o",
-      "StrictHostKeyChecking=no",
-      "root@#{@ip}",
-      "LC_ALL=C",
-      *cmd
-    )
   end
 end
