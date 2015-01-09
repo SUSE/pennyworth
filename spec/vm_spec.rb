@@ -90,7 +90,9 @@ describe VM do
     it "copies the directory and sets the user and group" do
       expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/mkdir -p/) }
       expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/scp/) }
-      expect(Cheetah).to receive(:run) { |*args| expect(args.join(" ")).to include("chown -R user:group") }
+      expect(Cheetah).to receive(:run) do |*args|
+        expect(args.join(" ")).to include("chown -R user:group")
+      end
 
       system = VM.new(nil)
       system.ip = "1.2.3.4"

@@ -26,7 +26,7 @@ describe RemoteCommandRunner do
       expect(Cheetah).to receive(:run).
         and_return(ssh_output)
 
-      output = subject.run("ls", "-l", "/etc/hosts", {:stdout=>:capture})
+      output = subject.run("ls", "-l", "/etc/hosts", stdout: :capture)
 
       expect(output).to eq (ssh_output)
     end
@@ -36,10 +36,10 @@ describe RemoteCommandRunner do
         with(
         "ssh", "-o", "UserKnownHostsFile=/dev/null", "-o", "StrictHostKeyChecking=no",
         "root@1.2.3.4", "LC_ALL=C", "su", "-l", "vagrant", "-c", "ls", "-l", "/etc/hosts",
-        {:stdout=>:capture}).
+        stdout: :capture).
         and_return(ssh_output)
 
-      output = subject.run("ls", "-l", "/etc/hosts", {as: "vagrant", stdout: :capture})
+      output = subject.run("ls", "-l", "/etc/hosts", as: "vagrant", stdout: :capture)
 
       expect(output).to eq (ssh_output)
     end
