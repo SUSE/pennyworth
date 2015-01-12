@@ -250,9 +250,13 @@ In order to use a system as a pennyworth host it needs to be prepared like this:
        echo "*/.ssh" > /etc/snapper/filters/ssh.txt
 
   5. There needs to be a snapper snapshot of the defined state which will be
-     configured in the `hosts.yml`:
+     configured in the `hosts.yaml`:
 
        snapper create --description "Initial snapshot"
+
+     The according snapshot id can be retrieved using
+
+       snapper list
 
 #### Accessing test systems
 
