@@ -33,7 +33,7 @@ class HostRunner
         "Missing 'address' field for host '#{host_name}' in '#{config_file}'"
       )
     end
-    if !@base_snapshot_id
+    if !@base_snapshot_id && !ENV["SKIP_CLEANUP"]
       raise InvalidHostError.new(
         "Missing 'base_snapshot_id' field for host '#{host_name}' in '#{config_file}'"
       )
