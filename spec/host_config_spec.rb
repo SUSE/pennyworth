@@ -82,4 +82,91 @@ EOT
 
     expect(File.read(File.join(config_dir, "hosts.yaml"))).to eq(body)
   end
+
+  describe "include" do
+    it "throws error when included file doesn't exist" do
+      host_config = HostConfig.new(given_directory)
+
+      file = <<EOT
+---
+include: inexistent
+EOT
+
+      expect {
+        host_config.parse(file)
+      }.to raise_error(HostFileError)
+    end
+
+    it "takes host from remote file" do
+      body = <<EOT
+---
+hosts:
+  test_host_1:
+    address: a.example.com
+EOT
+      stub_request(:get, "http://ci.example.com/pennyworth/hosts.yaml").
+        with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+        to_return(:status => 200, :body => body, :headers => {})
+
+      file = <<EOT
+---
+include: http://ci.example.com/pennyworth/hosts.yaml
+EOT
+
+      host_config = HostConfig.new(given_directory)
+      host_config.parse(file)
+
+      expect(host_config.host("test_host_1")["address"]).to eq("a.example.com")
+    end
+
+    it "takes host from local file" do
+      body = <<EOT
+---
+hosts:
+  test_host_1:
+    address: a.example.com
+EOT
+      stub_request(:get, "http://ci.example.com/pennyworth/hosts.yaml").
+        with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+        to_return(:status => 200, :body => body, :headers => {})
+
+      file = <<EOT
+---
+include: http://ci.example.com/pennyworth/hosts.yaml
+hosts:
+  test_host_2:
+    address: b.example.com
+EOT
+
+      host_config = HostConfig.new(given_directory)
+      host_config.parse(file)
+
+      expect(host_config.host("test_host_2")["address"]).to eq("b.example.com")
+    end
+
+    it "overwrite host from remote file by host from local file" do
+      body = <<EOT
+---
+hosts:
+  test_host_3:
+    address: c.example.com
+EOT
+      stub_request(:get, "http://ci.example.com/pennyworth/hosts.yaml").
+        with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+        to_return(:status => 200, :body => body, :headers => {})
+
+      file = <<EOT
+---
+include: http://ci.example.com/pennyworth/hosts.yaml
+hosts:
+  test_host_3:
+    address: x.example.com
+EOT
+
+      host_config = HostConfig.new(given_directory)
+      host_config.parse(file)
+
+      expect(host_config.host("test_host_3")["address"]).to eq("x.example.com")
+    end
+  end
 end

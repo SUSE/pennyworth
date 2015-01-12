@@ -26,14 +26,39 @@ class HostConfig
     @config_file = File.expand_path(config_file)
   end
 
-  def read
-    yaml = YAML.load_file(config_file)
-    if yaml && yaml["hosts"]
-      @hosts = yaml["hosts"]
-      @lock_server_address = yaml["lock_server_address"]
-    else
+  def parse(yaml_string)
+    yaml = YAML.load(yaml_string)
+    if !yaml
       raise HostFileError.new("Could not parse YAML in file '#{config_file}'")
     end
+
+    if yaml["include"]
+      begin
+        open(yaml["include"], "rb") do |u|
+          parse(u.read)
+        end
+      rescue OpenURI::HTTPError, Errno::ENOENT
+        raise HostFileError.new("Unable to include '#{yaml["include"]}'")
+      end
+    end
+
+    if yaml["hosts"]
+      if !@hosts
+        @hosts = yaml["hosts"]
+      else
+        yaml["hosts"].each do |key, value|
+          @hosts[key] = value
+        end
+      end
+    end
+
+    if yaml["lock_server_address"]
+      @lock_server_address = yaml["lock_server_address"]
+    end
+  end
+
+  def read
+    parse(File.read(config_file))
   end
 
   def hosts
