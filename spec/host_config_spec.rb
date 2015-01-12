@@ -58,29 +58,39 @@ describe HostConfig do
     expect(host_config.lock_server_address).to eq("lock.example.com:9999")
   end
 
-  it "fetches remote config" do
-    body = <<EOT
+  describe "#setup" do
+    it "fails if config file already exists" do
+      config_file = nil
+      config_dir = given_directory do
+        config_file = given_file "hosts.yaml"
+      end
+
+      host_config = HostConfig.for_directory(config_dir)
+
+      expect {
+        host_config.setup("http://example.com/pennyworth/hosts.yaml")
+      }.to raise_error(HostFileError)
+
+      expected_config_file = File.join(test_data_dir, "hosts.yaml")
+      expect(File.read(config_file)).to eq(File.read(expected_config_file))
+    end
+
+    it "writes initial config file" do
+      config_base_dir = given_directory
+
+      config_dir = File.join(config_base_dir, ".pennyworth")
+
+      host_config = HostConfig.for_directory(config_dir)
+      host_config.setup("http://example.com/pennyworth/hosts.yaml")
+
+      expected_config = <<EOT
 ---
-hosts:
-  test_host:
-    address: host.example.com
+include: http://example.com/pennyworth/hosts.yaml
 EOT
-    stub_request(:get, "http://remote.example.com/pennyworth/hosts.yaml").
-      with(:headers => {
-        "Accept" => "*/*",
-        "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
-        "User-Agent" => "Ruby"
-      }).
-      to_return(status: 200, body: body, headers: {})
 
-    config_base_dir = given_directory
-
-    config_dir = File.join(config_base_dir, ".pennyworth")
-
-    host_config = HostConfig.for_directory(config_dir)
-    host_config.fetch("http://remote.example.com")
-
-    expect(File.read(File.join(config_dir, "hosts.yaml"))).to eq(body)
+      expect(File.read(File.join(config_dir, "hosts.yaml"))).
+        to eq(expected_config)
+    end
   end
 
   describe "include" do

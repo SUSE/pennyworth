@@ -69,20 +69,16 @@ class HostConfig
     @hosts[host_name]
   end
 
-  def fetch(url)
-    file_url = url + "/pennyworth/hosts.yaml"
-    body = nil
-    begin
-      open(file_url, "rb") do |u|
-        body = u.read
-      end
-    rescue OpenURI::HTTPError
-      raise HostFileError.new("Unable to fetch from '#{file_url}'")
+  def setup(url)
+    if File.exist?(config_file)
+      raise HostFileError.new("Config file '#{config_file}' already exists." +
+        " Canceling setup.")
     end
 
     FileUtils.mkdir_p(File.dirname(config_file))
     File.open(config_file, "w") do |f|
-      f.write(body)
+      f.puts("---")
+      f.puts("include: #{url}")
     end
   end
 end

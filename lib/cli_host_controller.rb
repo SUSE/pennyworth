@@ -28,7 +28,7 @@ class CliHostController
 
     @out.puts "Setup from '#{url}'"
     begin
-      HostConfig.for_directory(@config_dir).fetch(url)
+      HostConfig.for_directory(@config_dir).setup(url)
     rescue HostFileError => e
       @out.puts "Error: #{e}"
     end
