@@ -203,12 +203,17 @@ in the pennyworth command line application. Get an overview by running
 
 To initially set up the test infrastructure run
 
-    pennyworth host setup http://ci.example.org
+    pennyworth host setup http://ci.example.org/pennyworth/hosts.yaml
 
-This will copy the `hosts.yaml` configuration file from
-`http://ci.example.com/pennyworth/hosts.yaml` to your local configuration so
-that it is picked up by Pennyworth automatically. This makes it easy to
-distribute a common configuration between several systems and users.
+with a URL corresponding to where you store the configuration of your test
+hosts. This will create a configuration file which includes the configuration
+from `http://ci.example.com/pennyworth/hosts.yaml` as a reference. The
+configuration will dynamically be fetched from the URL when tests are run.
+You can add local configuration to the `~/.pennyworth/hosts.yaml` file. If it
+defines values for keys from the remote file it overwrites the value by the
+local attribute. This setup makes it easy to distribute a common configuration
+between several systems and users, while still allowing users to have their
+local settings.
 
 Pennyworth automatically cleans up the hosts after running the tests using
 snapper snapshots. The snapshot which the system is rolled back to is specified
