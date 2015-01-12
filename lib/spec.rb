@@ -31,6 +31,7 @@ require_relative "lock_service"
 require_relative "ssh_keys_importer"
 require_relative "vm"
 require_relative "spec_profiler"
+require_relative "remote_command_runner"
 
 module Pennyworth
   module SpecHelper

@@ -30,14 +30,58 @@ describe HostRunner do
         HostRunner.new("invalid_name", File.join(test_data_dir, "hosts.yaml"))
       }.to raise_error(InvalidHostError)
     end
+
+    it "fails with error, if address is not set" do
+      expect {
+        HostRunner.new("missing_address", File.join(test_data_dir, "hosts.yaml"))
+      }.to raise_error(InvalidHostError)
+    end
+
+    it "fails with error, if base_snapshot_id is not set" do
+      expect {
+        HostRunner.new("missing_snapshot_id", File.join(test_data_dir, "hosts.yaml"))
+      }.to raise_error(InvalidHostError)
+    end
   end
 
   describe "#start" do
     it "returns the IP address of the started system" do
       expect_any_instance_of(LockService).to receive(:request_lock).
         and_return(true)
+      expect(runner).to receive(:connect)
+      expect(runner).to receive(:check_cleanup_capabilities)
 
       expect(runner.start).to eq("host.example.com")
+    end
+  end
+
+  describe "#stop" do
+    before(:each) do
+      expect_any_instance_of(LockService).to receive(:release_lock).
+        and_return(true)
+    end
+
+    it "triggers a cleanup when the host was connected" do
+      runner.instance_variable_set(:@connected, true)
+      expect(runner).to receive(:cleanup)
+
+      runner.stop
+    end
+
+    it "does not trigger a cleanup when the host was not connected" do
+      runner.instance_variable_set(:@connected, false)
+      expect(runner).to_not receive(:cleanup)
+
+      runner.stop
+    end
+
+    it "does not trigger a cleanup when SKIP_CLEANUP is set" do
+      runner.instance_variable_set(:@connected, true)
+      expect(runner).to_not receive(:cleanup)
+
+      with_env "SKIP_CLEANUP" => "true" do
+        runner.stop
+      end
     end
   end
 end

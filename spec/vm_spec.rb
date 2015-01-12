@@ -18,43 +18,15 @@
 require "spec"
 
 describe VM do
-  let(:ssh_output) { "-rw-r--r-- 1 root root 642 Sep 27 22:06 /etc/hosts" }
-
   describe "#run_command" do
-    it "calls ssh and returns the command's standard output" do
-      expect(Cheetah).to receive(:run).
-        and_return(ssh_output)
+    it "lets a RemoteCommandRunner run the command" do
+      runner = double
+      expect(RemoteCommandRunner).to receive(:new).with("1.2.3.4").and_return(runner)
+      expect(runner).to receive(:run)
 
       system = VM.new(nil)
       system.ip = "1.2.3.4"
-      output = system.run_command("ls", "-l", "/etc/hosts", {:stdout=>:capture})
-
-      expect(output).to eq (ssh_output)
-    end
-
-    it "executes commands as given user" do
-      expect(Cheetah).to receive(:run).
-        with(
-          "ssh", "-o", "UserKnownHostsFile=/dev/null", "-o", "StrictHostKeyChecking=no",
-          "root@1.2.3.4", "LC_ALL=C", "su", "-l", "vagrant", "-c", "ls", "-l", "/etc/hosts",
-          {:stdout=>:capture}).
-        and_return(ssh_output)
-
-      system = VM.new(nil)
-      system.ip = "1.2.3.4"
-      output = system.run_command("ls", "-l", "/etc/hosts", {as: "vagrant", stdout: :capture})
-
-      expect(output).to eq (ssh_output)
-    end
-
-    it "raises ExecutionFailed in case of errors" do
-      expect(Cheetah).to receive(:run).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
-
-      expect {
-        system = VM.new(nil)
-        system.ip = "1.2.3.4"
-        system.run_command("foo")
-      }.to raise_error(ExecutionFailed)
+      system.run_command("ls")
     end
   end
 
@@ -79,7 +51,7 @@ describe VM do
 
     it "copies the file and sets the owner" do
       expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/scp/) }
-      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/chown.*tux/) }
+      expect(Cheetah).to receive(:run) { |*args| expect(args.join(" ")).to match(/chown.*tux/) }
 
       system = VM.new(nil)
       system.ip = "1.2.3.4"
@@ -88,7 +60,7 @@ describe VM do
 
     it "copies the file and sets the group" do
       expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/scp/) }
-      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/chown.*:tux/) }
+      expect(Cheetah).to receive(:run) { |*args| expect(args.join(" ")).to match(/chown.*:tux/) }
 
       system = VM.new(nil)
       system.ip = "1.2.3.4"
@@ -97,7 +69,7 @@ describe VM do
 
     it "copies the file and sets the mode" do
       expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/scp/) }
-      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/chmod 600/) }
+      expect(Cheetah).to receive(:run) { |*args| expect(args.join(" ")).to include("chmod 600") }
 
       system = VM.new(nil)
       system.ip = "1.2.3.4"
@@ -118,7 +90,9 @@ describe VM do
     it "copies the directory and sets the user and group" do
       expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/mkdir -p/) }
       expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/scp/) }
-      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/chown -R user:group/) }
+      expect(Cheetah).to receive(:run) do |*args|
+        expect(args.join(" ")).to include("chown -R user:group")
+      end
 
       system = VM.new(nil)
       system.ip = "1.2.3.4"

@@ -3,3 +3,8 @@ lock_server_address: lock.example.com:9999
 hosts:
  test_host:
    address: host.example.com
+   base_snapshot_id: 5
+ missing_address:
+   base_snapshot_id: 5
+ missing_snapshot_id:
+   address: host.example.com

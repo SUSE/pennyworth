@@ -31,7 +31,7 @@ describe HostConfig do
   it "reads config file" do
     host_config = HostConfig.for_directory(test_data_dir)
     host_config.read
-    expect(host_config.hosts).to eq(["test_host"])
+    expect(host_config.hosts).to eq(["test_host", "missing_address", "missing_snapshot_id"])
   end
 
   it "raises error when it cannot read the file" do
@@ -49,7 +49,7 @@ describe HostConfig do
     host_config = HostConfig.for_directory(test_data_dir)
     host_config.read
     expect(host_config.host("test_host")).
-      to eq("address" => "host.example.com")
+      to eq("address" => "host.example.com", "base_snapshot_id" => 5)
   end
 
   it "returns lock server address" do
