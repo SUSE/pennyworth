@@ -236,6 +236,24 @@ hosts:
     base_snapshot_id: 34
 ```
 
+In order to use a system as a pennyworth host it needs to be prepared like this:
+
+  1. The root partition needs to be a Btrfs partition
+  2. Snapper needs to be installed and configured for `/`:
+
+       snapper create-config /
+
+  3. There can't be any subvolumes below `/` besides `.snapshots`
+  4. It's usually helpful to exclude `*/.ssh` from the rollback so that SSH
+     access is retained
+
+       echo "*/.ssh" > /etc/snapper/filters/ssh.txt
+
+  5. There needs to be a snapper snapshot of the defined state which will be
+     configured in the `hosts.yml`:
+
+       snapper create --description "Initial snapshot"
+
 #### Accessing test systems
 
 Boxes, images and systems have the following requirements:
