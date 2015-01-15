@@ -33,7 +33,7 @@ class HostRunner
         "Missing 'address' field for host '#{host_name}' in '#{config_file}'"
       )
     end
-    if !@base_snapshot_id && !ENV["SKIP_CLEANUP"]
+    if should_cleanup && !@base_snapshot_id
       raise InvalidHostError.new(
         "Missing 'base_snapshot_id' field for host '#{host_name}' in '#{config_file}'"
       )
@@ -48,23 +48,32 @@ class HostRunner
     end
 
     connect
-    check_cleanup_capabilities if !ENV["SKIP_CLEANUP"]
+
+    if should_cleanup
+      check_cleanup_capabilities
+      install_cleanup_interrupt_handler
+    end
 
     @ip
   end
 
   def cleanup
+    return if @cleaned_up || !@connected
+
     remote = RemoteCommandRunner.new(@ip)
     remote.run "snapper", "create", "-c", "number", "--pre-number", @base_snapshot_id.to_s,
       "--description", "pennyworth_snapshot"
     remote.run "snapper", "undochange", "#{@base_snapshot_id}..0"
     remote.run "bash", "-c", "reboot &"
+    @cleaned_up = true
   end
 
   def stop
-    if @connected && !ENV["SKIP_CLEANUP"]
+    if should_cleanup
       cleanup
+      uninstall_cleanup_interrupt_handler
     end
+
     @locker.release_lock(@host_name)
   end
 
@@ -92,5 +101,29 @@ class HostRunner
       )
     end
     @connected = true
+  end
+
+  def should_cleanup
+    !ENV["SKIP_CLEANUP"]
+  end
+
+  def install_cleanup_interrupt_handler
+    @old_interrupt_handler = trap("INT") do
+      trap("INT") do
+        exit!(1)
+      end
+
+      puts "RSpec is shutting down. Resetting test host '#{@ip}'." \
+        "Interrupt again to force exit."
+      cleanup
+      puts "Done."
+
+      @old_interrupt_handler.call
+    end
+  end
+
+  def uninstall_cleanup_interrupt_handler
+    # Restore old interrupt handler
+    trap("INT", @old_interrupt_handler) if defined?(@old_interrupt_handler)
   end
 end

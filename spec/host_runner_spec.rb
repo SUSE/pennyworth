@@ -68,13 +68,6 @@ describe HostRunner do
       runner.stop
     end
 
-    it "does not trigger a cleanup when the host was not connected" do
-      runner.instance_variable_set(:@connected, false)
-      expect(runner).to_not receive(:cleanup)
-
-      runner.stop
-    end
-
     it "does not trigger a cleanup when SKIP_CLEANUP is set" do
       runner.instance_variable_set(:@connected, true)
       expect(runner).to_not receive(:cleanup)
@@ -82,6 +75,33 @@ describe HostRunner do
       with_env "SKIP_CLEANUP" => "true" do
         runner.stop
       end
+    end
+  end
+
+  describe "#cleanup" do
+    it "cleans up the host" do
+      runner.instance_variable_set(:@connected, true)
+      runner.instance_variable_set(:@cleaned_up, false)
+      command_runner = double(:run)
+      expect(command_runner).to receive(:run).at_least(:once)
+      expect(RemoteCommandRunner).to receive(:new).and_return(command_runner)
+
+      runner.cleanup
+    end
+    it "does not clean up when the host was not connected" do
+      runner.instance_variable_set(:@connected, false)
+      runner.instance_variable_set(:@cleaned_up, false)
+      expect(RemoteCommandRunner).to_not receive(:new)
+
+      runner.cleanup
+    end
+
+    it "does not clean up when the host was already cleaned up" do
+      runner.instance_variable_set(:@connected, true)
+      runner.instance_variable_set(:@cleaned_up, true)
+      expect(RemoteCommandRunner).to_not receive(:new)
+
+      runner.cleanup
     end
   end
 end
