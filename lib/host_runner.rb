@@ -16,11 +16,10 @@
 # you may find current contact information at www.suse.com
 
 class HostRunner
-  def initialize(host_name, config_file)
+  def initialize(host_name, host_config)
     @host_name = host_name
+    config_file = host_config.config_file
 
-    host_config = HostConfig.new(config_file)
-    host_config.read
     host = host_config.host(host_name)
     if !host
       raise InvalidHostError.new("Host '#{host_name}' is not defined in '#{config_file}'")
