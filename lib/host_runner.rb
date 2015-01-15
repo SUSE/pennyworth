@@ -113,10 +113,10 @@ class HostRunner
         exit!(1)
       end
 
-      Machinery::Ui.puts "RSpec is shutting down. Resetting test host '#{@ip}'." \
+      puts "RSpec is shutting down. Resetting test host '#{@ip}'." \
         "Interrupt again to force exit."
       cleanup
-      Machinery::Ui.puts "Done."
+      puts "Done."
 
       @old_interrupt_handler.call
     end
