@@ -280,6 +280,14 @@ class Cli
       end
     end
 
+    c.desc "reset host to defined state"
+    c.arg :host_name
+    c.command :reset do |sc|
+      sc.action do |_, _, args|
+        Cli.host_controller.reset(args[0])
+      end
+    end
+
     c.desc "show information about host"
     c.arg :host_name
     c.command :info do |sc|

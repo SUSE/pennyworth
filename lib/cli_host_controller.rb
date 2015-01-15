@@ -73,6 +73,14 @@ class CliHostController
     @out.puts(locker.info(host_name))
   end
 
+  def reset(host_name)
+    check_host(host_name)
+
+    runner = HostRunner.new(host_name, host_config)
+    runner.start
+    runner.cleanup
+  end
+
   private
 
   def check_host(host_name)
