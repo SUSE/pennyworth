@@ -37,8 +37,20 @@ class CliHostController
   def list
     host_config = HostConfig.for_directory(@config_dir)
     host_config.read
-    host_config.hosts.each do |host|
-      @out.puts host
+    host_config.hosts.each do |host_name|
+      host = host_config.host(host_name)
+      out = "#{host_name}"
+      attributes = []
+      if host['address']
+        attributes.push("address: #{host['address']}")
+      end
+      if host['base_snapshot_id']
+        attributes.push("base snapshot id: #{host['base_snapshot_id']}")
+      end
+      if !attributes.empty?
+        out += " (" + attributes.join(", ") + ")"
+      end
+      @out.puts(out)
     end
   end
 

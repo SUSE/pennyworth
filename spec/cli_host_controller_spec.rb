@@ -65,8 +65,12 @@ describe CliHostController do
 
     describe "#list" do
       it "lists host" do
-        allow(@out).to receive(:puts)
-        expect(@out).to receive(:puts).with("test_host")
+        expect(@out).to receive(:puts).
+          with("test_host (address: host.example.com, base snapshot id: 5)")
+        expect(@out).to receive(:puts).
+          with("missing_address (base snapshot id: 5)")
+        expect(@out).to receive(:puts).
+          with("missing_snapshot_id (address: host.example.com)")
 
         @controller.list
       end
