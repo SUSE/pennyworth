@@ -53,14 +53,7 @@ class CliHostController
   end
 
   def lock(host_name)
-    if !host_name
-      raise GLI::BadCommandLine.new("Please provide a host name argument")
-    end
-
-    if !host_config.host(host_name)
-      raise LockError.new("Host name #{host_name} doesn't exist in " +
-        "configuration file '#{host_config.config_file}'")
-    end
+    check_host(host_name)
 
     locker = LockService.new(host_config.lock_server_address)
     if locker.request_lock(host_name)
@@ -74,6 +67,15 @@ class CliHostController
   end
 
   def info(host_name)
+    check_host(host_name)
+
+    locker = LockService.new(host_config.lock_server_address)
+    @out.puts(locker.info(host_name))
+  end
+
+  private
+
+  def check_host(host_name)
     if !host_name
       raise GLI::BadCommandLine.new("Please provide a host name argument")
     end
@@ -82,12 +84,7 @@ class CliHostController
       raise LockError.new("Host name #{host_name} doesn't exist in " +
         "configuration file '#{host_config.config_file}'")
     end
-
-    locker = LockService.new(host_config.lock_server_address)
-    @out.puts(locker.info(host_name))
   end
-
-  private
 
   def host_config
     return @host_config if @host_config
