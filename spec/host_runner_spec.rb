@@ -18,8 +18,13 @@
 require "spec_helper"
 
 describe HostRunner do
+  let(:host_config) {
+    config = HostConfig.for_directory(test_data_dir)
+    config.read
+    config
+  }
   let(:runner) {
-    HostRunner.new("test_host", File.join(test_data_dir, "hosts.yaml"))
+    HostRunner.new("test_host", host_config)
   }
 
   it_behaves_like "a runner"
@@ -27,19 +32,19 @@ describe HostRunner do
   describe "#initialize" do
     it "fails with error, if host is not known" do
       expect {
-        HostRunner.new("invalid_name", File.join(test_data_dir, "hosts.yaml"))
+        HostRunner.new("invalid_name", host_config)
       }.to raise_error(InvalidHostError)
     end
 
     it "fails with error, if address is not set" do
       expect {
-        HostRunner.new("missing_address", File.join(test_data_dir, "hosts.yaml"))
+        HostRunner.new("missing_address", host_config)
       }.to raise_error(InvalidHostError)
     end
 
     it "fails with error, if base_snapshot_id is not set" do
       expect {
-        HostRunner.new("missing_snapshot_id", File.join(test_data_dir, "hosts.yaml"))
+        HostRunner.new("missing_snapshot_id", host_config)
       }.to raise_error(InvalidHostError)
     end
   end

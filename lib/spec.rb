@@ -18,6 +18,7 @@
 require "cheetah"
 require "libvirt"
 require "socket"
+require "open-uri"
 
 require_relative "exceptions"
 require_relative "helper"
@@ -46,7 +47,9 @@ module Pennyworth
         runner = ImageRunner.new(opts[:image])
         password = "linux"
       elsif opts[:host]
-        runner = HostRunner.new(opts[:host], RSpec.configuration.hosts_file)
+        config = HostConfig.new(RSpec.configuration.hosts_file)
+        config.read
+        runner = HostRunner.new(opts[:host], config)
       end
 
       raise "No image specified." unless runner

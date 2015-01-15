@@ -79,7 +79,7 @@ describe Pennyworth::SpecHelper do
       runner = double
       expect(runner).to receive(:start)
       expect(HostRunner).to receive(:new).
-        with("test_host", RSpec.configuration.hosts_file).
+        with("test_host", instance_of(HostConfig)).
         and_return(runner)
       expect(SshKeysImporter).to_not receive(:import)
 
