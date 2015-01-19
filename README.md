@@ -257,7 +257,7 @@ In order to use a system as a pennyworth host it needs to be prepared like this:
   5. There needs to be a snapper snapshot of the defined state which will be
      configured in the `hosts.yaml`:
 
-        snapper create --description "Initial snapshot"
+        snapper create --description "pennyworth_snapshot"
 
      The according snapshot id can be retrieved using
 
