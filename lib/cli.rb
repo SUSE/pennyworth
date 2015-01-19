@@ -18,7 +18,22 @@
 class Cli
   extend GLI::App
 
-  program_desc 'A tool for running integration tests inside a network of virtual machines'
+  program_desc 'A tool for controlling networks of machines for integration testing'
+  program_long_desc <<-LONGDESC
+    Pennyworth is a tool for controlling a network of machines for
+    integration testing. It helps to control virtual and real machines to
+    provide a well-defined test environment for automated tests.
+
+    Use the global `--definitions-dir` option to specify the path to the
+    directory containing Kiwi and Vagrant definitions. The directory needs to
+    contain `kiwi/` and `vagrant/` subdirectories. Default is `~/.pennyworth`.
+
+    Pennyworth writes a log file to `/tmp/pennyworth.log`.
+
+    Use the `help` command to get documentation about the individual commands.
+    Find more documentation at https://github.com/SUSE/pennyworth.
+  LONGDESC
+
   preserve_argv(true)
   @version = Pennyworth::VERSION
   switch :version, :negatable => false, :desc => "Show version"
@@ -26,7 +41,7 @@ class Cli
   switch :verbose, :negatable => false, :desc => "Verbose"
   switch [:silent], :negatable => false, :desc => "Silent mode"
   flag ["definitions-dir", :d],
-    :desc => "Path to the directory containing Kiwi and Vagrant definitions",
+    :desc => "Path to the directory containing machine definitions",
     :arg_name => "DEFINITIONS_DIR"
 
   pre do |global_options,command,options,args|
