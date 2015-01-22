@@ -18,7 +18,22 @@
 class Cli
   extend GLI::App
 
-  program_desc 'A tool for running integration tests inside a network of virtual machines'
+  program_desc 'A tool for controlling networks of machines for integration testing'
+  program_long_desc <<-LONGDESC
+    Pennyworth is a tool for controlling a network of machines for
+    integration testing. It helps to control virtual and real machines to
+    provide a well-defined test environment for automated tests.
+
+    Use the global `--definitions-dir` option to specify the path to the
+    directory containing Kiwi and Vagrant definitions. The directory needs to
+    contain `kiwi/` and `vagrant/` subdirectories. Default is `~/.pennyworth`.
+
+    Pennyworth writes a log file to `/tmp/pennyworth.log`.
+
+    Use the `help` command to get documentation about the individual commands.
+    Find more documentation at https://github.com/SUSE/pennyworth.
+  LONGDESC
+
   preserve_argv(true)
   @version = Pennyworth::VERSION
   switch :version, :negatable => false, :desc => "Show version"
@@ -26,7 +41,7 @@ class Cli
   switch :verbose, :negatable => false, :desc => "Verbose"
   switch [:silent], :negatable => false, :desc => "Silent mode"
   flag ["definitions-dir", :d],
-    :desc => "Path to the directory containing Kiwi and Vagrant definitions",
+    :desc => "Path to the directory containing machine definitions",
     :arg_name => "DEFINITIONS_DIR"
 
   pre do |global_options,command,options,args|
@@ -89,9 +104,13 @@ class Cli
     @@settings = s
   end
 
-  desc "setup"
+  desc "Prepare system for running Pennyworth"
   long_desc <<-LONGDESC
-    Prepare system for running virtual machines
+    Prepare the system to be able to run virtual machines via Pennyworth. This
+    encapsulates package installation as well as set up of required tools such
+    as Vagrant and libvirt.
+
+    See https://github.com/SUSE/pennyworth#installation for more information.
   LONGDESC
   command :setup do |c|
     c.action do |global_options,options,args|
@@ -99,9 +118,10 @@ class Cli
     end
   end
 
-  desc "status <vm_name>"
+  desc "Show status of virtual machine"
   long_desc <<-LONGDESC
-    Show status of virtual machine
+    Show status of specified virtual machine. Use `list` to get a list of all
+    available machines.
   LONGDESC
   arg_name "VM_NAME"
   command :status do |c|
@@ -112,11 +132,13 @@ class Cli
     end
   end
 
-  desc "build-base [image_name]"
+  desc "Build base images"
   long_desc <<-LONGDESC
-    Build base images
+    Build base images used by Vagrant. If no specific name is given all base
+    images are built. The images have to be imported with `import-base` to be
+    available to be run.
   LONGDESC
-  arg_name "IMAGE_NAME"
+  arg_name "IMAGE_NAME", :optional
   command "build-base" do |c|
     c.flag [:kiwi_tmp_dir, :k], :type => String, :required => false,
       :desc => "Temporary KIWI directory for building the Vagrant box.",
@@ -128,11 +150,13 @@ class Cli
     end
   end
 
-  desc "import-base [image_name]"
+  desc "Import base images"
   long_desc <<-LONGDESC
-    Import base images
+    Import base images used by Vagrant. If no specific name is given all base
+    images are imported. Base images have to be built with `build-base` or
+    imported from a remote location specified with the `--url` option.
   LONGDESC
-  arg_name "IMAGE_NAME"
+  arg_name "IMAGE_NAME", :optional
   command "import-base" do |c|
     c.flag [:url, :u], :type => String, :required => false,
       :desc => "URL of the remote server where the images will be imported from", :arg_name => "URL"
@@ -159,9 +183,9 @@ class Cli
     end
   end
 
-  desc "up <vm_name>"
+  desc "Start virtual machine"
   long_desc <<-LONGDESC
-    Start virtual machine
+    Start specified virtual machine
   LONGDESC
   arg_name "VM_NAME"
   command :up do |c|
@@ -174,9 +198,9 @@ class Cli
     end
   end
 
-  desc "down <vm_name>"
+  desc "Stop virtual machine"
   long_desc <<-LONGDESC
-    Stop virtual machine
+    Stop specified virtual machine
   LONGDESC
   arg_name "VM_NAME"
   command :down do |c|
@@ -187,11 +211,11 @@ class Cli
     end
   end
 
-  desc "copy-ssh-keys <ip address>"
+  desc "Copy puplic SSH keys to target system"
   long_desc <<-LONGDESC
-    Copy the public SSH keys to the host for easy root access
+    Copy the public SSH keys to the host named IP-ADDRESS for easy root access
   LONGDESC
-  arg_name "IP"
+  arg_name "IP-ADDRESS"
   command :copy_ssh_keys do |c|
     c.flag [:password, :p], :type => String, :required => false,
       :desc => "Password", :arg_name => "PASSWORD"
@@ -206,9 +230,9 @@ class Cli
     end
   end
 
-  desc "list"
+  desc "List available machines and images"
   long_desc <<-LONGDESC
-    List virtual machines and base images
+    List virtual machines, base images, and related data
   LONGDESC
   command :list do |c|
     c.action do |global_options,options,args|
@@ -217,9 +241,10 @@ class Cli
     end
   end
 
-  desc "boot <path_to_image>"
+  desc "Boot custom image file"
   long_desc <<-LONGDESC
-    "Boot a custom image in a non vagrant managed VM"
+    Boot a custom image from the given file IMAGE in a VM not managed by
+    Vagrant. You can shut down an image booted this way with `shutdown`.
   LONGDESC
   arg_name "IMAGE"
   command :boot do |c|
@@ -234,11 +259,11 @@ class Cli
     end
   end
 
-  desc "shutdown <path_to_image>"
+  desc "Shutdown custom image"
   long_desc <<-LONGDESC
-    Shutdown custom image
+    Shutdown custom image, which was started with `boot`.
   LONGDESC
-  arg_name "NAME"
+  arg_name "IMAGE"
   command :shutdown do |c|
     c.action do |global_options,options,args|
       if !args.empty?
@@ -255,41 +280,54 @@ class Cli
     CliHostController.new("~/.pennyworth", STDOUT)
   end
 
-  desc "manage test hosts"
+  desc "Manage test hosts"
+  long_desc <<-LONGDESC
+    This subcommand provides the tools to manage existing machines to be used
+    as test hosts. Hosts are defined in the configuration file
+    `.pennyworth/hosts.yaml`.
+
+    See https://github.com/SUSE/pennyworth#using-existing-hosts for more
+    information.
+  LONGDESC
   command :host do |c|
-    c.desc "fetch host configuration"
-    c.arg :url
+    c.desc "Fetch host configuration"
+    c.long_desc <<-LONGDESC
+      Fetch initial host configuration from a given URL. This can be used to
+      share configuration across multiple machines and users. The argument has
+      to be the URL to the remote configuration file.
+    LONGDESC
+    c.arg_name "URL"
     c.command :setup do |sc|
       sc.action do |_, _, args|
         Cli.host_controller.setup(args[0])
       end
     end
 
-    c.desc "list available hosts"
+    c.desc "List available hosts"
     c.command :list do |sc|
       sc.action do
         Cli.host_controller.list
       end
     end
 
-    c.desc "lock host"
-    c.arg :host_name
+    c.desc "Lock host"
+    c.arg_name "HOST-NAME"
     c.command :lock do |sc|
       sc.action do |_, _, args|
         Cli.host_controller.lock(args[0])
       end
     end
 
-    c.desc "reset host to defined state"
-    c.arg :host_name
+    c.desc "Reset host to defined state"
+    c.arg_name "HOST-NAME"
     c.command :reset do |sc|
       sc.action do |_, _, args|
         Cli.host_controller.reset(args[0])
       end
     end
 
-    c.desc "show information about host"
-    c.arg :host_name
+    c.desc "Show information about host"
+    c.arg_name "HOST-NAME"
     c.command :info do |sc|
       sc.action do |_, _, args|
         Cli.host_controller.info(args[0])
