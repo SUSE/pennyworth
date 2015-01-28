@@ -62,6 +62,7 @@ class HostRunner
     remote = RemoteCommandRunner.new(@ip)
     remote.run "snapper", "create", "-c", "number", "--pre-number", @base_snapshot_id.to_s,
       "--description", "pennyworth_snapshot"
+    remote.run "snapper", "cleanup", "number"
     remote.run "snapper", "undochange", "#{@base_snapshot_id}..0"
     remote.run "bash", "-c", "reboot &"
     @cleaned_up = true
