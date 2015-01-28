@@ -258,7 +258,7 @@ In order to use a system as a pennyworth host it needs to be prepared like this:
 
              zypper rm snapper-zypp-plugin
 
-       (Ref.: https://www.suse.com/documentation/sles-12/singlehtml/book_sle_admin/book_sle_admin.html#sec.snapper.setup.customize.auto_snapshots )
+       For further details: [Snapper Automatic Snapshot Documentation](https://www.suse.com/documentation/sles-12/singlehtml/book_sle_admin/book_sle_admin.html#sec.snapper.setup.customize.auto_snapshots)
 
   3. There can't be any subvolumes below `/` besides `.snapshots`
   4. It's usually helpful to exclude `*/.ssh` from the rollback so that SSH
