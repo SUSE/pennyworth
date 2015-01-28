@@ -249,8 +249,8 @@ In order to use a system as a pennyworth host it needs to be prepared like this:
         Enable snapper for root by running:
         snapper create-config /
 
-        Disable the timeline for the new config:
-        snapper -c root set-config "TIMELINE_CREATE=no"
+        Remove more than 5 Pennyworth snapshots and disable the timeline for the new config:
+        snapper set-config NUMBER_LIMIT=5 TIMELINE_CREATE=no
 
         Disable the automatic zypper snapshots by removing the plugin:
         zypper rm snapper-zypp-plugin
