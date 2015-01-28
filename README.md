@@ -246,16 +246,19 @@ In order to use a system as a pennyworth host it needs to be prepared like this:
   1. The root partition needs to be a Btrfs partition
   2. Snapper needs to be installed and configured for `/`:
 
-        Enable snapper for root by running:
-        snapper create-config /
+       1. Enable snapper for root by running:
 
-        Disable the timeline for the new config:
-        snapper -c root set-config "TIMELINE_CREATE=no"
+             snapper create-config /
 
-        Disable the automatic zypper snapshots by removing the plugin:
-        zypper rm snapper-zypp-plugin
+       2. Remove more than 5 Pennyworth snapshots and disable the timeline for the new config:
 
-        (Ref.: https://www.suse.com/documentation/sles-12/singlehtml/book_sle_admin/book_sle_admin.html#sec.snapper.setup.customize.auto_snapshots )
+             snapper set-config NUMBER_LIMIT=5 TIMELINE_CREATE=no
+
+       3. Disable the automatic zypper snapshots by removing the plugin:
+
+             zypper rm snapper-zypp-plugin
+
+       For further details: [Snapper Automatic Snapshot Documentation](https://www.suse.com/documentation/sles-12/singlehtml/book_sle_admin/book_sle_admin.html#sec.snapper.setup.customize.auto_snapshots)
 
   3. There can't be any subvolumes below `/` besides `.snapshots`
   4. It's usually helpful to exclude `*/.ssh` from the rollback so that SSH
