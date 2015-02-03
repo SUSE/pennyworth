@@ -73,11 +73,11 @@ describe HostRunner do
       runner.stop
     end
 
-    it "does not trigger a cleanup when SKIP_CLEANUP is set" do
+    it "does not trigger a cleanup when SKIP_HOST_CLEANUP is set" do
       runner.instance_variable_set(:@connected, true)
       expect(runner).to_not receive(:cleanup)
 
-      with_env "SKIP_CLEANUP" => "true" do
+      with_env "SKIP_HOST_CLEANUP" => "true" do
         runner.stop
       end
     end

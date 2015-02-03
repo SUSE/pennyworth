@@ -222,10 +222,10 @@ snapshot named `pennyworth` is created which can be used for debugging test
 failures.
 
 In some cases (e.g. while working on a test) the automatic rollback might not be
-desired. It can easily be disabled temporarily by setting the `SKIP_CLEANUP`
-environment variable, e.g.
+desired. It can easily be disabled temporarily by setting the
+`SKIP_HOST_CLEANUP` environment variable, e.g.
 
-    SKIP_CLEANUP=true rspec
+    SKIP_HOST_CLEANUP=true rspec
 
 An example for the configuration file is:
 

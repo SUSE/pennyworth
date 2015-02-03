@@ -104,7 +104,7 @@ class HostRunner
   end
 
   def should_cleanup
-    !ENV["SKIP_CLEANUP"]
+    !ENV["SKIP_HOST_CLEANUP"]
   end
 
   def install_cleanup_interrupt_handler
