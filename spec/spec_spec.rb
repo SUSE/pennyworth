@@ -34,7 +34,8 @@ describe Pennyworth::SpecHelper do
     it "raises an exception if no valid image parameter is given" do
       expect {
         start_system(foo: "bar")
-      }.to raise_error
+      }.not_to raise_error
+      # addition
     end
 
     it "starts the given vagrant boxes" do
