@@ -15,42 +15,15 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-# Represents a virtual machine that can be started, stopped, and interacted
-# with.
-class VM
-  attr_accessor :ip
-
-  def initialize(runner)
-    @runner = runner
-  end
-
-  def start
-    @ip = @runner.start
-  end
-
-  def stop
-    @runner.stop
-  end
-
-  def run_command(*args)
-    command_runner.run(*args)
-  end
-
-  def inject_file(source, destination, opts = {})
-    command_runner.inject_file(source, destination, opts)
-  end
-
-  def extract_file(source, destination)
-    command_runner.extract_file(source, destination)
-  end
-
-  def inject_directory(source, destination, opts = {})
-    command_runner.inject_directory(source, destination, opts)
-  end
-
-  private
-
-  def command_runner
-    @command_runner ||= @runner.command_runner
+shared_examples "a command runner" do
+  [
+    :run,
+    :inject_file,
+    :extract_file,
+    :inject_directory
+  ].each do |method|
+    it "has a #{method.to_s} method" do
+      expect(command_runner).to respond_to(method)
+    end
   end
 end

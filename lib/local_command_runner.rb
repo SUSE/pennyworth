@@ -36,15 +36,48 @@ class LocalCommandRunner
   end
 
   def run(*args)
-    command = map_to_local_commands(args)
+    options = args.last.is_a?(Hash) ? args.pop : {}
+    command = map_to_local_commands(args.map(&:split).flatten)
 
     with_env(@env) do
       Cheetah.run(
-        *command
+        *command,
+        options
       )
     end
   rescue Cheetah::ExecutionFailed => e
     raise ExecutionFailed.new(e)
+  end
+
+  # Copy a local file to the remote system.
+  #
+  # +source+:: Path to the local file
+  # +destination+:: Path to the remote file or directory. If +destination+ is a
+  #                 path, the same filename as +source+ will be used.
+  # +opts+:: Options to modify the attributes of the remote file.
+  #
+  #          Available options:
+  #          [owner]:: Owner of the file, e.g. "tux"
+  #          [group]:: Group of the file, e.g. "users"
+  #          [mode]:: Mode of the file, e.g. "600"
+  def inject_file(source, destination, opts = {})
+    # Append filename (taken from +source+) to destination if it is a path, so
+    # that +destination+ is always the full target path including the filename.
+    destination = File.join(destination, File.basename(source)) if File.directory?(destination)
+
+    FileUtils.cp(source, destination)
+    FileUtils.chown(opts[:owner], opts[:group], destination)
+    FileUtils.chmod(opts[:mode], destination) if opts[:mode]
+  end
+
+  def extract_file(source, destination)
+    FileUtils.cp(source, destination)
+  end
+
+  def inject_directory(source, destination, opts = {})
+    FileUtils.mkdir_p(destination)
+    FileUtils.cp_r(source, destination)
+    FileUtils.chown_R(opts[:owner], opts[:group], destination)
   end
 
   private
