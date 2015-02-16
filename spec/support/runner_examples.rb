@@ -23,4 +23,8 @@ shared_examples "a runner" do
   it "has a stop method" do
     expect(runner).to respond_to(:stop)
   end
+
+  it "has a command_runner method" do
+    expect(runner).to respond_to(:command_runner)
+  end
 end

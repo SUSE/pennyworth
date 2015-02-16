@@ -121,6 +121,6 @@ class VM
   private
 
   def command_runner
-    @command_runner ||= RemoteCommandRunner.new(@ip)
+    @command_runner ||= @runner.command_runner
   end
 end
