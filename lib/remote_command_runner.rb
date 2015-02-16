@@ -56,4 +56,86 @@ class RemoteCommandRunner
   rescue Cheetah::ExecutionFailed => e
     raise ExecutionFailed.new(e)
   end
+
+  # Copy a local file to the remote system.
+  #
+  # +source+:: Path to the local file
+  # +destination+:: Path to the remote file or directory. If +destination+ is a
+  #                 path, the same filename as +source+ will be used.
+  # +opts+:: Options to modify the attributes of the remote file.
+  #
+  #          Available options:
+  #          [owner]:: Owner of the file, e.g. "tux"
+  #          [group]:: Group of the file, e.g. "users"
+  #          [mode]:: Mode of the file, e.g. "600"
+  def inject_file(source, destination, opts = {})
+    # Append filename (taken from +source+) to destination if it is a path, so
+    # that +destination+ is always the full target path including the filename.
+    destination += File.basename(source) if destination.end_with?("/")
+
+    Cheetah.run(
+      "scp",
+      "-o",
+      "UserKnownHostsFile=/dev/null",
+      "-o",
+      "StrictHostKeyChecking=no",
+      source,
+      "root@#{@ip}:#{destination}"
+    )
+
+    if opts[:owner] || opts[:group]
+      owner_group = opts[:owner] || ""
+      owner_group += ":#{opts[:group]}" if opts[:group]
+      run "chown", "-R", owner_group, destination
+    end
+
+    if opts[:mode]
+      run "chmod", opts[:mode], destination
+    end
+  rescue Cheetah::ExecutionFailed => e
+    raise ExecutionFailed.new(e)
+  end
+
+  def extract_file(source, destination)
+    Cheetah.run(
+      "scp",
+      "-o",
+      "UserKnownHostsFile=/dev/null",
+      "-o",
+      "StrictHostKeyChecking=no",
+      "root@#{@ip}:#{source}",
+      destination
+    )
+  rescue Cheetah::ExecutionFailed => e
+    raise ExecutionFailed.new(e)
+  end
+
+  def inject_directory(source, destination, opts = {})
+    if opts[:owner] || opts[:group]
+      owner_group = opts[:owner] || ""
+      owner_group += ":#{opts[:group]}" if opts[:group]
+    end
+
+    chown_cmd = " && chown #{owner_group} '#{destination}'" if owner_group
+    mkdir_cmd = "test -d '#{destination}' || (mkdir -p '#{destination}' #{chown_cmd} )"
+
+    run mkdir_cmd, skip_escape: true
+
+    Cheetah.run(
+      "scp",
+      "-r",
+      "-o",
+      "UserKnownHostsFile=/dev/null",
+      "-o",
+      "StrictHostKeyChecking=no",
+      source,
+      "root@#{@ip}:#{destination}"
+    )
+
+    if owner_group
+      run "chown", "-R", owner_group, File.join(destination, File.basename(source))
+    end
+  rescue Cheetah::ExecutionFailed => e
+    raise ExecutionFailed.new(e)
+  end
 end
