@@ -77,6 +77,10 @@ class HostRunner
     @locker.release_lock(@host_name)
   end
 
+  def command_runner
+    RemoteCommandRunner.new(@ip)
+  end
+
   private
 
   # Makes sure the we can connect to the remote system as root (without a

@@ -30,12 +30,16 @@ class ImageRunner
   def start
     cleanup()
 
-    start_built_image()
+    @ip = start_built_image()
   end
 
   def stop
     system = @connection.lookup_domain_by_name(@name)
     system.destroy
+  end
+
+  def command_runner
+    RemoteCommandRunner.new(@ip)
   end
 
   private

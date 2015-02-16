@@ -25,10 +25,14 @@ class VagrantRunner
     @vagrant.run "destroy", @box
     @vagrant.run "up", @box
 
-    @vagrant.ssh_config(@box)[@box]["HostName"]
+    @ip = @vagrant.ssh_config(@box)[@box]["HostName"]
   end
 
   def stop
     @vagrant.run "halt", @box
+  end
+
+  def command_runner
+    RemoteCommandRunner.new(@ip)
   end
 end

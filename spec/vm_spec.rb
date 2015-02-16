@@ -18,15 +18,16 @@
 require "spec"
 
 describe VM do
+  let(:command_runner) { double(:run) }
+  let(:runner) { double(command_runner: command_runner) }
+  subject { VM.new(runner) }
+
   describe "#run_command" do
     it "lets a RemoteCommandRunner run the command" do
-      runner = double
-      expect(RemoteCommandRunner).to receive(:new).with("1.2.3.4").and_return(runner)
-      expect(runner).to receive(:run)
+      expect(command_runner).to receive(:run)
 
-      system = VM.new(nil)
-      system.ip = "1.2.3.4"
-      system.run_command("ls")
+      subject.ip = "1.2.3.4"
+      subject.run_command("ls")
     end
   end
 
@@ -34,9 +35,8 @@ describe VM do
     it "calls scp with source and destination as arguments" do
       expect(Cheetah).to receive(:run)
 
-      system = VM.new(nil)
-      system.ip = "1.2.3.4"
-      system.extract_file("/etc/hosts", "/tmp")
+      subject.ip = "1.2.3.4"
+      subject.extract_file("/etc/hosts", "/tmp")
     end
   end
 
@@ -44,59 +44,53 @@ describe VM do
     it "calls scp with source and destination as arguments" do
       expect(Cheetah).to receive(:run)
 
-      system = VM.new(nil)
-      system.ip = "1.2.3.4"
-      system.inject_file("/tmp/hosts", "/etc")
+      subject.ip = "1.2.3.4"
+      subject.inject_file("/tmp/hosts", "/etc")
     end
 
     it "copies the file and sets the owner" do
       expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/scp/) }
-      expect(Cheetah).to receive(:run) { |*args| expect(args.join(" ")).to match(/chown.*tux/) }
+      expect(command_runner).to receive(:run) { |*args| expect(args.join(" ")).to match(/chown.*tux/) }
 
-      system = VM.new(nil)
-      system.ip = "1.2.3.4"
-      system.inject_file("/tmp/hosts", "/etc", owner: "tux")
+      subject.ip = "1.2.3.4"
+      subject.inject_file("/tmp/hosts", "/etc", owner: "tux")
     end
 
     it "copies the file and sets the group" do
       expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/scp/) }
-      expect(Cheetah).to receive(:run) { |*args| expect(args.join(" ")).to match(/chown.*:tux/) }
+      expect(command_runner).to receive(:run) { |*args| expect(args.join(" ")).to match(/chown.*:tux/) }
 
-      system = VM.new(nil)
-      system.ip = "1.2.3.4"
-      system.inject_file("/tmp/hosts", "/etc", group: "tux")
+      subject.ip = "1.2.3.4"
+      subject.inject_file("/tmp/hosts", "/etc", group: "tux")
     end
 
     it "copies the file and sets the mode" do
       expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/scp/) }
-      expect(Cheetah).to receive(:run) { |*args| expect(args.join(" ")).to include("chmod 600") }
+      expect(command_runner).to receive(:run) { |*args| expect(args.join(" ")).to include("chmod 600") }
 
-      system = VM.new(nil)
-      system.ip = "1.2.3.4"
-      system.inject_file("/tmp/hosts", "/etc", mode: "600")
+      subject.ip = "1.2.3.4"
+      subject.inject_file("/tmp/hosts", "/etc", mode: "600")
     end
   end
 
   describe "#inject_directory" do
     it "calls scp with source and destination as arguments" do
-      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/mkdir -p/) }
+      expect(command_runner).to receive(:run) { |*args| expect(args).to include(/mkdir -p/) }
       expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/scp/) }
 
-      system = VM.new(nil)
-      system.ip = "1.2.3.4"
-      system.inject_directory("/tmp/hosts", "/etc")
+      subject.ip = "1.2.3.4"
+      subject.inject_directory("/tmp/hosts", "/etc")
     end
 
     it "copies the directory and sets the user and group" do
-      expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/mkdir -p/) }
+      expect(command_runner).to receive(:run) { |*args| expect(args).to include(/mkdir -p/) }
       expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/scp/) }
-      expect(Cheetah).to receive(:run) do |*args|
+      expect(command_runner).to receive(:run) do |*args|
         expect(args.join(" ")).to include("chown -R user:group")
       end
 
-      system = VM.new(nil)
-      system.ip = "1.2.3.4"
-      system.inject_directory("/tmp/hosts", "/etc", owner: "user", group: "group")
+      subject.ip = "1.2.3.4"
+      subject.inject_directory("/tmp/hosts", "/etc", owner: "user", group: "group")
     end
   end
 
