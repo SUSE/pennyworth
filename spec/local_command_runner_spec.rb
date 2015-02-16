@@ -17,40 +17,134 @@
 
 require "spec_helper"
 
+include GivenFilesystemSpecHelpers
+
 describe LocalCommandRunner do
+  use_given_filesystem
+  let(:command_runner) { LocalCommandRunner.new }
+
+  it_behaves_like "a command runner"
+
   describe "#run" do
     it "executes commands via Cheetah" do
-      expect(Cheetah).to receive(:run).with("foo", "bar", stdout: :capture)
+      expect(Cheetah).to receive(:run).with("bash", "-c", "foo bar", stdout: :capture)
 
-      subject.run("foo", "bar", stdout: :capture)
+      command_runner.run("foo bar", stdout: :capture)
     end
 
     it "prepends the env variable to the command" do
-      runner = LocalCommandRunner.new({
-        env: { "MACHINERY_DIR" => "/tmp" }
-      })
+      runner = LocalCommandRunner.new(
+        env: {
+          "MACHINERY_DIR" => "/tmp"
+        }
+      )
       expect(runner).to receive(:with_env).with("MACHINERY_DIR" => "/tmp").and_call_original
-      expect(Cheetah).to receive(:run).with("foo", "bar", stdout: :capture)
+      expect(Cheetah).to receive(:run).with("bash", "-c", "foo bar", stdout: :capture)
 
-      runner.run("foo", "bar", stdout: :capture)
+      runner.run("foo bar", stdout: :capture)
     end
 
     it "replaces commands according to the command map" do
-      runner = LocalCommandRunner.new({
-        command_map: { "machinery" => "/my/local/machinery" }
-      })
-      expect(Cheetah).to receive(:run).with("/my/local/machinery")
+      runner = LocalCommandRunner.new(
+        command_map: {
+          "machinery" => "/my/local/machinery"
+        }
+      )
+      expect(Cheetah).to receive(:run).with("bash", "-c", "/my/local/machinery", {})
 
       runner.run("machinery")
     end
 
     it "replaces commands according to the command map when sudo is used" do
-      runner = LocalCommandRunner.new({
-        command_map: { "machinery" => "/my/local/machinery" }
-      })
-      expect(Cheetah).to receive(:run).with("sudo", "/my/local/machinery")
+      runner = LocalCommandRunner.new(
+        command_map: {
+          "machinery" => "/my/local/machinery"
+        }
+      )
+      expect(Cheetah).to receive(:run).with("bash", "-c", "sudo /my/local/machinery", {})
 
-      runner.run("sudo", "machinery")
+      runner.run("sudo machinery")
+    end
+
+    it "does not replace commands that aren't part of the command map" do
+      runner = LocalCommandRunner.new(
+        command_map: {
+          "machinery" => "/my/local/machinery"
+        }
+      )
+      expect(Cheetah).to receive(:run).with("bash", "-c", "something_else", {})
+
+      runner.run("something_else")
+    end
+  end
+
+  describe "#extract_file" do
+    before(:each) do
+      @source_file = given_dummy_file "example.file"
+      @target = given_directory
+      @expected_file = File.join(@target, "example.file")
+    end
+
+    it "extracts the file" do
+      command_runner.extract_file(@source_file, @target)
+
+      expect(File.exists?(File.join(@target, "example.file"))).to be(true)
+    end
+  end
+
+  describe "#inject_file" do
+    before(:each) do
+      @source_file = given_dummy_file "example.file"
+      @target = given_directory
+      @expected_file = File.join(@target, "example.file")
+    end
+
+    it "injects the file" do
+      command_runner.inject_file(@source_file, @target)
+      expect(File.exists?(File.join(@target, "example.file"))).to be(true)
+    end
+
+    it "copies the file and sets the owner" do
+      expect(FileUtils).to receive(:chown).with("tux", nil, @expected_file)
+
+      command_runner.inject_file(@source_file, @target, owner: "tux")
+    end
+
+    it "copies the file and sets the group" do
+      expect(FileUtils).to receive(:chown).with(nil, "tux", @expected_file)
+
+      command_runner.inject_file(@source_file, @target, group: "tux")
+    end
+
+    it "copies the file and sets the mode" do
+      expect(FileUtils).to receive(:chmod).with("600", @expected_file)
+
+      command_runner.inject_file(@source_file, @target, mode: "600")
+    end
+  end
+
+  describe "#inject_directory" do
+    before(:each) do
+      @source_dir = given_directory do
+        @source_file = given_dummy_file "example.file"
+      end
+
+      @target = given_directory
+      @expected_dir = File.join(@target, File.basename(@source_dir))
+      @expected_file = File.join(@target, File.basename(@source_dir), "example.file")
+    end
+
+    it "injects the directory" do
+      command_runner.inject_directory(@source_dir, @target)
+
+      expect(Dir.exists?(@expected_dir)).to be(true)
+      expect(File.exists?(@expected_file)).to be(true)
+    end
+
+    it "copies the directory and sets the user and group" do
+      expect(FileUtils).to receive(:chown_R).with("user", "group", @target)
+
+      command_runner.inject_directory(@source_dir, @target, owner: "user", group: "group")
     end
   end
 end

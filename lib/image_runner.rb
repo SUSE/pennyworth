@@ -19,6 +19,7 @@ class ImageRunner
   DOMAIN_TEMPLATE = File.join(File.dirname(__FILE__) + "/../files/image_test-template.xml")
 
   attr_accessor :name
+  attr_reader :command_runner
 
   def initialize(image, name = File.basename(image))
     @image = image
@@ -28,18 +29,17 @@ class ImageRunner
   end
 
   def start
-    cleanup()
+    cleanup
 
-    @ip = start_built_image()
+    ip = start_built_image
+    @command_runner = RemoteCommandRunner.new(ip)
+
+    ip
   end
 
   def stop
     system = @connection.lookup_domain_by_name(@name)
     system.destroy
-  end
-
-  def command_runner
-    RemoteCommandRunner.new(@ip)
   end
 
   private
