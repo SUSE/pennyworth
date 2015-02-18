@@ -86,7 +86,9 @@ describe RemoteCommandRunner do
 
     it "copies the file and sets the mode" do
       expect(Cheetah).to receive(:run) { |*args| expect(args).to include(/scp/) }
-      expect(command_runner).to receive(:run) { |*args| expect(args.join(" ")).to include("chmod 600") }
+      expect(command_runner).to receive(:run) do |*args|
+        expect(args.join(" ")).to include("chmod 600")
+      end
 
       command_runner.inject_file("/tmp/hosts", "/etc", mode: "600")
     end

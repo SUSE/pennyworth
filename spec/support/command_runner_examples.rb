@@ -22,7 +22,7 @@ shared_examples "a command runner" do
     :extract_file,
     :inject_directory
   ].each do |method|
-    it "has a #{method.to_s} method" do
+    it "has a #{method} method" do
       expect(command_runner).to respond_to(method)
     end
   end

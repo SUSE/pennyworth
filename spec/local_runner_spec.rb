@@ -31,8 +31,8 @@ describe LocalRunner do
 
     it "forwards the :env and :command_map options to the LocalCommandRunner" do
       opts = {
-        :env => { "FOO" => "BAR" },
-        :command_map => { "foo" => "/bar"}
+        env: { "FOO" => "BAR" },
+        command_map: { "foo" => "/bar" }
       }
       expect(LocalCommandRunner).to receive(:new).with(opts)
 
