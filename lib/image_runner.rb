@@ -29,9 +29,9 @@ class ImageRunner
   end
 
   def start
-    cleanup()
+    cleanup
 
-    ip = start_built_image()
+    ip = start_built_image
     @command_runner = RemoteCommandRunner.new(ip)
 
     ip

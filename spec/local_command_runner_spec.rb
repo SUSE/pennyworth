@@ -33,9 +33,11 @@ describe LocalCommandRunner do
     end
 
     it "prepends the env variable to the command" do
-      runner = LocalCommandRunner.new({
-        env: { "MACHINERY_DIR" => "/tmp" }
-      })
+      runner = LocalCommandRunner.new(
+        env: {
+          "MACHINERY_DIR" => "/tmp"
+        }
+      )
       expect(runner).to receive(:with_env).with("MACHINERY_DIR" => "/tmp").and_call_original
       expect(Cheetah).to receive(:run).with("foo", "bar", stdout: :capture)
 
@@ -43,18 +45,22 @@ describe LocalCommandRunner do
     end
 
     it "replaces commands according to the command map" do
-      runner = LocalCommandRunner.new({
-        command_map: { "machinery" => "/my/local/machinery" }
-      })
+      runner = LocalCommandRunner.new(
+        command_map: {
+          "machinery" => "/my/local/machinery"
+        }
+      )
       expect(Cheetah).to receive(:run).with("/my/local/machinery", {})
 
       runner.run("machinery")
     end
 
     it "replaces commands according to the command map when sudo is used" do
-      runner = LocalCommandRunner.new({
-        command_map: { "machinery" => "/my/local/machinery" }
-      })
+      runner = LocalCommandRunner.new(
+        command_map: {
+          "machinery" => "/my/local/machinery"
+        }
+      )
       expect(Cheetah).to receive(:run).with("sudo", "/my/local/machinery", {})
 
       runner.run("sudo", "machinery")
