@@ -79,7 +79,7 @@ RSpec.configure do |config|
   config.include(Pennyworth::SpecHelper)
   config.add_setting :pennyworth_mode, default: false
   config.add_setting :vagrant_dir, default: defaults.vagrant_dir
-  config.add_setting :hosts_file, default: File.join(defaults.definitions_dir,"/hosts.yaml")
+  config.add_setting :hosts_file, default: File.join(defaults.definitions_dir, "/hosts.yaml")
 
   config.before(:all) do
     unless RSpec.configuration.pennyworth_mode
