@@ -15,25 +15,15 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-class VagrantRunner
-  attr_reader :command_runner
-
-  def initialize(box, vagrant_dir)
-    @box = box
-    @vagrant = Vagrant.new(vagrant_dir)
-  end
-
-  def start
-    @vagrant.run "destroy", @box
-    @vagrant.run "up", @box
-
-    ip = @vagrant.ssh_config(@box)[@box]["HostName"]
-    @command_runner = RemoteCommandRunner.new(ip)
-
-    ip
-  end
-
-  def stop
-    @vagrant.run "halt", @box
+shared_examples "a command runner" do
+  [
+    :run,
+    :inject_file,
+    :extract_file,
+    :inject_directory
+  ].each do |method|
+    it "has a #{method} method" do
+      expect(command_runner).to respond_to(method)
+    end
   end
 end

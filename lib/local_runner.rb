@@ -15,25 +15,20 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-class VagrantRunner
+class LocalRunner
   attr_reader :command_runner
 
-  def initialize(box, vagrant_dir)
-    @box = box
-    @vagrant = Vagrant.new(vagrant_dir)
+  def initialize(opts = {})
+    @command_runner = LocalCommandRunner.new(opts)
   end
 
   def start
-    @vagrant.run "destroy", @box
-    @vagrant.run "up", @box
+    # Nothing to do here
 
-    ip = @vagrant.ssh_config(@box)[@box]["HostName"]
-    @command_runner = RemoteCommandRunner.new(ip)
-
-    ip
+    "127.0.0.1"
   end
 
   def stop
-    @vagrant.run "halt", @box
+    # Nothing to do here either
   end
 end
