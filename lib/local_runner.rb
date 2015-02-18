@@ -16,8 +16,10 @@
 # you may find current contact information at www.suse.com
 
 class LocalRunner
+  attr_reader :command_runner
+
   def initialize(opts = {})
-    @opts = opts
+    @command_runner = LocalCommandRunner.new(opts)
   end
 
   def start
@@ -28,9 +30,5 @@ class LocalRunner
 
   def stop
     # Nothing to do here either
-  end
-
-  def command_runner
-    LocalCommandRunner.new(@opts)
   end
 end

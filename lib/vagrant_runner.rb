@@ -16,6 +16,8 @@
 # you may find current contact information at www.suse.com
 
 class VagrantRunner
+  attr_reader :command_runner
+
   def initialize(box, vagrant_dir)
     @box = box
     @vagrant = Vagrant.new(vagrant_dir)
@@ -25,14 +27,13 @@ class VagrantRunner
     @vagrant.run "destroy", @box
     @vagrant.run "up", @box
 
-    @ip = @vagrant.ssh_config(@box)[@box]["HostName"]
+    ip = @vagrant.ssh_config(@box)[@box]["HostName"]
+    @command_runner = RemoteCommandRunner.new(ip)
+
+    ip
   end
 
   def stop
     @vagrant.run "halt", @box
-  end
-
-  def command_runner
-    RemoteCommandRunner.new(@ip)
   end
 end

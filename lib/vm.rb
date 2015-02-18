@@ -51,6 +51,6 @@ class VM
   private
 
   def command_runner
-    @command_runner ||= @runner.command_runner
+    @runner.command_runner
   end
 end
