@@ -33,6 +33,7 @@ require_relative "ssh_keys_importer"
 require_relative "vm"
 require_relative "spec_profiler"
 require_relative "remote_command_runner"
+require_relative "settings"
 
 module Pennyworth
   module SpecHelper
@@ -74,10 +75,11 @@ module Pennyworth
 end
 
 RSpec.configure do |config|
+  defaults = Settings.new
   config.include(Pennyworth::SpecHelper)
   config.add_setting :pennyworth_mode, default: false
-  config.add_setting :vagrant_dir, default: ""
-  config.add_setting :hosts_file, default: "~/.pennyworth/hosts.yaml"
+  config.add_setting :vagrant_dir, default: defaults.vagrant_dir
+  config.add_setting :hosts_file, default: File.join(defaults.definitions_dir, "/hosts.yaml")
 
   config.before(:all) do
     unless RSpec.configuration.pennyworth_mode
