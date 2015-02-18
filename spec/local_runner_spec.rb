@@ -15,25 +15,28 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-class VagrantRunner
-  attr_reader :command_runner
+require "spec_helper"
 
-  def initialize(box, vagrant_dir)
-    @box = box
-    @vagrant = Vagrant.new(vagrant_dir)
-  end
+describe LocalRunner do
+  let(:runner) {
+    LocalRunner.new
+  }
 
-  def start
-    @vagrant.run "destroy", @box
-    @vagrant.run "up", @box
+  it_behaves_like "a runner"
 
-    ip = @vagrant.ssh_config(@box)[@box]["HostName"]
-    @command_runner = RemoteCommandRunner.new(ip)
+  describe "#command_runner" do
+    it "returns a LocalCommandRunner" do
+      expect(runner.command_runner).to be_a(LocalCommandRunner)
+    end
 
-    ip
-  end
+    it "forwards the :env and :command_map options to the LocalCommandRunner" do
+      opts = {
+        env: { "FOO" => "BAR" },
+        command_map: { "foo" => "/bar" }
+      }
+      expect(LocalCommandRunner).to receive(:new).with(opts)
 
-  def stop
-    @vagrant.run "halt", @box
+      LocalRunner.new(opts).command_runner
+    end
   end
 end
