@@ -18,7 +18,7 @@
 # Represents a virtual machine that can be started, stopped, and interacted
 # with.
 class VM
-  attr_accessor :ip
+  attr_accessor :ip, :runner
 
   def initialize(runner)
     @runner = runner
