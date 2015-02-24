@@ -55,7 +55,7 @@ module Pennyworth
         config.read
         runner = HostRunner.new(opts[:host], config)
       elsif opts[:local]
-        runner = LocalRunner.new(opts.select { |k, _| [:env, :command_map].include?(k) })
+        runner = LocalRunner.new(env: opts[:env])
       end
 
       raise "No image specified." unless runner

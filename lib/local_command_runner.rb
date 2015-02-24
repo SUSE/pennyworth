@@ -26,22 +26,16 @@ class LocalCommandRunner
   #            {
   #              "MACHINERY_DIR" => "/tmp/machinery"
   #            }
-  #          [command_map]:: Map which translates commands to their local equivalent, e.g.
-  #            {
-  #              "machinery" => "/home/tux/src/machinery/bin/machinery"
-  #            }
   def initialize(opts = {})
-    @command_map = opts[:command_map] || {}
     @env = opts[:env] || {}
   end
 
   def run(*args)
     options = args.last.is_a?(Hash) ? args.pop : {}
-    command = map_to_local_commands(args)
 
     with_env(@env) do
       Cheetah.run(
-        "bash", "-c", *command, options
+        "bash", "-c", *args, options
       )
     end
   rescue Cheetah::ExecutionFailed => e
@@ -77,17 +71,5 @@ class LocalCommandRunner
     FileUtils.mkdir_p(destination)
     FileUtils.cp_r(source, destination)
     FileUtils.chown_R(opts[:owner], opts[:group], destination)
-  end
-
-  private
-
-  def map_to_local_commands(command)
-    command.map! do |c|
-      @command_map.each do |original, replacement|
-        c.sub!(/^(sudo )?(#{original})/, "\\1#{replacement}")
-      end
-
-      c
-    end
   end
 end
