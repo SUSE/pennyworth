@@ -16,6 +16,8 @@
 # you may find current contact information at www.suse.com
 
 class HostRunner
+  attr_reader :command_runner
+
   def initialize(host_name, host_config)
     @host_name = host_name
     config_file = host_config.config_file
@@ -38,6 +40,7 @@ class HostRunner
       )
     end
 
+    @command_runner = RemoteCommandRunner.new(@ip)
     @locker = LockService.new(host_config.lock_server_address)
   end
 

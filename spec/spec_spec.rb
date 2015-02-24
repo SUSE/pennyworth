@@ -91,5 +91,15 @@ describe Pennyworth::SpecHelper do
       # our doubles which triggers an ugly warning message
       self.class.hooks[:after][:context].clear
     end
+
+    it "uses LocalRunner for local tests" do
+      opts = {
+        env: { "FOO" => "BAR" }
+      }
+      expect(LocalRunner).to receive(:new).with(opts).and_call_original
+      expect(SshKeysImporter).to_not receive(:import)
+
+      start_system(opts.merge(local: true))
+    end
   end
 end

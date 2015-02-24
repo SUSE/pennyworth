@@ -19,6 +19,7 @@ require "cheetah"
 require "libvirt"
 require "socket"
 require "open-uri"
+require "yaml"
 
 require_relative "exceptions"
 require_relative "helper"
@@ -34,6 +35,8 @@ require_relative "vm"
 require_relative "spec_profiler"
 require_relative "remote_command_runner"
 require_relative "settings"
+require_relative "local_runner"
+require_relative "local_command_runner"
 
 module Pennyworth
   module SpecHelper
@@ -51,6 +54,8 @@ module Pennyworth
         config = HostConfig.new(RSpec.configuration.hosts_file)
         config.read
         runner = HostRunner.new(opts[:host], config)
+      elsif opts[:local]
+        runner = LocalRunner.new(env: opts[:env])
       end
 
       raise "No image specified." unless runner
@@ -65,7 +70,7 @@ module Pennyworth
       measure("Boot machine '#{opts[:box] || opts[:image] || opts[:host]}'") do
         system.start
       end
-      if !opts[:skip_ssh_setup] && !opts[:host]
+      if !opts[:skip_ssh_setup] && !opts[:host] && !opts[:local]
         SshKeysImporter.import(system.ip, password)
       end
 
