@@ -94,8 +94,7 @@ describe Pennyworth::SpecHelper do
 
     it "uses LocalRunner for local tests" do
       opts = {
-        env: { "FOO" => "BAR" },
-        command_map: { "foo" => "/bar" }
+        env: { "FOO" => "BAR" }
       }
       expect(LocalRunner).to receive(:new).with(opts).and_call_original
       expect(SshKeysImporter).to_not receive(:import)

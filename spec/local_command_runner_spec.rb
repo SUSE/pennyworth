@@ -43,39 +43,6 @@ describe LocalCommandRunner do
 
       runner.run("foo bar", stdout: :capture)
     end
-
-    it "replaces commands according to the command map" do
-      runner = LocalCommandRunner.new(
-        command_map: {
-          "machinery" => "/my/local/machinery"
-        }
-      )
-      expect(Cheetah).to receive(:run).with("bash", "-c", "/my/local/machinery", {})
-
-      runner.run("machinery")
-    end
-
-    it "replaces commands according to the command map when sudo is used" do
-      runner = LocalCommandRunner.new(
-        command_map: {
-          "machinery" => "/my/local/machinery"
-        }
-      )
-      expect(Cheetah).to receive(:run).with("bash", "-c", "sudo /my/local/machinery", {})
-
-      runner.run("sudo machinery")
-    end
-
-    it "does not replace commands that aren't part of the command map" do
-      runner = LocalCommandRunner.new(
-        command_map: {
-          "machinery" => "/my/local/machinery"
-        }
-      )
-      expect(Cheetah).to receive(:run).with("bash", "-c", "something_else", {})
-
-      runner.run("something_else")
-    end
   end
 
   describe "#extract_file" do
