@@ -15,10 +15,10 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-class VagrantRunner
-  attr_reader :command_runner
-
+class VagrantRunner < Runner
   def initialize(box, vagrant_dir)
+    super
+
     @box = box
     @vagrant = Vagrant.new(vagrant_dir)
   end
@@ -29,11 +29,13 @@ class VagrantRunner
 
     ip = @vagrant.ssh_config(@box)[@box]["HostName"]
     @command_runner = RemoteCommandRunner.new(ip)
+    @running = true
 
     ip
   end
 
   def stop
+    @running = false
     @vagrant.run "halt", @box
   end
 end

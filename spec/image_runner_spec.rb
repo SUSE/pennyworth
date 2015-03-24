@@ -32,30 +32,41 @@ describe ImageRunner do
   let(:lease_file) {
     ["1390553648 52:54:01:60:3c:95 192.168.122.186 vagrant-opensuse 52:54:01:60:3c:95"]
   }
+  let(:system) {
+    double(
+      destroy: true
+    )
+  }
+  let(:libvirt) {
+    double(
+      create_domain_xml: true,
+      lookup_domain_by_name: system
+    )
+  }
   let(:runner) { ImageRunner.new("/path/to/image") }
 
-  describe "runner" do
-    before(:each) do
-      allow(Libvirt).to receive(:open)
-    end
+  before(:each) do
+    allow(Libvirt).to receive(:open).and_return(libvirt)
+    allow(system).to receive(:xml_desc) { libvirt_xml }
+    allow(File).to receive(:readlines) { lease_file }
 
+    allow(runner).to receive(:cleanup)
+  end
+
+  describe "runner" do
     it_behaves_like "a runner"
+  end
+
+  it "sets the running state" do
+    expect(runner.running).to be_falsey
+    runner.start
+    expect(runner.running).to be(true)
+    runner.stop
+    expect(runner.running).to be_falsey
   end
 
   describe "#start" do
     it "returns the IP address from the lease file" do
-      libvirt = double
-      system = double
-      expect(Libvirt).to receive(:open) { libvirt }
-
-      expect(libvirt).to receive(:create_domain_xml)
-      expect(libvirt).to receive(:lookup_domain_by_name) { system }
-
-      expect(system).to receive(:xml_desc) { libvirt_xml }
-      expect(File).to receive(:readlines) { lease_file }
-
-      allow(runner).to receive(:cleanup)
-
       expect(runner.start).to eq("192.168.122.186")
     end
   end

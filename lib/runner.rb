@@ -15,21 +15,11 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-class LocalRunner < Runner
-  def initialize(opts = {})
-    super
+# Base class for all Runner classes
+class Runner
+  attr_reader :command_runner, :running
 
-    @command_runner = LocalCommandRunner.new(opts)
-    @running = true
-  end
-
-  def start
-    # Nothing to do here
-
-    "127.0.0.1"
-  end
-
-  def stop
-    # Nothing to do here either
+  def initialize(*_args)
+    @running = false
   end
 end

@@ -27,4 +27,8 @@ shared_examples "a runner" do
   it "has a command_runner method" do
     expect(runner).to respond_to(:command_runner)
   end
+
+  it "has a running method" do
+    expect(runner).to respond_to(:running)
+  end
 end

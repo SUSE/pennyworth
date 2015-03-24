@@ -39,4 +39,12 @@ describe LocalRunner do
       LocalRunner.new(opts).command_runner
     end
   end
+
+  it "is always running" do
+    expect(runner.running).to be(true)
+
+    runner.stop
+
+    expect(runner.running).to be(true)
+  end
 end

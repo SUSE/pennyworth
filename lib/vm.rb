@@ -32,6 +32,10 @@ class VM
     @runner.stop
   end
 
+  def running?
+    @runner.running
+  end
+
   def run_command(*args)
     command_runner.run(*args)
   end
