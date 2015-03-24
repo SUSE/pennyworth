@@ -15,13 +15,14 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-class ImageRunner
+class ImageRunner < Runner
   DOMAIN_TEMPLATE = File.join(File.dirname(__FILE__) + "/../files/image_test-template.xml")
 
   attr_accessor :name
-  attr_reader :command_runner
 
   def initialize(image, name = File.basename(image))
+    super
+
     @image = image
     @name = name
 
@@ -33,11 +34,13 @@ class ImageRunner
 
     ip = start_built_image
     @command_runner = RemoteCommandRunner.new(ip)
+    @running = true
 
     ip
   end
 
   def stop
+    @running = false
     system = @connection.lookup_domain_by_name(@name)
     system.destroy
   end

@@ -27,7 +27,24 @@ describe HostRunner do
     HostRunner.new("test_host", host_config)
   }
 
+  before(:each) do
+    allow_any_instance_of(LockService).to receive(:request_lock).
+      and_return(true)
+    allow_any_instance_of(LockService).to receive(:release_lock).
+      and_return(true)
+    allow(runner).to receive(:connect)
+    allow(runner).to receive(:check_cleanup_capabilities)
+  end
+
   it_behaves_like "a runner"
+
+  it "sets the running state" do
+    expect(runner.running).to be_falsey
+    runner.start
+    expect(runner.running).to be(true)
+    runner.stop
+    expect(runner.running).to be_falsey
+  end
 
   describe "#initialize" do
     it "fails with error, if host is not known" do
@@ -51,21 +68,11 @@ describe HostRunner do
 
   describe "#start" do
     it "returns the IP address of the started system" do
-      expect_any_instance_of(LockService).to receive(:request_lock).
-        and_return(true)
-      expect(runner).to receive(:connect)
-      expect(runner).to receive(:check_cleanup_capabilities)
-
       expect(runner.start).to eq("host.example.com")
     end
   end
 
   describe "#stop" do
-    before(:each) do
-      expect_any_instance_of(LockService).to receive(:release_lock).
-        and_return(true)
-    end
-
     it "triggers a cleanup when the host was connected" do
       runner.instance_variable_set(:@connected, true)
       expect(runner).to receive(:cleanup)
