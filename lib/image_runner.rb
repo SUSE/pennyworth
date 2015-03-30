@@ -15,11 +15,10 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-class ImageRunner
+class ImageRunner < Runner
   DOMAIN_TEMPLATE = File.join(File.dirname(__FILE__) + "/../files/image_test-template.xml")
 
   attr_accessor :name
-  attr_reader :command_runner
 
   def initialize(image, name = File.basename(image))
     @image = image
@@ -40,6 +39,10 @@ class ImageRunner
   def stop
     system = @connection.lookup_domain_by_name(@name)
     system.destroy
+  end
+
+  def cleanup_directory(_dir)
+    # The machine will be reset anyway after the tests, so this is is a NOP
   end
 
   private

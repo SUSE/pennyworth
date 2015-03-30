@@ -15,9 +15,7 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-class HostRunner
-  attr_reader :command_runner
-
+class HostRunner < Runner
   def initialize(host_name, host_config)
     @host_name = host_name
     config_file = host_config.config_file

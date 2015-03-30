@@ -15,9 +15,7 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-class VagrantRunner
-  attr_reader :command_runner
-
+class VagrantRunner < Runner
   def initialize(box, vagrant_dir)
     @box = box
     @vagrant = Vagrant.new(vagrant_dir)
@@ -35,5 +33,9 @@ class VagrantRunner
 
   def stop
     @vagrant.run "halt", @box
+  end
+
+  def cleanup_directory(_dir)
+    # The machine will be reset anyway after the tests, so this is is a NOP
   end
 end

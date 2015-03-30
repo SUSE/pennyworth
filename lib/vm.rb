@@ -48,6 +48,10 @@ class VM
     command_runner.inject_directory(source, destination, opts)
   end
 
+  def cleanup_directory(dir)
+    runner.cleanup_directory(dir)
+  end
+
   private
 
   def command_runner
