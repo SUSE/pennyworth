@@ -46,14 +46,9 @@ describe Pennyworth::SpecHelper do
       expect(runner_two).to receive(:start)
       expect(SshKeysImporter).to receive(:import).twice
 
-      expect {
-        start_system(box: system_one)
-        start_system(box: system_two)
-      }.to change { self.class.hooks[:after][:context].size }.by(2)
-
-      # Reset after(:context) hooks, otherwise pennyworth will try to shutdown
-      # our doubles which triggers an ugly warning message
-      self.class.hooks[:after][:context].clear
+      expect(self.class).to receive(:after).twice
+      start_system(box: system_one)
+      start_system(box: system_two)
     end
 
     it "starts the given images" do
@@ -65,14 +60,9 @@ describe Pennyworth::SpecHelper do
       expect(runner_two).to receive(:start)
       expect(SshKeysImporter).to receive(:import).twice
 
-      expect {
-        start_system(image: image_one)
-        start_system(image: image_two)
-      }.to change { self.class.hooks[:after][:context].size }.by(2)
-
-      # Reset after(:context) hooks, otherwise pennyworth will try to shutdown
-      # our doubles which triggers an ugly warning message
-      self.class.hooks[:after][:context].clear
+      expect(self.class).to receive(:after).twice
+      start_system(image: image_one)
+      start_system(image: image_two)
     end
 
     it "starts the given host" do
@@ -83,13 +73,8 @@ describe Pennyworth::SpecHelper do
         and_return(runner)
       expect(SshKeysImporter).to_not receive(:import)
 
-      expect {
-        start_system(host: "test_host")
-      }.to change { self.class.hooks[:after][:context].size }.by(1)
-
-      # Reset after(:context) hooks, otherwise pennyworth will try to shutdown
-      # our doubles which triggers an ugly warning message
-      self.class.hooks[:after][:context].clear
+      expect(self.class).to receive(:after).once
+      start_system(host: "test_host")
     end
 
     it "uses LocalRunner for local tests" do
