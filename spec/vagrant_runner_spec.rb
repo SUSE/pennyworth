@@ -18,7 +18,7 @@
 require 'spec_helper'
 
 describe VagrantRunner do
-  let(:runner) { VagrantRunner.new("foo", RSpec.configuration.vagrant_dir) }
+  let(:runner) { VagrantRunner.new("foo", RSpec.configuration.vagrant_dir, "root") }
 
   it_behaves_like "a runner"
 

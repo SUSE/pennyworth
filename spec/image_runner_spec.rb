@@ -32,7 +32,7 @@ describe ImageRunner do
   let(:lease_file) {
     ["1390553648 52:54:01:60:3c:95 192.168.122.186 vagrant-opensuse 52:54:01:60:3c:95"]
   }
-  let(:runner) { ImageRunner.new("/path/to/image") }
+  let(:runner) { ImageRunner.new("/path/to/image", "root") }
 
   describe "runner" do
     before(:each) do

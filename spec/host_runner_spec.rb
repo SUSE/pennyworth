@@ -24,7 +24,7 @@ describe HostRunner do
     config
   }
   let(:runner) {
-    HostRunner.new("test_host", host_config)
+    HostRunner.new("test_host", host_config, "root")
   }
 
   it_behaves_like "a runner"
@@ -32,19 +32,19 @@ describe HostRunner do
   describe "#initialize" do
     it "fails with error, if host is not known" do
       expect {
-        HostRunner.new("invalid_name", host_config)
+        HostRunner.new("invalid_name", host_config, "root")
       }.to raise_error(InvalidHostError)
     end
 
     it "fails with error, if address is not set" do
       expect {
-        HostRunner.new("missing_address", host_config)
+        HostRunner.new("missing_address", host_config, "root")
       }.to raise_error(InvalidHostError)
     end
 
     it "fails with error, if base_snapshot_id is not set" do
       expect {
-        HostRunner.new("missing_snapshot_id", host_config)
+        HostRunner.new("missing_snapshot_id", host_config, "root")
       }.to raise_error(InvalidHostError)
     end
   end

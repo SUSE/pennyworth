@@ -17,8 +17,9 @@
 
 # The purpose of this class is to execute commands on a remote machine via SSH.
 class RemoteCommandRunner
-  def initialize(ip)
+  def initialize(ip, username)
     @ip = ip
+    @username = username
   end
 
   def run(*args)
@@ -48,7 +49,7 @@ class RemoteCommandRunner
       "UserKnownHostsFile=/dev/null",
       "-o",
       "StrictHostKeyChecking=no",
-      "root@#{@ip}",
+      "#{@username}@#{@ip}",
       "LC_ALL=C",
       *args,
       options
@@ -80,7 +81,7 @@ class RemoteCommandRunner
       "-o",
       "StrictHostKeyChecking=no",
       source,
-      "root@#{@ip}:#{destination}"
+      "#{@username}@#{@ip}:#{destination}"
     )
 
     if opts[:owner] || opts[:group]
@@ -103,7 +104,7 @@ class RemoteCommandRunner
       "UserKnownHostsFile=/dev/null",
       "-o",
       "StrictHostKeyChecking=no",
-      "root@#{@ip}:#{source}",
+      "#{@username}@#{@ip}:#{source}",
       destination
     )
   rescue Cheetah::ExecutionFailed => e
@@ -129,7 +130,7 @@ class RemoteCommandRunner
       "-o",
       "StrictHostKeyChecking=no",
       source,
-      "root@#{@ip}:#{destination}"
+      "#{@username}@#{@ip}:#{destination}"
     )
 
     if owner_group

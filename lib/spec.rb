@@ -45,16 +45,17 @@ module Pennyworth
       opts = {
         skip_ssh_setup: false
       }.merge(opts)
+      username = opts[:username] || "root"
       if opts[:box]
-        runner = VagrantRunner.new(opts[:box], RSpec.configuration.vagrant_dir)
-        password = "vagrant"
+        runner = VagrantRunner.new(opts[:box], RSpec.configuration.vagrant_dir, username)
+        password = opts[:password] || "vagrant"
       elsif opts[:image]
-        runner = ImageRunner.new(opts[:image])
-        password = "linux"
+        runner = ImageRunner.new(opts[:image], username)
+        password = opts[:password] || "linux"
       elsif opts[:host]
         config = HostConfig.new(RSpec.configuration.hosts_file)
         config.read
-        runner = HostRunner.new(opts[:host], config)
+        runner = HostRunner.new(opts[:host], config, username)
       elsif opts[:local]
         runner = LocalRunner.new(env: opts[:env])
       end
@@ -72,7 +73,7 @@ module Pennyworth
         system.start
       end
       if !opts[:skip_ssh_setup] && !opts[:host] && !opts[:local]
-        SshKeysImporter.import(system.ip, password)
+        SshKeysImporter.import(system.ip, username, password)
       end
 
       system
