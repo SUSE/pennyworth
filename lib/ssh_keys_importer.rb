@@ -18,7 +18,7 @@
 require "tempfile"
 
 class SshKeysImporter
-  def self.import(ip, password, identity_file = nil)
+  def self.import(ip, username, password, identity_file = nil)
     tmp_file = Tempfile.new("pennyworth-ssh-key-importer")
 
     cmd = "ssh-copy-id"
@@ -28,7 +28,7 @@ class SshKeysImporter
     end
     cmd << " -o \"UserKnownHostsFile=/dev/null\""
     cmd << " -o \"StrictHostKeyChecking=no\""
-    cmd << " root@#{ip}"
+    cmd << " #{username}@#{ip}"
 
     # This temporary bash script copies the SSH keys to the host using
     # ssh-copy-id.

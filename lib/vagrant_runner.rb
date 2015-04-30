@@ -16,8 +16,9 @@
 # you may find current contact information at www.suse.com
 
 class VagrantRunner < Runner
-  def initialize(box, vagrant_dir)
+  def initialize(box, vagrant_dir, username)
     @box = box
+    @username = username
     @vagrant = Vagrant.new(vagrant_dir)
   end
 
@@ -26,7 +27,7 @@ class VagrantRunner < Runner
     @vagrant.run "up", @box
 
     ip = @vagrant.ssh_config(@box)[@box]["HostName"]
-    @command_runner = RemoteCommandRunner.new(ip)
+    @command_runner = RemoteCommandRunner.new(ip, @username)
 
     ip
   end

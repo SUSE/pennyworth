@@ -20,9 +20,10 @@ class ImageRunner < Runner
 
   attr_accessor :name
 
-  def initialize(image, name = File.basename(image))
+  def initialize(image, username)
     @image = image
-    @name = name
+    @name = File.basename(image)
+    @username = username
 
     @connection = Libvirt::open("qemu:///system")
   end
@@ -31,7 +32,7 @@ class ImageRunner < Runner
     cleanup
 
     ip = start_built_image
-    @command_runner = RemoteCommandRunner.new(ip)
+    @command_runner = RemoteCommandRunner.new(ip, @username)
 
     ip
   end

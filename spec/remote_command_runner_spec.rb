@@ -19,7 +19,7 @@ require "spec_helper"
 
 describe RemoteCommandRunner do
   let(:ssh_output) { "-rw-r--r-- 1 root root 642 Sep 27 22:06 /etc/hosts" }
-  let(:command_runner) { RemoteCommandRunner.new("1.2.3.4") }
+  let(:command_runner) { RemoteCommandRunner.new("1.2.3.4", "root") }
 
   it_behaves_like "a command runner"
 

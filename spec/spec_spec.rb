@@ -39,10 +39,10 @@ describe Pennyworth::SpecHelper do
 
     it "starts the given vagrant boxes" do
       runner_one = double
-      expect(VagrantRunner).to receive(:new).with(system_one, anything) { runner_one }
+      expect(VagrantRunner).to receive(:new).with(system_one, anything, anything) { runner_one }
       expect(runner_one).to receive(:start)
       runner_two = double
-      expect(VagrantRunner).to receive(:new).with(system_two, anything) { runner_two }
+      expect(VagrantRunner).to receive(:new).with(system_two, anything, anything) { runner_two }
       expect(runner_two).to receive(:start)
       expect(SshKeysImporter).to receive(:import).twice
 
@@ -53,10 +53,10 @@ describe Pennyworth::SpecHelper do
 
     it "starts the given images" do
       runner_one = double
-      expect(ImageRunner).to receive(:new).with(image_one) { runner_one }
+      expect(ImageRunner).to receive(:new).with(image_one, anything) { runner_one }
       expect(runner_one).to receive(:start)
       runner_two = double
-      expect(ImageRunner).to receive(:new).with(image_two) { runner_two }
+      expect(ImageRunner).to receive(:new).with(image_two, anything) { runner_two }
       expect(runner_two).to receive(:start)
       expect(SshKeysImporter).to receive(:import).twice
 
@@ -69,12 +69,21 @@ describe Pennyworth::SpecHelper do
       runner = double
       expect(runner).to receive(:start)
       expect(HostRunner).to receive(:new).
-        with("test_host", instance_of(HostConfig)).
+        with("test_host", instance_of(HostConfig), "root").
         and_return(runner)
       expect(SshKeysImporter).to_not receive(:import)
 
       expect(self.class).to receive(:after).once
       start_system(host: "test_host")
+    end
+
+    it "forwards the username and password options" do
+      runner_one = double
+      expect(VagrantRunner).to receive(:new).with(system_one, anything, "machinery") { runner_one }
+      expect(runner_one).to receive(:start)
+      expect(SshKeysImporter).to receive(:import).with(anything, "machinery", "linux")
+
+      start_system(box: system_one, username: "machinery", password: "linux")
     end
 
     it "uses LocalRunner for local tests" do
