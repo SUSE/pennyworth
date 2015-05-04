@@ -16,8 +16,9 @@
 # you may find current contact information at www.suse.com
 
 class HostRunner < Runner
-  def initialize(host_name, host_config, username)
+  def initialize(host_name, host_config, username = "root")
     @host_name = host_name
+    @username = username
     config_file = host_config.config_file
 
     host = host_config.host(host_name)
@@ -38,7 +39,7 @@ class HostRunner < Runner
       )
     end
 
-    @command_runner = RemoteCommandRunner.new(@ip, username)
+    @command_runner = RemoteCommandRunner.new(@ip, @username)
     @locker = LockService.new(host_config.lock_server_address)
   end
 
@@ -60,7 +61,7 @@ class HostRunner < Runner
   def cleanup
     return if @cleaned_up || !@connected
 
-    remote = RemoteCommandRunner.new(@ip)
+    remote = RemoteCommandRunner.new(@ip, @username)
     remote.run "snapper", "create", "-c", "number", "--pre-number", @base_snapshot_id.to_s,
       "--description", "pennyworth_snapshot"
     remote.run "snapper", "cleanup", "number"
@@ -95,7 +96,7 @@ class HostRunner < Runner
 
   def check_cleanup_capabilities
     begin
-      RemoteCommandRunner.new(@ip).run "snapper", "--help"
+      RemoteCommandRunner.new(@ip, @username).run "snapper", "--help"
     rescue Cheetah::ExecutionFailed
       raise CommandNotFoundError.new(
         "Snapper needs to be installed on the test system '#{@ip}' for the automatic cleanup."
