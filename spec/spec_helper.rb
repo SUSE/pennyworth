@@ -16,7 +16,7 @@
 # you may find current contact information at www.suse.com
 
 require "pennyworth"
-require "spec"
+require "pennyworth/spec"
 require "webmock/rspec"
 require "given_filesystem/spec_helpers"
 

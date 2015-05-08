@@ -17,7 +17,7 @@
 
 require "spec_helper.rb"
 
-describe BuildBaseCommand do
+describe Pennyworth::BuildBaseCommand do
 
   let(:tmp_dir) { "/tmp/kiwi-vagrant-build-environment" }
   let(:expected_content) {
@@ -40,9 +40,9 @@ EOT
 
   context "with non-existing box state file" do
     before(:each) do
-      Cli.settings = Settings.new
+      Pennyworth::Cli.settings = Pennyworth::Settings.new
       @kiwi_dir = File.join(test_data_dir, "kiwi")
-      @cmd = BuildBaseCommand.new(@kiwi_dir)
+      @cmd = Pennyworth::BuildBaseCommand.new(@kiwi_dir)
     end
 
     it "reads box sources state of one box" do
@@ -109,9 +109,9 @@ EOT
 
   context "with existing box state file" do
     before(:each) do
-      Cli.settings = Settings.new
+      Pennyworth::Cli.settings = Pennyworth::Settings.new
       @kiwi_dir = File.join(test_data_dir, "kiwi2")
-      @cmd = BuildBaseCommand.new(@kiwi_dir)
+      @cmd = Pennyworth::BuildBaseCommand.new(@kiwi_dir)
     end
 
     it "reads box state file" do

@@ -15,7 +15,7 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require 'spec'
+require 'pennyworth/spec'
 
 describe 'Spec Profiler' do
   it "measures top level items" do

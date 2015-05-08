@@ -17,10 +17,10 @@
 
 require "spec_helper"
 
-describe Settings do
+describe Pennyworth::Settings do
 
   it "is not verbose by default" do
-    expect(Settings.new.verbose).to be(false)
+    expect(Pennyworth::Settings.new.verbose).to be(false)
   end
 
 end

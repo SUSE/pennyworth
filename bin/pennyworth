@@ -17,10 +17,10 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require_relative "../lib/pennyworth"
+require "pennyworth"
 
-Cli.settings = Settings.new
+Pennyworth::Cli.settings = Pennyworth::Settings.new
 
 begin
-  Cli.run(ARGV)
+  Pennyworth::Cli.run(ARGV)
 end

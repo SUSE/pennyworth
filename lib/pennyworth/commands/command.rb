@@ -15,16 +15,29 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require "spec_helper.rb"
+module Pennyworth
+  class Command
 
-describe Pennyworth::BaseCommand do
-  it "processes the base image parameter" do
-    c = Pennyworth::BaseCommand.new("/foo")
+    def initialize
+      Cheetah.default_options = { :logger => logger }
+    end
 
-    all_base_images = ["aaa", "bbb", "ccc"]
+    def config
+      @config ||= YAML.load_file(File.dirname(__FILE__) + "/../../config/setup.yml")
+    end
 
-    expect(c.process_base_image_parameter(all_base_images, "bbb")).to eq ["bbb"]
-    expect { c.process_base_image_parameter(all_base_images, "xxx") }.to raise_error
-    expect(c.process_base_image_parameter(all_base_images, nil)).to eq ["aaa", "bbb", "ccc"]
+    def logger
+      @logger ||= Logger.new("/tmp/pennyworth.log")
+    end
+
+    private
+
+    def print_ssh_config(vagrant, vm_name)
+      config = vagrant.ssh_config(vm_name)
+
+      config.each_pair do |host, host_config|
+        puts "#{host}\t#{host_config["HostName"]}"
+      end
+    end
   end
 end

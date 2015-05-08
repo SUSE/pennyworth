@@ -17,8 +17,8 @@
 
 require "spec_helper"
 
-describe LockService do
-  let(:lock_service) { LockService.new("lock.example.com:9999") }
+describe Pennyworth::LockService do
+  let(:lock_service) { Pennyworth::LockService.new("lock.example.com:9999") }
 
   it "creates lock object" do
     expect(lock_service.lock_server_host).to eq("lock.example.com")
@@ -48,7 +48,7 @@ describe LockService do
   it "fails to release non-existing lock" do
     expect {
       lock_service.release_lock("inexisting lock")
-    }.to raise_error(LockError)
+    }.to raise_error(Pennyworth::LockError)
   end
 
   it "releases lock" do

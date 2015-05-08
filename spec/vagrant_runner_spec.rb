@@ -17,16 +17,16 @@
 
 require 'spec_helper'
 
-describe VagrantRunner do
-  let(:runner) { VagrantRunner.new("foo", RSpec.configuration.vagrant_dir, "root") }
+describe Pennyworth::VagrantRunner do
+  let(:runner) { Pennyworth::VagrantRunner.new("foo", RSpec.configuration.vagrant_dir, "root") }
 
   it_behaves_like "a runner"
 
   describe "#start" do
     it "returns the IP address of the started system" do
-      expect_any_instance_of(Vagrant).to receive(:run).with("destroy", "foo")
-      expect_any_instance_of(Vagrant).to receive(:run).with("up", "foo")
-      expect_any_instance_of(Vagrant).to receive(:ssh_config).with("foo") {
+      expect_any_instance_of(Pennyworth::Vagrant).to receive(:run).with("destroy", "foo")
+      expect_any_instance_of(Pennyworth::Vagrant).to receive(:run).with("up", "foo")
+      expect_any_instance_of(Pennyworth::Vagrant).to receive(:ssh_config).with("foo") {
         {
           "foo" => {
             "HostName" => "1.2.3.4"

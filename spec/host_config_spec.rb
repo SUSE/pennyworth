@@ -19,17 +19,17 @@ require "spec_helper"
 
 include GivenFilesystemSpecHelpers
 
-describe HostConfig do
+describe Pennyworth::HostConfig do
   use_given_filesystem
 
   it "creates config object for config dir" do
     config_dir = given_directory
-    host_config = HostConfig.for_directory(config_dir)
+    host_config = Pennyworth::HostConfig.for_directory(config_dir)
     expect(host_config.config_file).to eq(File.join(config_dir, "hosts.yaml"))
   end
 
   it "reads config file" do
-    host_config = HostConfig.for_directory(test_data_dir)
+    host_config = Pennyworth::HostConfig.for_directory(test_data_dir)
     host_config.read
     expect(host_config.hosts).to eq(["test_host", "missing_address", "missing_snapshot_id"])
   end
@@ -38,22 +38,22 @@ describe HostConfig do
     config_dir = given_directory
     File.write(File.join(config_dir, "hosts.yaml"), "")
 
-    host_config = HostConfig.for_directory(config_dir)
+    host_config = Pennyworth::HostConfig.for_directory(config_dir)
 
     expect {
       host_config.read
-    }.to raise_error HostFileError
+    }.to raise_error Pennyworth::HostFileError
   end
 
   it "returns host" do
-    host_config = HostConfig.for_directory(test_data_dir)
+    host_config = Pennyworth::HostConfig.for_directory(test_data_dir)
     host_config.read
     expect(host_config.host("test_host")).
       to eq("address" => "host.example.com", "base_snapshot_id" => 5)
   end
 
   it "returns lock server address" do
-    host_config = HostConfig.for_directory(test_data_dir)
+    host_config = Pennyworth::HostConfig.for_directory(test_data_dir)
     host_config.read
     expect(host_config.lock_server_address).to eq("lock.example.com:9999")
   end
@@ -65,11 +65,11 @@ describe HostConfig do
         config_file = given_file "hosts.yaml"
       end
 
-      host_config = HostConfig.for_directory(config_dir)
+      host_config = Pennyworth::HostConfig.for_directory(config_dir)
 
       expect {
         host_config.setup("http://example.com/pennyworth/hosts.yaml")
-      }.to raise_error(HostFileError)
+      }.to raise_error(Pennyworth::HostFileError)
 
       expected_config_file = File.join(test_data_dir, "hosts.yaml")
       expect(File.read(config_file)).to eq(File.read(expected_config_file))
@@ -80,7 +80,7 @@ describe HostConfig do
 
       config_dir = File.join(config_base_dir, ".pennyworth")
 
-      host_config = HostConfig.for_directory(config_dir)
+      host_config = Pennyworth::HostConfig.for_directory(config_dir)
       host_config.setup("http://example.com/pennyworth/hosts.yaml")
 
       expected_config = <<EOT
@@ -95,7 +95,7 @@ EOT
 
   describe "include" do
     it "throws error when included file doesn't exist" do
-      host_config = HostConfig.new(given_directory)
+      host_config = Pennyworth::HostConfig.new(given_directory)
 
       file = <<EOT
 ---
@@ -104,7 +104,7 @@ EOT
 
       expect {
         host_config.parse(file)
-      }.to raise_error(HostFileError)
+      }.to raise_error(Pennyworth::HostFileError)
     end
 
     it "takes host from remote file" do
@@ -128,7 +128,7 @@ EOT
 include: http://ci.example.com/pennyworth/hosts.yaml
 EOT
 
-      host_config = HostConfig.new(given_directory)
+      host_config = Pennyworth::HostConfig.new(given_directory)
       host_config.parse(file)
 
       expect(host_config.host("test_host_1")["address"]).to eq("a.example.com")
@@ -158,7 +158,7 @@ hosts:
     address: b.example.com
 EOT
 
-      host_config = HostConfig.new(given_directory)
+      host_config = Pennyworth::HostConfig.new(given_directory)
       host_config.parse(file)
 
       expect(host_config.host("test_host_2")["address"]).to eq("b.example.com")
@@ -188,7 +188,7 @@ hosts:
     address: x.example.com
 EOT
 
-      host_config = HostConfig.new(given_directory)
+      host_config = Pennyworth::HostConfig.new(given_directory)
       host_config.parse(file)
 
       expect(host_config.host("test_host_3")["address"]).to eq("x.example.com")
