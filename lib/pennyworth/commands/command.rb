@@ -23,7 +23,7 @@ module Pennyworth
     end
 
     def config
-      @config ||= YAML.load_file(File.dirname(__FILE__) + "/../../config/setup.yml")
+      @config ||= YAML.load_file(File.dirname(__FILE__) + "/../../../config/setup.yml")
     end
 
     def logger
