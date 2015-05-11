@@ -31,7 +31,7 @@ class ListCommand < BaseCommand
     end
     puts
 
-    puts "Availabe VMs:"
+    puts "Available VMs:"
     VagrantCommand.new.status.each do |vm|
       puts "  #{vm}"
     end
