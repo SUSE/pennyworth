@@ -17,7 +17,7 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require "pennyworth"
+require_relative "../lib/pennyworth"
 
 Pennyworth::Cli.settings = Pennyworth::Settings.new
 
