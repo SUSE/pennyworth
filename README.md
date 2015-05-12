@@ -133,7 +133,7 @@ For example:
   - Building an image
     `$pennyworth build_base example_image --definitions-dir=example_dir`
 
-  - Listing availabe VMs
+  - Listing available VMs
     `$pennyworth list --definitions-dir=example_dir`
 
   - Starting a VM
