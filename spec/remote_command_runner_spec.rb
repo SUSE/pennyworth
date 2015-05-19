@@ -17,9 +17,9 @@
 
 require "spec_helper"
 
-describe RemoteCommandRunner do
+describe Pennyworth::RemoteCommandRunner do
   let(:ssh_output) { "-rw-r--r-- 1 root root 642 Sep 27 22:06 /etc/hosts" }
-  let(:command_runner) { RemoteCommandRunner.new("1.2.3.4", "root") }
+  let(:command_runner) { Pennyworth::RemoteCommandRunner.new("1.2.3.4", "root") }
 
   it_behaves_like "a command runner"
 
@@ -51,7 +51,7 @@ describe RemoteCommandRunner do
 
       expect {
         command_runner.run("foo")
-      }.to raise_error(ExecutionFailed)
+      }.to raise_error(Pennyworth::ExecutionFailed)
     end
   end
 

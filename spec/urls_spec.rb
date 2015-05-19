@@ -15,32 +15,32 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require "spec"
+require "pennyworth/spec"
 
-describe URLs do
+describe Pennyworth::URLs do
   describe ".join" do
     it "joins parts using slashes" do
-      expect(URLs.join("a", "b", "c")).to eq("a/b/c")
+      expect(Pennyworth::URLs.join("a", "b", "c")).to eq("a/b/c")
     end
 
     it "doesn't duplicate slashes before parts containing leading slashes" do
-      expect(URLs.join("a", "/b", "/c")).to eq("a/b/c")
+      expect(Pennyworth::URLs.join("a", "/b", "/c")).to eq("a/b/c")
     end
 
     it "doesn't duplicate slashes after parts containing trailing slashes" do
-      expect(URLs.join("a/", "b/", "c")).to eq("a/b/c")
+      expect(Pennyworth::URLs.join("a/", "b/", "c")).to eq("a/b/c")
     end
 
     it "doesn't duplicate slashes around empty parts" do
-      expect(URLs.join("a", "", "c")).to eq("a/c")
+      expect(Pennyworth::URLs.join("a", "", "c")).to eq("a/c")
     end
 
     it "preserves leading slash in the first part" do
-      expect(URLs.join("/a", "b", "c")).to eq("/a/b/c")
+      expect(Pennyworth::URLs.join("/a", "b", "c")).to eq("/a/b/c")
     end
 
     it "preserves trailing slash in the last part" do
-      expect(URLs.join("a", "b", "c/")).to eq("a/b/c/")
+      expect(Pennyworth::URLs.join("a", "b", "c/")).to eq("a/b/c/")
     end
   end
 end

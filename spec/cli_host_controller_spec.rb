@@ -19,7 +19,7 @@ require "spec_helper"
 
 include GivenFilesystemSpecHelpers
 
-describe CliHostController do
+describe Pennyworth::CliHostController do
   use_given_filesystem
 
   context "no configuration" do
@@ -27,7 +27,7 @@ describe CliHostController do
       @config_dir = given_directory
       out = double
       allow(out).to receive(:puts)
-      @controller = CliHostController.new(@config_dir, out)
+      @controller = Pennyworth::CliHostController.new(@config_dir, out)
     end
 
     describe "#setup" do
@@ -60,7 +60,7 @@ describe CliHostController do
         given_file("hosts.yaml")
       end
       @out = double
-      @controller = CliHostController.new(@config_dir, @out)
+      @controller = Pennyworth::CliHostController.new(@config_dir, @out)
     end
 
     describe "#list" do
@@ -86,25 +86,25 @@ describe CliHostController do
       it "raises error when host is not in configuration file" do
         expect {
           @controller.lock("invalid name")
-        }.to raise_error(LockError)
+        }.to raise_error(Pennyworth::LockError)
       end
 
       it "acquires lock for host" do
-        expect_any_instance_of(LockService).to receive(:request_lock).
+        expect_any_instance_of(Pennyworth::LockService).to receive(:request_lock).
           with("test_host").and_return(true)
         expect(@out).to receive(:puts).with(/test_host/)
-        expect_any_instance_of(LockService).to receive(:keep_lock)
+        expect_any_instance_of(Pennyworth::LockService).to receive(:keep_lock)
 
         @controller.lock("test_host")
       end
 
       it "fails to acquire lock for host" do
-        expect_any_instance_of(LockService).to receive(:request_lock).
+        expect_any_instance_of(Pennyworth::LockService).to receive(:request_lock).
           with("test_host").and_return(false)
-        expect_any_instance_of(LockService).to receive(:info).
+        expect_any_instance_of(Pennyworth::LockService).to receive(:info).
           with("test_host").and_return("'test_host' locked by 1.2.3.4")
         expect(@out).to receive(:puts).with(/test_host/)
-        expect_any_instance_of(LockService).to_not receive(:keep_lock)
+        expect_any_instance_of(Pennyworth::LockService).to_not receive(:keep_lock)
 
         @controller.lock("test_host")
       end

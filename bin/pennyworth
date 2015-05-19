@@ -19,8 +19,8 @@
 
 require_relative "../lib/pennyworth"
 
-Cli.settings = Settings.new
+Pennyworth::Cli.settings = Pennyworth::Settings.new
 
 begin
-  Cli.run(ARGV)
+  Pennyworth::Cli.run(ARGV)
 end

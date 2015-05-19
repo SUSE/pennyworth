@@ -15,16 +15,25 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require "spec_helper.rb"
+module Pennyworth
+  class WrongPasswordException < StandardError; end
+  class SshKeysAlreadyExistsException < StandardError; end
+  class SshConnectionFailed < StandardError; end
+  class CommandNotFoundError < StandardError; end
+  class BuildFailed < StandardError; end
+  class InvalidHostError < StandardError; end
+  class HostFileError < StandardError; end
+  class LockError < StandardError; end
 
-describe Pennyworth::BaseCommand do
-  it "processes the base image parameter" do
-    c = Pennyworth::BaseCommand.new("/foo")
+  class ExecutionFailed < StandardError
+    def initialize(e)
+      @message = e.message
+      @message += "\nStandard output:\n #{e.stdout}\n"
+      @message += "\nError output:\n #{e.stderr}\n"
+    end
 
-    all_base_images = ["aaa", "bbb", "ccc"]
-
-    expect(c.process_base_image_parameter(all_base_images, "bbb")).to eq ["bbb"]
-    expect { c.process_base_image_parameter(all_base_images, "xxx") }.to raise_error
-    expect(c.process_base_image_parameter(all_base_images, nil)).to eq ["aaa", "bbb", "ccc"]
+    def to_s
+      @message
+    end
   end
 end

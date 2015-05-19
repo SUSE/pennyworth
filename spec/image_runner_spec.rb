@@ -17,7 +17,7 @@
 
 require "spec_helper"
 
-describe ImageRunner do
+describe Pennyworth::ImageRunner do
   let(:libvirt_xml) {
     <<-EOF
       <domain type='kvm' id='52'>
@@ -32,7 +32,7 @@ describe ImageRunner do
   let(:lease_file) {
     ["1390553648 52:54:01:60:3c:95 192.168.122.186 vagrant-opensuse 52:54:01:60:3c:95"]
   }
-  let(:runner) { ImageRunner.new("/path/to/image", "root") }
+  let(:runner) { Pennyworth::ImageRunner.new("/path/to/image", "root") }
 
   describe "runner" do
     before(:each) do
@@ -46,7 +46,7 @@ describe ImageRunner do
     it "returns the IP address from the lease file" do
       libvirt = double
       system = double
-      expect(Libvirt).to receive(:open) { libvirt }
+      expect(::Libvirt).to receive(:open) { libvirt }
 
       expect(libvirt).to receive(:create_domain_xml)
       expect(libvirt).to receive(:lookup_domain_by_name) { system }

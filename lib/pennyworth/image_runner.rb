@@ -17,7 +17,7 @@
 
 module Pennyworth
   class ImageRunner < Runner
-    DOMAIN_TEMPLATE = File.join(File.dirname(__FILE__) + "/../files/image_test-template.xml")
+    DOMAIN_TEMPLATE = File.join(File.dirname(__FILE__) + "/../../files/image_test-template.xml")
 
     attr_accessor :name
 
@@ -26,7 +26,7 @@ module Pennyworth
       @name = File.basename(image)
       @username = username
 
-      @connection = Libvirt::open("qemu:///system")
+      @connection = ::Libvirt::open("qemu:///system")
     end
 
     def start

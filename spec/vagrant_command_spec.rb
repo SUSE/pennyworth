@@ -17,7 +17,7 @@
 
 require "spec_helper"
 
-describe VagrantCommand do
+describe Pennyworth::VagrantCommand do
 
   it "parses output of `vagrant status`" do
     status_output = <<-EOT
@@ -31,7 +31,7 @@ This environment represents multiple VMs. The VMs are all listed
 above with their current state. For more information about a specific
 VM, run `vagrant status NAME`.
 EOT
-    vms = VagrantCommand.parse_status status_output
+    vms = Pennyworth::VagrantCommand.parse_status status_output
     expect( vms ).to eq [ "opensuse123 (running)","opensuse131","master" ]
   end
 
@@ -40,10 +40,10 @@ EOT
       Dir.mktmpdir("vagrant_command_test") do |tmp_dir|
         dir = File.join(tmp_dir, "pennyworth")
         expect(Dir.exists?(dir)).to be(false)
-        expect(Vagrant).to receive(:new).with(dir).and_call_original
-        expect_any_instance_of(Vagrant).to receive(:run).with("init")
+        expect(Pennyworth::Vagrant).to receive(:new).with(dir).and_call_original
+        expect_any_instance_of(Pennyworth::Vagrant).to receive(:run).with("init")
 
-        VagrantCommand.setup_environment(dir)
+        Pennyworth::VagrantCommand.setup_environment(dir)
         expect(Dir.exists?(dir)).to be(true)
       end
     end

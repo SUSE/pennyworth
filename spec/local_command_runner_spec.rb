@@ -19,9 +19,9 @@ require "spec_helper"
 
 include GivenFilesystemSpecHelpers
 
-describe LocalCommandRunner do
+describe Pennyworth::LocalCommandRunner do
   use_given_filesystem
-  let(:command_runner) { LocalCommandRunner.new }
+  let(:command_runner) { Pennyworth::LocalCommandRunner.new }
 
   it_behaves_like "a command runner"
 
@@ -33,7 +33,7 @@ describe LocalCommandRunner do
     end
 
     it "prepends the env variable to the command" do
-      runner = LocalCommandRunner.new(
+      runner = Pennyworth::LocalCommandRunner.new(
         env: {
           "MACHINERY_DIR" => "/tmp"
         }

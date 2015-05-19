@@ -17,14 +17,14 @@
 
 require "spec_helper"
 
-describe Vagrant do
+describe Pennyworth::Vagrant do
   describe "#ssh_config" do
     def unindent(s)
       indent = " " * (s.split("\n").map { |l| l.match(/^\s*/)[0].size }.min || 0)
       s.gsub(/^#{indent}/, "")
     end
 
-    subject { Vagrant.new("/tmp") }
+    subject { Pennyworth::Vagrant.new("/tmp") }
 
     let(:vagrant_ssh_config_output_one) {
       unindent(<<-EOT)

@@ -15,16 +15,27 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require "spec_helper.rb"
+module Pennyworth
+  class ListCommand < BaseCommand
+    def execute
+      if @kiwi_dir
+        puts "Vagrant box definitions managed by pennyworth:"
+        local_base_images.each do |b|
+          puts "  #{b}"
+        end
+        puts
+      end
 
-describe Pennyworth::BaseCommand do
-  it "processes the base image parameter" do
-    c = Pennyworth::BaseCommand.new("/foo")
+      puts "Available Vagrant boxes:"
+      VagrantCommand.new.list.each do |box|
+        puts "  #{box}"
+      end
+      puts
 
-    all_base_images = ["aaa", "bbb", "ccc"]
-
-    expect(c.process_base_image_parameter(all_base_images, "bbb")).to eq ["bbb"]
-    expect { c.process_base_image_parameter(all_base_images, "xxx") }.to raise_error
-    expect(c.process_base_image_parameter(all_base_images, nil)).to eq ["aaa", "bbb", "ccc"]
+      puts "Available VMs:"
+      VagrantCommand.new.status.each do |vm|
+        puts "  #{vm}"
+      end
+    end
   end
 end

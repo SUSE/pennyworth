@@ -17,14 +17,14 @@
 
 require "spec_helper"
 
-describe HostRunner do
+describe Pennyworth::HostRunner do
   let(:host_config) {
-    config = HostConfig.for_directory(test_data_dir)
+    config = Pennyworth::HostConfig.for_directory(test_data_dir)
     config.read
     config
   }
   let(:runner) {
-    HostRunner.new("test_host", host_config, "root")
+    Pennyworth::HostRunner.new("test_host", host_config, "root")
   }
 
   it_behaves_like "a runner"
@@ -32,26 +32,26 @@ describe HostRunner do
   describe "#initialize" do
     it "fails with error, if host is not known" do
       expect {
-        HostRunner.new("invalid_name", host_config, "root")
-      }.to raise_error(InvalidHostError)
+        Pennyworth::HostRunner.new("invalid_name", host_config, "root")
+      }.to raise_error(Pennyworth::InvalidHostError)
     end
 
     it "fails with error, if address is not set" do
       expect {
-        HostRunner.new("missing_address", host_config, "root")
-      }.to raise_error(InvalidHostError)
+        Pennyworth::HostRunner.new("missing_address", host_config, "root")
+      }.to raise_error(Pennyworth::InvalidHostError)
     end
 
     it "fails with error, if base_snapshot_id is not set" do
       expect {
-        HostRunner.new("missing_snapshot_id", host_config, "root")
-      }.to raise_error(InvalidHostError)
+        Pennyworth::HostRunner.new("missing_snapshot_id", host_config, "root")
+      }.to raise_error(Pennyworth::InvalidHostError)
     end
   end
 
   describe "#start" do
     it "returns the IP address of the started system" do
-      expect_any_instance_of(LockService).to receive(:request_lock).
+      expect_any_instance_of(Pennyworth::LockService).to receive(:request_lock).
         and_return(true)
       expect(runner).to receive(:connect)
       expect(runner).to receive(:check_cleanup_capabilities)
@@ -62,7 +62,7 @@ describe HostRunner do
 
   describe "#stop" do
     before(:each) do
-      expect_any_instance_of(LockService).to receive(:release_lock).
+      expect_any_instance_of(Pennyworth::LockService).to receive(:release_lock).
         and_return(true)
     end
 
@@ -89,14 +89,14 @@ describe HostRunner do
       runner.instance_variable_set(:@cleaned_up, false)
       command_runner = double(:run)
       expect(command_runner).to receive(:run).at_least(:once)
-      expect(RemoteCommandRunner).to receive(:new).and_return(command_runner)
+      expect(Pennyworth::RemoteCommandRunner).to receive(:new).and_return(command_runner)
 
       runner.cleanup
     end
     it "does not clean up when the host was not connected" do
       runner.instance_variable_set(:@connected, false)
       runner.instance_variable_set(:@cleaned_up, false)
-      expect(RemoteCommandRunner).to_not receive(:new)
+      expect(Pennyworth::RemoteCommandRunner).to_not receive(:new)
 
       runner.cleanup
     end
@@ -104,7 +104,7 @@ describe HostRunner do
     it "does not clean up when the host was already cleaned up" do
       runner.instance_variable_set(:@connected, true)
       runner.instance_variable_set(:@cleaned_up, true)
-      expect(RemoteCommandRunner).to_not receive(:new)
+      expect(Pennyworth::RemoteCommandRunner).to_not receive(:new)
 
       runner.cleanup
     end

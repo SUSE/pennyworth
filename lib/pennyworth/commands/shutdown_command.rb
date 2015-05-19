@@ -15,16 +15,14 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require "spec_helper.rb"
+module Pennyworth
+  class ShutdownCommand < Command
+    def execute(name)
+      runner = ImageRunner.new(name)
 
-describe Pennyworth::BaseCommand do
-  it "processes the base image parameter" do
-    c = Pennyworth::BaseCommand.new("/foo")
-
-    all_base_images = ["aaa", "bbb", "ccc"]
-
-    expect(c.process_base_image_parameter(all_base_images, "bbb")).to eq ["bbb"]
-    expect { c.process_base_image_parameter(all_base_images, "xxx") }.to raise_error
-    expect(c.process_base_image_parameter(all_base_images, nil)).to eq ["aaa", "bbb", "ccc"]
+      VM.new(runner).stop
+    rescue
+      log "Could not shutdown image #{runner.name}. Was it running?"
+    end
   end
 end

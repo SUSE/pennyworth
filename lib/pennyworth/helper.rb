@@ -15,16 +15,25 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require "spec_helper.rb"
+# This file contains global helper methods
 
-describe Pennyworth::BaseCommand do
-  it "processes the base image parameter" do
-    c = Pennyworth::BaseCommand.new("/foo")
+def log s = nil
+  puts s unless Pennyworth::Cli.settings.silent
+end
 
-    all_base_images = ["aaa", "bbb", "ccc"]
+def with_c_locale(&block)
+  with_env "LC_ALL" => "C", &block
+end
 
-    expect(c.process_base_image_parameter(all_base_images, "bbb")).to eq ["bbb"]
-    expect { c.process_base_image_parameter(all_base_images, "xxx") }.to raise_error
-    expect(c.process_base_image_parameter(all_base_images, nil)).to eq ["aaa", "bbb", "ccc"]
+def with_env(env)
+  # ENV isn't a Hash, but a weird Hash-like object. Calling #to_hash on it
+  # will copy its items into a newly created Hash instance. This approach
+  # ensures that any modifications of ENV won't affect the stored value.
+  saved_env = ENV.to_hash
+  begin
+    ENV.replace(saved_env.merge(env))
+    yield
+  ensure
+    ENV.replace(saved_env)
   end
 end

@@ -15,16 +15,30 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require "spec_helper.rb"
+module Pennyworth
+  class VagrantRunner < Runner
+    def initialize(box, vagrant_dir, username)
+      @box = box
+      @username = username
+      @vagrant = Vagrant.new(vagrant_dir)
+    end
 
-describe Pennyworth::BaseCommand do
-  it "processes the base image parameter" do
-    c = Pennyworth::BaseCommand.new("/foo")
+    def start
+      @vagrant.run "destroy", @box
+      @vagrant.run "up", @box
 
-    all_base_images = ["aaa", "bbb", "ccc"]
+      ip = @vagrant.ssh_config(@box)[@box]["HostName"]
+      @command_runner = RemoteCommandRunner.new(ip, @username)
 
-    expect(c.process_base_image_parameter(all_base_images, "bbb")).to eq ["bbb"]
-    expect { c.process_base_image_parameter(all_base_images, "xxx") }.to raise_error
-    expect(c.process_base_image_parameter(all_base_images, nil)).to eq ["aaa", "bbb", "ccc"]
+      ip
+    end
+
+    def stop
+      @vagrant.run "halt", @box
+    end
+
+    def cleanup_directory(_dir)
+      # The machine will be reset anyway after the tests, so this is is a NOP
+    end
   end
 end

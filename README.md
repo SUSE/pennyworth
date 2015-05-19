@@ -149,7 +149,7 @@ using Pennyworth.
 To use the helper, first require it:
 
 ```ruby
-require "<pennyworth-dir>/lib/spec"
+require "pennyworth/spec"
 ```
 
 Replace `<pennyworth-dir>` with a directory into which you installed Pennyworth.

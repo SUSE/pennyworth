@@ -15,12 +15,12 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require "spec"
+require "pennyworth/spec"
 
-describe VM do
+describe Pennyworth::VM do
   let(:command_runner) { double(:run) }
   let(:runner) { double(command_runner: command_runner) }
-  subject { VM.new(runner) }
+  subject { Pennyworth::VM.new(runner) }
 
   describe "#run_command" do
     it "lets the CommandRunner run the command" do

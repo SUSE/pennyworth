@@ -15,7 +15,7 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require "spec"
+require "pennyworth/spec"
 
 describe Pennyworth::SpecHelper do
   let(:system_one) { "openSUSE_13.1" }
@@ -39,12 +39,12 @@ describe Pennyworth::SpecHelper do
 
     it "starts the given vagrant boxes" do
       runner_one = double
-      expect(VagrantRunner).to receive(:new).with(system_one, anything, anything) { runner_one }
+      expect(Pennyworth::VagrantRunner).to receive(:new).with(system_one, anything, anything) { runner_one }
       expect(runner_one).to receive(:start)
       runner_two = double
-      expect(VagrantRunner).to receive(:new).with(system_two, anything, anything) { runner_two }
+      expect(Pennyworth::VagrantRunner).to receive(:new).with(system_two, anything, anything) { runner_two }
       expect(runner_two).to receive(:start)
-      expect(SshKeysImporter).to receive(:import).twice
+      expect(Pennyworth::SshKeysImporter).to receive(:import).twice
 
       expect(self.class).to receive(:after).twice
       start_system(box: system_one)
@@ -53,12 +53,12 @@ describe Pennyworth::SpecHelper do
 
     it "starts the given images" do
       runner_one = double
-      expect(ImageRunner).to receive(:new).with(image_one, anything) { runner_one }
+      expect(Pennyworth::ImageRunner).to receive(:new).with(image_one, anything) { runner_one }
       expect(runner_one).to receive(:start)
       runner_two = double
-      expect(ImageRunner).to receive(:new).with(image_two, anything) { runner_two }
+      expect(Pennyworth::ImageRunner).to receive(:new).with(image_two, anything) { runner_two }
       expect(runner_two).to receive(:start)
-      expect(SshKeysImporter).to receive(:import).twice
+      expect(Pennyworth::SshKeysImporter).to receive(:import).twice
 
       expect(self.class).to receive(:after).twice
       start_system(image: image_one)
@@ -68,10 +68,10 @@ describe Pennyworth::SpecHelper do
     it "starts the given host" do
       runner = double
       expect(runner).to receive(:start)
-      expect(HostRunner).to receive(:new).
-        with("test_host", instance_of(HostConfig), "root").
+      expect(Pennyworth::HostRunner).to receive(:new).
+        with("test_host", instance_of(Pennyworth::HostConfig), "root").
         and_return(runner)
-      expect(SshKeysImporter).to_not receive(:import)
+      expect(Pennyworth::SshKeysImporter).to_not receive(:import)
 
       expect(self.class).to receive(:after).once
       start_system(host: "test_host")
@@ -79,9 +79,9 @@ describe Pennyworth::SpecHelper do
 
     it "forwards the username and password options" do
       runner_one = double
-      expect(VagrantRunner).to receive(:new).with(system_one, anything, "machinery") { runner_one }
+      expect(Pennyworth::VagrantRunner).to receive(:new).with(system_one, anything, "machinery") { runner_one }
       expect(runner_one).to receive(:start)
-      expect(SshKeysImporter).to receive(:import).with(anything, "machinery", "linux")
+      expect(Pennyworth::SshKeysImporter).to receive(:import).with(anything, "machinery", "linux")
 
       start_system(box: system_one, username: "machinery", password: "linux")
     end
@@ -90,8 +90,8 @@ describe Pennyworth::SpecHelper do
       opts = {
         env: { "FOO" => "BAR" }
       }
-      expect(LocalRunner).to receive(:new).with(opts).and_call_original
-      expect(SshKeysImporter).to_not receive(:import)
+      expect(Pennyworth::LocalRunner).to receive(:new).with(opts).and_call_original
+      expect(Pennyworth::SshKeysImporter).to_not receive(:import)
 
       start_system(opts.merge(local: true))
     end

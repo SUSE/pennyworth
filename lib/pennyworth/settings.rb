@@ -15,16 +15,28 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require "spec_helper.rb"
+module Pennyworth
+  class Settings
 
-describe Pennyworth::BaseCommand do
-  it "processes the base image parameter" do
-    c = Pennyworth::BaseCommand.new("/foo")
+    attr_accessor :verbose, :silent, :definitions_dir
 
-    all_base_images = ["aaa", "bbb", "ccc"]
+    def initialize
+      @verbose = false
+      @silent = false
+      @definitions_dir = File.expand_path("~/.pennyworth")
+    end
 
-    expect(c.process_base_image_parameter(all_base_images, "bbb")).to eq ["bbb"]
-    expect { c.process_base_image_parameter(all_base_images, "xxx") }.to raise_error
-    expect(c.process_base_image_parameter(all_base_images, nil)).to eq ["aaa", "bbb", "ccc"]
+    def kiwi_dir
+      File.join(@definitions_dir, "/kiwi")
+    end
+
+    def vagrant_dir
+      File.join(@definitions_dir, "/vagrant")
+    end
+
+    def version
+      Pennyworth::VERSION
+    end
+
   end
 end

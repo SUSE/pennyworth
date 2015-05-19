@@ -17,16 +17,16 @@
 
 require "spec_helper"
 
-describe LocalRunner do
+describe Pennyworth::LocalRunner do
   let(:runner) {
-    LocalRunner.new
+    Pennyworth::LocalRunner.new
   }
 
   it_behaves_like "a runner"
 
   describe "#command_runner" do
     it "returns a LocalCommandRunner" do
-      expect(runner.command_runner).to be_a(LocalCommandRunner)
+      expect(runner.command_runner).to be_a(Pennyworth::LocalCommandRunner)
     end
 
     it "forwards the :env and :command_map options to the LocalCommandRunner" do
@@ -34,9 +34,9 @@ describe LocalRunner do
         env: { "FOO" => "BAR" },
         command_map: { "foo" => "/bar" }
       }
-      expect(LocalCommandRunner).to receive(:new).with(opts)
+      expect(Pennyworth::LocalCommandRunner).to receive(:new).with(opts)
 
-      LocalRunner.new(opts).command_runner
+      Pennyworth::LocalRunner.new(opts).command_runner
     end
   end
 end

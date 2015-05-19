@@ -17,11 +17,11 @@
 
 require "spec_helper.rb"
 
-describe ImportBaseCommand do
+describe Pennyworth::ImportBaseCommand do
 
   before(:all) do
-    Cli.settings = Settings.new
-    Cli.settings.definitions_dir = test_data_dir
+    Pennyworth::Cli.settings = Pennyworth::Settings.new
+    Pennyworth::Cli.settings.definitions_dir = test_data_dir
   end
 
   before(:each) do
@@ -34,7 +34,7 @@ describe ImportBaseCommand do
   context "without box state file" do
     before(:each) do
       @kiwi_dir = File.join(test_data_dir, "kiwi")
-      @cmd = ImportBaseCommand.new(@kiwi_dir, "http://example.com/pennyworth/")
+      @cmd = Pennyworth::ImportBaseCommand.new(@kiwi_dir, "http://example.com/pennyworth/")
       allow(Pennyworth::Libvirt).to receive(:ensure_libvirt_env_started)
       allow(@cmd).to receive(:log)
       allow(@cmd).to receive(:write_import_state_file) # Don't write state
@@ -42,7 +42,7 @@ describe ImportBaseCommand do
 
     it "imports a local box" do
       expect(@cmd).to receive(:base_image_clean).with("base_opensuse12.3_kvm")
-      expect_any_instance_of(Vagrant).to receive(:run).with("box", "add",
+      expect_any_instance_of(Pennyworth::Vagrant).to receive(:run).with("box", "add",
         "base_opensuse12.3_kvm", "#{@kiwi_dir}/base_opensuse12.3_kvm.box",
         "--force")
 
@@ -53,7 +53,7 @@ describe ImportBaseCommand do
       allow(@cmd).to receive(:fetch_remote_box_state_file)
 
       expect(@cmd).to receive(:base_image_clean).with("base_opensuse13.1_kvm")
-      expect_any_instance_of(Vagrant).to receive(:run).with("box", "add",
+      expect_any_instance_of(Pennyworth::Vagrant).to receive(:run).with("box", "add",
         "base_opensuse13.1_kvm",
         "http://example.com/pennyworth/base_opensuse13.1_kvm.box", "--force")
 
@@ -66,14 +66,14 @@ describe ImportBaseCommand do
       end
 
       it "fetches the box state file from an url with a trailing slash" do
-        cmd = ImportBaseCommand.new(@kiwi_dir, "http://example.com/pennyworth/")
+        cmd = Pennyworth::ImportBaseCommand.new(@kiwi_dir, "http://example.com/pennyworth/")
         cmd.read_remote_box_state_file()
 
         assert_requested(@box_state_get)
       end
 
       it "fetches the box state file from an url without a trailing slash" do
-        cmd = ImportBaseCommand.new(@kiwi_dir, "http://example.com/pennyworth")
+        cmd = Pennyworth::ImportBaseCommand.new(@kiwi_dir, "http://example.com/pennyworth")
         cmd.read_remote_box_state_file()
 
         assert_requested(@box_state_get)
@@ -84,7 +84,7 @@ describe ImportBaseCommand do
   context "with box state file" do
     before(:each) do
       @kiwi_dir = File.join(test_data_dir, "kiwi2")
-      @cmd = ImportBaseCommand.new(@kiwi_dir)
+      @cmd = Pennyworth::ImportBaseCommand.new(@kiwi_dir)
       allow(Pennyworth::Libvirt).to receive(:ensure_libvirt_env_started)
       allow(@cmd).to receive(:log)
       allow(@cmd).to receive(:fetch_remote_box_state_file).and_return(
@@ -94,7 +94,7 @@ describe ImportBaseCommand do
     it "writes import state file" do
       allow(@cmd).to receive(:base_image_clean)
       allow(@cmd).to receive(:vagrant)
-      allow_any_instance_of(Vagrant).to receive(:run)
+      allow_any_instance_of(Pennyworth::Vagrant).to receive(:run)
 
       import_state_file = File.join(@kiwi_dir, "import_state.yaml")
 
@@ -127,7 +127,7 @@ base_opensuse12.3_kvm: e4e743b5340686d8488dbce54b5644d8
   context "with box and import state files" do
     before(:each) do
       @kiwi_dir = File.join(test_data_dir, "kiwi3")
-      @cmd = ImportBaseCommand.new(@kiwi_dir, "http://example.com/pennyworth/")
+      @cmd = Pennyworth::ImportBaseCommand.new(@kiwi_dir, "http://example.com/pennyworth/")
       allow(Pennyworth::Libvirt).to receive(:ensure_libvirt_env_started)
       allow(@cmd).to receive(:log)
       allow(@cmd).to receive(:write_import_state_file) # Don't write state
@@ -137,28 +137,28 @@ base_opensuse12.3_kvm: e4e743b5340686d8488dbce54b5644d8
 
     it "imports changed local box" do
       expect(@cmd).to receive(:base_image_clean)
-      expect_any_instance_of(Vagrant).to receive(:run)
+      expect_any_instance_of(Pennyworth::Vagrant).to receive(:run)
 
       @cmd.execute("base_opensuse12.3_kvm", :local => true)
     end
 
     it "doesn't import unchanged local box" do
       expect(@cmd).to_not receive(:base_image_clean)
-      expect_any_instance_of(Vagrant).to_not receive(:run)
+      expect_any_instance_of(Pennyworth::Vagrant).to_not receive(:run)
 
       @cmd.execute("base_opensuse13.1_kvm", :local => true)
     end
 
     it "imports changed remote box" do
       expect(@cmd).to receive(:base_image_clean)
-      expect_any_instance_of(Vagrant).to receive(:run)
+      expect_any_instance_of(Pennyworth::Vagrant).to receive(:run)
 
       @cmd.execute("base_opensuse13.2_kvm")
     end
 
     it "doesn't import unchanged remote box" do
       expect(@cmd).to_not receive(:base_image_clean)
-      expect_any_instance_of(Vagrant).to_not receive(:run)
+      expect_any_instance_of(Pennyworth::Vagrant).to_not receive(:run)
 
       @cmd.execute("base_opensuse13.1_kvm")
     end
@@ -167,14 +167,14 @@ base_opensuse12.3_kvm: e4e743b5340686d8488dbce54b5644d8
   context "without box state, but with import state files" do
     before(:each) do
       @kiwi_dir = File.join(test_data_dir, "kiwi4")
-      @cmd = ImportBaseCommand.new(@kiwi_dir)
+      @cmd = Pennyworth::ImportBaseCommand.new(@kiwi_dir)
       allow(Pennyworth::Libvirt).to receive(:ensure_libvirt_env_started)
       allow(@cmd).to receive(:log)
     end
 
     it "removes imported state after import" do
       expect(@cmd).to receive(:base_image_clean)
-      expect_any_instance_of(Vagrant).to receive(:run)
+      expect_any_instance_of(Pennyworth::Vagrant).to receive(:run)
 
       import_state = @cmd.read_import_state_file
       expect(import_state["base_opensuse13.1_kvm"]).to eq "115469c104dcc69455f321eb086ffb11"

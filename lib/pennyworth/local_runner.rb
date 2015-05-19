@@ -15,16 +15,20 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-require "spec_helper.rb"
+module Pennyworth
+  class LocalRunner < Runner
+    def initialize(opts = {})
+      @command_runner = LocalCommandRunner.new(opts)
+    end
 
-describe Pennyworth::BaseCommand do
-  it "processes the base image parameter" do
-    c = Pennyworth::BaseCommand.new("/foo")
+    def start
+      # Nothing to do here
 
-    all_base_images = ["aaa", "bbb", "ccc"]
+      "127.0.0.1"
+    end
 
-    expect(c.process_base_image_parameter(all_base_images, "bbb")).to eq ["bbb"]
-    expect { c.process_base_image_parameter(all_base_images, "xxx") }.to raise_error
-    expect(c.process_base_image_parameter(all_base_images, nil)).to eq ["aaa", "bbb", "ccc"]
+    def stop
+      # Nothing to do here either
+    end
   end
 end
