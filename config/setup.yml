@@ -14,4 +14,4 @@
    "13.2":
      - qemu-kvm             # Needed to run VMs
    remote:
-     - https://dl.bintray.com/mitchellh/vagrant/vagrant_1.6.3_x86_64.rpm
+     - https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.2_x86_64.rpm
