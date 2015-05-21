@@ -25,6 +25,7 @@ module Pennyworth
 
     def execute
       # Install dependencies
+      show_warning_for_unsupported_platforms
       install_packages
       reload_udev_rules
       install_vagrant_plugin
@@ -75,6 +76,26 @@ module Pennyworth
       log "Reloading udev rules"
       Cheetah.run "sudo", "/sbin/udevadm", "control", "--reload-rules"
       Cheetah.run "sudo", "/sbin/udevadm", "trigger"
+    end
+
+    def show_warning_for_unsupported_platforms
+      os_file = "/etc/os-release"
+      warning = true
+      current_os = {}
+      supported_os = [
+        { version: "\"13.2\"", distribution: "openSUSE" },
+        { version: "\"12\"", distribution: "SLES" }
+      ]
+      if File.exist?(os_file)
+        File.readlines(os_file).each do |line|
+          current_os[:version] = line.split("=")[1].strip if /^VERSION_ID=/.match(line)
+          current_os[:distribution] = line.split("=")[1].strip if /^NAME=/.match(line)
+        end
+
+        warning = false if supported_os.include?(current_os)
+      end
+      log "Warning: Pennyworth is not tested upstream on this platform. " \
+        "Use at your own risk." if warning
     end
 
     def install_vagrant_plugin
