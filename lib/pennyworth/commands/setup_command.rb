@@ -87,7 +87,7 @@ module Pennyworth
     def install_vagrant_plugin
       log "Installing libvirt plugin for Vagrant..."
 
-      Cheetah.run "vagrant", "plugin", "install", "--plugin-version", "0.0.16", "vagrant-libvirt"
+      Cheetah.run "vagrant", "plugin", "install", "vagrant-libvirt"
     end
 
     def add_user_to_groups
