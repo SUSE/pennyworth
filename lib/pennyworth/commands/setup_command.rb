@@ -63,7 +63,14 @@ module Pennyworth
 
       config["packages"]["remote"].each do |url|
         log "  * Downloading and installing #{url}..."
-        Cheetah.run "sudo", "rpm", "--install", "--replacepkgs", url
+        Cheetah.run(
+          "sudo",
+          "zypper",
+          "--non-interactive",
+          "install",
+          "--auto-agree-with-licenses",
+          url
+        )
       end
     end
 
