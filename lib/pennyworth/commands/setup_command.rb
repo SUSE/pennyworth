@@ -79,23 +79,20 @@ module Pennyworth
     end
 
     def show_warning_for_unsupported_platforms
-      os_file = "/etc/os-release"
-      warning = true
-      current_os = {}
-      supported_os = [
-        { version: "\"13.2\"", distribution: "openSUSE" },
-        { version: "\"12\"", distribution: "SLES" }
-      ]
-      if File.exist?(os_file)
-        File.readlines(os_file).each do |line|
-          current_os[:version] = line.split("=")[1].strip if /^VERSION_ID=/.match(line)
-          current_os[:distribution] = line.split("=")[1].strip if /^NAME=/.match(line)
-        end
+      supported_os = ["openSUSE 13.2", "SLES 12"]
 
-        warning = false if supported_os.include?(current_os)
+      os_release_file = "/etc/os-release"
+      os_release = File.read(os_release_file) if File.exist?(os_release_file)
+
+      if os_release
+          version = os_release[/^VERSION_ID="(.*)"/, 1]
+          distribution = os_release[/^NAME="(.*)"/, 1]
       end
-      log "Warning: Pennyworth is not tested upstream on this platform. " \
-        "Use at your own risk." if warning
+
+      if !os_release || !supported_os.include?("#{distribution} #{version}")
+        log "Warning: Pennyworth is not tested upstream on this platform. " \
+          "Use at your own risk."
+      end
     end
 
     def install_vagrant_plugin
