@@ -32,7 +32,7 @@ and [SUSE Linux Enterprise Server 12](https://www.suse.com/products/server/).
 It may not work with other openSUSE versions, Linux distributions, or
 operating systems.
 
-The following steps will make Pennyworth run on a vanilla openSUSE 13.1 system.
+The following steps will make Pennyworth run on a vanilla openSUSE 13.2 system.
 
   1. **Install required packages**
 
