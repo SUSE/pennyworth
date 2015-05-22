@@ -25,6 +25,7 @@ module Pennyworth
 
     def execute
       # Install dependencies
+      show_warning_for_unsupported_platforms
       install_packages
       reload_udev_rules
       install_vagrant_plugin
@@ -35,6 +36,27 @@ module Pennyworth
       allow_libvirt_access
       allow_qemu_kvm_access
       allow_arp_access
+    end
+
+    def show_warning_for_unsupported_platforms
+      supported_os = ["openSUSE 13.2", "SLES 12"]
+
+      os_release = read_os_release_file
+
+      if os_release
+        version = os_release[/^VERSION_ID="(.*)"/, 1]
+        distribution = os_release[/^NAME="(.*)"/, 1]
+      end
+
+      if !os_release || !supported_os.include?("#{distribution} #{version}")
+        log "Warning: Pennyworth is not tested upstream on this platform. " \
+          "Use at your own risk."
+      end
+    end
+
+    def read_os_release_file
+      os_release_file = "/etc/os-release"
+      File.read(os_release_file) if File.exist?(os_release_file)
     end
 
     private
