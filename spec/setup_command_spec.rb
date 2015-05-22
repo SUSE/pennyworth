@@ -17,7 +17,7 @@
 require_relative "../lib/pennyworth/commands/setup_command.rb"
 
 describe Pennyworth::SetupCommand do
-  let(:setup_command) {Pennyworth::SetupCommand.new}
+  let(:setup_command) { Pennyworth::SetupCommand.new }
 
   describe "#show_warning_for_unsupported_platforms" do
     it "shows warning if current distribution is openSUSE 13.1" do
