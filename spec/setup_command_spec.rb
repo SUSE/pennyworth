@@ -16,22 +16,17 @@
 # you may find current contact information at www.suse.com
 require_relative "../lib/pennyworth/commands/setup_command.rb"
 
-describe Pennyworth::SetupCommand do 
+describe Pennyworth::SetupCommand do
   setup_command = Pennyworth::SetupCommand.new
 
   describe "#show_warning_for_unsupported_platforms" do
-
     it "shows warning if current distribution is openSUSE 13.1" do
-
-      openSUSE_131_release_file = <<-EOF
+      openSUSE131_release_file = <<-EOF
 NAME=openSUSE
 VERSION="13.1 (Bottle)"
 VERSION_ID="13.1"
 EOF
-      expect(setup_command).to receive(:read_os_release_file)
-        .and_return(openSUSE_131_release_file)
-
-      
+      expect(setup_command).to receive(:read_os_release_file).and_return(openSUSE131_release_file)
 
       expect(setup_command).to receive(:log).with(
         "Warning: Pennyworth is not tested upstream on this platform. " \
@@ -48,10 +43,7 @@ VERSION="12"
 VERSION_ID="12"
 PRETTY_NAME="SUSE Linux Enterprise Server 12"
 EOF
-      expect(setup_command).to receive(:read_os_release_file)
-        .and_return(sles12_release_file)
-
-      
+      expect(setup_command).to receive(:read_os_release_file).and_return(sles12_release_file)
 
       expect(setup_command).not_to receive(:log).with(
         "Warning: Pennyworth is not tested upstream on this platform. " \
@@ -59,7 +51,6 @@ EOF
       )
 
       setup_command.show_warning_for_unsupported_platforms
-      
     end
   end
 end

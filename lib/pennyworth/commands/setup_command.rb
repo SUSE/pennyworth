@@ -56,7 +56,7 @@ module Pennyworth
 
     def read_os_release_file
       os_release_file = "/etc/os-release"
-      os_release = File.read(os_release_file) if File.exist?(os_release_file)
+      File.read(os_release_file) if File.exist?(os_release_file)
     end
 
     private
