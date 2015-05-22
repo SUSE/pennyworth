@@ -27,11 +27,12 @@ the environment of the integration tests.
 
 ## Installation
 
-Pennyworth is tested on [openSUSE 13.1](http://en.opensuse.org/Portal:13.1).
+Pennyworth is tested on [openSUSE 13.2](https://en.opensuse.org/Portal:13.2) 
+and [SUSE Linux Enterprise Server 12](https://www.suse.com/products/server/).
 It may not work with other openSUSE versions, Linux distributions, or
 operating systems.
 
-The following steps will make Pennyworth run on a vanilla openSUSE 13.1 system.
+The following steps will make Pennyworth run on a vanilla openSUSE 13.2 system.
 
   1. **Install required packages**
 
