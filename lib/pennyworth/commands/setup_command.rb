@@ -38,6 +38,27 @@ module Pennyworth
       allow_arp_access
     end
 
+    def show_warning_for_unsupported_platforms
+      supported_os = ["openSUSE 13.2", "SLES 12"]
+
+      os_release = read_os_release_file
+
+      if os_release
+        version = os_release[/^VERSION_ID="(.*)"/, 1]
+        distribution = os_release[/^NAME="(.*)"/, 1]
+      end
+
+      if !os_release || !supported_os.include?("#{distribution} #{version}")
+        log "Warning: Pennyworth is not tested upstream on this platform. " \
+          "Use at your own risk."
+      end
+    end
+
+    def read_os_release_file
+      os_release_file = "/etc/os-release"
+      os_release = File.read(os_release_file) if File.exist?(os_release_file)
+    end
+
     private
 
     def install_packages
@@ -76,23 +97,6 @@ module Pennyworth
       log "Reloading udev rules"
       Cheetah.run "sudo", "/sbin/udevadm", "control", "--reload-rules"
       Cheetah.run "sudo", "/sbin/udevadm", "trigger"
-    end
-
-    def show_warning_for_unsupported_platforms
-      supported_os = ["openSUSE 13.2", "SLES 12"]
-
-      os_release_file = "/etc/os-release"
-      os_release = File.read(os_release_file) if File.exist?(os_release_file)
-
-      if os_release
-          version = os_release[/^VERSION_ID="(.*)"/, 1]
-          distribution = os_release[/^NAME="(.*)"/, 1]
-      end
-
-      if !os_release || !supported_os.include?("#{distribution} #{version}")
-        log "Warning: Pennyworth is not tested upstream on this platform. " \
-          "Use at your own risk."
-      end
     end
 
     def install_vagrant_plugin
