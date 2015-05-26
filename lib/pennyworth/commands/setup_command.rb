@@ -61,6 +61,18 @@ module Pennyworth
 
     private
 
+    def zypper_install(package)
+      Cheetah.run(
+        "sudo",
+        "zypper",
+        "--non-interactive",
+        "install",
+        "--auto-agree-with-licenses",
+        "--name",
+        package
+      )
+    end
+
     def install_packages
       log "Installing packages:"
 
@@ -70,22 +82,14 @@ module Pennyworth
         packages += config["packages"][base_system]
       end
 
-      packages.each do |package|
-        log "  * Installing #{package}..."
-        Cheetah.run(
-          "sudo",
-          "zypper",
-          "--non-interactive",
-          "install",
-          "--auto-agree-with-licenses",
-          "--name",
-          package
-        )
+      packages.each do |name|
+        log "  * Installing #{name}..."
+        zypper_install(name)
       end
 
       config["packages"]["remote"].each do |url|
         log "  * Downloading and installing #{url}..."
-        Cheetah.run "sudo", "rpm", "--install", "--replacepkgs", url
+        zypper_install(url)
       end
     end
 
@@ -102,7 +106,7 @@ module Pennyworth
     def install_vagrant_plugin
       log "Installing libvirt plugin for Vagrant..."
 
-      Cheetah.run "vagrant", "plugin", "install", "--plugin-version", "0.0.16", "vagrant-libvirt"
+      Cheetah.run "vagrant", "plugin", "install", "vagrant-libvirt"
     end
 
     def add_user_to_groups
