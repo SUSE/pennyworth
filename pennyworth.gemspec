@@ -37,6 +37,7 @@ Gem::Specification.new do |s|
     helpers are provided.
   EOT
 
+  s.required_ruby_version = ">= 2.0.0"
   s.required_rubygems_version = ">= 1.3.6"
   s.rubyforge_project         = "pennyworth"
 
