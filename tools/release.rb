@@ -38,7 +38,7 @@ class Release
     set_version
     finalize_news_file
 
-    # commit
+    commit
   end
 
   # Calculates the next version number according to the release type (:major, :minor or :patch)
