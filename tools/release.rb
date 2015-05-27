@@ -19,15 +19,16 @@
 require_relative "release_checks"
 class Release
   include ReleaseChecks
+
   def initialize(opts = {})
     @options = {
-      version:      generate_development_version
+      version: generate_development_version
     }.merge(opts)
     @release_version = @options[:version]
-    @tag             = "v#{@release_version}"
-    @release_time    = Time.now.strftime("%a %b %d %H:%M:%S %Z %Y")
-    @mail            = Cheetah.run(["git", "config", "user.email"], stdout: :capture).chomp
-    @gemspec         = Gem::Specification.load("pennyworth.gemspec")
+    @tag = "v#{@release_version}"
+    @release_time = Time.now.strftime("%a %b %d %H:%M:%S %Z %Y")
+    @mail = Cheetah.run(["git", "config", "user.email"], stdout: :capture).chomp
+    @gemspec = Gem::Specification.load("pennyworth.gemspec")
   end
 
   # Commit version changes, tag release and push changes upstream.
