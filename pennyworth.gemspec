@@ -20,7 +20,7 @@
 require File.expand_path("../lib/pennyworth/version", __FILE__)
 
 Gem::Specification.new do |s|
-  s.name        = "pennyworth"
+  s.name        = "pennyworth-tool"
   s.version     = Pennyworth::VERSION
   s.license     = 'GPL-3.0'
   s.platform    = Gem::Platform::RUBY
