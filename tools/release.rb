@@ -21,7 +21,6 @@ require_relative "release_checks"
 
 class Release
   include ReleaseChecks
-
   def initialize(opts = {})
     @options = {
       version:      generate_development_version
@@ -103,5 +102,4 @@ class Release
 
     "#{Pennyworth::VERSION}.#{timestamp}git#{commit_id}"
   end
-
 end
