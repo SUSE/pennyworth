@@ -1,6 +1,7 @@
 # Pennyworth
 
 [![Code Climate](https://codeclimate.com/github/SUSE/pennyworth/badges/gpa.svg)](https://codeclimate.com/github/SUSE/pennyworth)
+[![Gem Version](https://badge.fury.io/rb/pennyworth-tool.svg)](http://badge.fury.io/rb/pennyworth-tool)
 
 Pennyworth is a tool for running integration tests inside a network of virtual
 machines. It allows the user to define virtual machines, build them as Vagrant
@@ -27,7 +28,7 @@ the environment of the integration tests.
 
 ## Installation
 
-Pennyworth is tested on [openSUSE 13.2](https://en.opensuse.org/Portal:13.2) 
+Pennyworth is tested on [openSUSE 13.2](https://en.opensuse.org/Portal:13.2)
 and [SUSE Linux Enterprise Server 12](https://www.suse.com/products/server/).
 It may not work with other openSUSE versions, Linux distributions, or
 operating systems.
