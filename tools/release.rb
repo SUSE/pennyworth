@@ -16,21 +16,19 @@
 #
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
-
 require_relative "release_checks"
-
 class Release
   include ReleaseChecks
 
   def initialize(opts = {})
     @options = {
-      version:      generate_development_version
+      version: generate_development_version
     }.merge(opts)
     @release_version = @options[:version]
-    @tag             = "v#{@release_version}"
-    @release_time    = Time.now.strftime('%a %b %d %H:%M:%S %Z %Y')
-    @mail            = Cheetah.run(["git", "config", "user.email"], :stdout => :capture).chomp
-    @gemspec         = Gem::Specification.load("pennyworth.gemspec")
+    @tag = "v#{@release_version}"
+    @release_time = Time.now.strftime("%a %b %d %H:%M:%S %Z %Y")
+    @mail = Cheetah.run(["git", "config", "user.email"], stdout: :capture).chomp
+    @gemspec = Gem::Specification.load("pennyworth.gemspec")
   end
 
   # Commit version changes, tag release and push changes upstream.
@@ -65,7 +63,13 @@ class Release
 
   def set_version
     Dir.chdir(Pennyworth::ROOT) do
-      Cheetah.run "sed", "-i", "s/VERSION.*=.*/VERSION = \"#{@release_version}\"/", "lib/pennyworth/version.rb"
+      command = [
+        "sed",
+        "-i",
+        "s/VERSION.*=.*/VERSION = \"#{@release_version}\"/",
+        "lib/pennyworth/version.rb"
+      ]
+      Cheetah.run command
     end
   end
 
@@ -76,10 +80,10 @@ class Release
     # by the developers without adding a version line.
     # Since the version line is automatically added during release by this
     # method we can check for new bullet points since the last release.
-    if content.scan(/# Pennyworth .*$\n+## Version /).empty?
-      content = content.sub(/\n+/, "\n\n\n## Version #{@release_version} - #{@release_time} - #{@mail}\n\n")
-      File.write(file, content)
-    end
+    fail if content.scan(/# Pennyworth .*$\n+## Version /).empty?
+    header = "\n\n\n## Version #{@release_version} - #{@release_time} - #{@mail}\n\n"
+    content = content.sub(/\n+/, header)
+    File.write(file, content)
   end
 
   def commit
@@ -93,9 +97,8 @@ class Release
     # The development version RPMs have the following version number scheme:
     # <base version>.<timestamp><os>git<short git hash>
     timestamp = Time.now.strftime("%Y%m%dT%H%M%SZ")
-    commit_id = Cheetah.run("git", "rev-parse", "--short", "HEAD", :stdout => :capture).chomp
+    commit_id = Cheetah.run("git", "rev-parse", "--short", "HEAD", stdout: :capture).chomp
 
     "#{Pennyworth::VERSION}.#{timestamp}git#{commit_id}"
   end
-
 end
