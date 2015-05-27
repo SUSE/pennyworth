@@ -65,7 +65,13 @@ class Release
 
   def set_version
     Dir.chdir(Pennyworth::ROOT) do
-      Cheetah.run "sed", "-i", "s/VERSION.*=.*/VERSION = \"#{@release_version}\"/", "lib/pennyworth/version.rb"
+      command = [
+        "sed",
+        "-i",
+        "s/VERSION.*=.*/VERSION = \"#{@release_version}\"/",
+        "lib/pennyworth/version.rb"
+      ]
+      Cheetah.run command
     end
   end
 
