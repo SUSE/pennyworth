@@ -37,14 +37,15 @@ Gem::Specification.new do |s|
     helpers are provided.
   EOT
 
+  s.required_ruby_version = ">= 2.0.0"
   s.required_rubygems_version = ">= 1.3.6"
   s.rubyforge_project         = "pennyworth"
 
-  s.add_dependency "gli", "~> 2.11.0"
-  s.add_dependency "cheetah"
-  s.add_dependency "colorize"
-  s.add_dependency "nokogiri"
-  s.add_dependency "ruby-libvirt", "~> 0.4.0"
+  s.add_dependency "gli", "~> 2.11"
+  s.add_dependency "cheetah", "~> 0.4"
+  s.add_dependency "colorize", "~> 0.7"
+  s.add_dependency "nokogiri", "~> 1.6"
+  s.add_dependency "ruby-libvirt", "~> 0.4"
 
   s.files        = `git ls-files`.split("\n")
   s.executables  = `git ls-files`.split("\n").map{|f| f =~ /^bin\/(.*)/ ? $1 : nil}.compact
