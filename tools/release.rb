@@ -17,7 +17,6 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 require_relative "release_checks"
-
 class Release
   include ReleaseChecks
   def initialize(opts = {})
