@@ -14,7 +14,6 @@
 #
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
-
 module ReleaseChecks
   def check
     check_tag
@@ -29,10 +28,8 @@ module ReleaseChecks
 
   def check_tag
     Cheetah.run("git", "fetch", "--tags")
-    existing_tag = Cheetah.run("git", "tag", "-l", @tag, :stdout => :capture)
+    existing_tag = Cheetah.run("git", "tag", "-l", @tag, stdout: :capture)
 
-    unless existing_tag.empty?
-      fail "Tag #{@tag} already exists. Abort."
-    end
+    fail "Tag #{@tag} already exists. Abort." unless existing_tag.empty?
   end
 end
