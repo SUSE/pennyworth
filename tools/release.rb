@@ -80,7 +80,7 @@ class Release
     # by the developers without adding a version line.
     # Since the version line is automatically added during release by this
     # method we can check for new bullet points since the last release.
-    fail if content.scan(/# Pennyworth .*$\n+## Version /).empty?
+    fail("Couldn't find a NEWS file") unless content.scan(/# Pennyworth .*$\n+## Version /).empty?
     header = "\n\n\n## Version #{@release_version} - #{@release_time} - #{@mail}\n\n"
     content = content.sub(/\n+/, header)
     File.write(file, content)
