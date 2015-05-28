@@ -80,10 +80,13 @@ class Release
     # by the developers without adding a version line.
     # Since the version line is automatically added during release by this
     # method we can check for new bullet points since the last release.
-    fail if content.scan(/# Pennyworth .*$\n+## Version /).empty?
-    header = "\n\n\n## Version #{@release_version} - #{@release_time} - #{@mail}\n\n"
-    content = content.sub(/\n+/, header)
-    File.write(file, content)
+    if content.scan(/# Pennyworth .*$\n+## Version /).empty?
+      header = "\n\n\n## Version #{@release_version} - #{@release_time} - #{@mail}\n\n"
+      content = content.sub(/\n+/, header)
+      File.write(file, content)
+    else
+      fail("No new changelog items for this version")
+    end
   end
 
   def commit
