@@ -36,6 +36,9 @@ module Pennyworth
       allow_libvirt_access
       allow_qemu_kvm_access
       allow_arp_access
+
+      # Enable required services
+      enable_services
     end
 
     def show_warning_for_unsupported_platforms
@@ -200,6 +203,12 @@ module Pennyworth
       )
       Cheetah.run "sudo", "mv", temp_file, file
       Cheetah.run "sudo", "chmod", permissions, file
+    end
+
+    def enable_services
+      ["libvirtd", "dnsmasq"].each do |service|
+        Cheetah.run "sudo", "systemctl", "enable", service
+      end
     end
 
     def base_system

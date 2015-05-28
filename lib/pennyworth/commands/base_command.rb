@@ -18,11 +18,11 @@
 module Pennyworth
   class BaseCommand < Command
 
-    attr_reader :kiwi_dir
+    attr_reader :boxes_dir
 
-    def initialize(kiwi_dir, remote_url = nil)
+    def initialize(boxes_dir, remote_url = nil)
       super()
-      @kiwi_dir = kiwi_dir
+      @boxes_dir = boxes_dir
       @remote_url = remote_url
     end
 
@@ -41,7 +41,7 @@ module Pennyworth
     end
 
     def local_base_images
-      Dir.glob(File.join(@kiwi_dir, "definitions", "*")).
+      Dir.glob(File.join(@boxes_dir, "definitions", "*")).entries.
         select { |f| File.directory?(f) }.
         map { |d| File.basename(d) }
     end
@@ -59,7 +59,7 @@ module Pennyworth
 
     def read_box_sources_state(box_name)
       sources = Hash.new
-      source_dir = File.join(@kiwi_dir, "definitions", box_name)
+      source_dir = File.join(@boxes_dir, "definitions", box_name)
       Find.find(source_dir) do |file|
         next if File.directory?(file)
         relative_path = file.gsub(/^#{File.join(source_dir, "/")}/, "")
@@ -69,7 +69,7 @@ module Pennyworth
     end
 
     def read_box_target_state(box_name)
-      box_file = File.join(@kiwi_dir, box_name) + ".box"
+      box_file = File.join(@boxes_dir, box_name) + ".box"
       if File.exist?(box_file)
         target_state = Digest::MD5.file(box_file).hexdigest
       end
@@ -77,13 +77,13 @@ module Pennyworth
     end
 
     def write_box_state_file(box_state)
-      File.open(File.join(@kiwi_dir, "box_state.yaml"), "w") do |f|
+      File.open(File.join(@boxes_dir, "box_state.yaml"), "w") do |f|
         f.write(box_state.to_yaml)
       end
     end
 
     def read_local_box_state_file
-      box_state_file = File.join(@kiwi_dir, "box_state.yaml")
+      box_state_file = File.join(@boxes_dir, "box_state.yaml")
       if File.exist? box_state_file
         box_state = YAML.load_file(box_state_file)
       else
