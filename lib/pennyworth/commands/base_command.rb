@@ -41,7 +41,7 @@ module Pennyworth
     end
 
     def local_base_images
-      Dir.glob(File.join(@boxes_dir, "definitions", "*")).entries.
+      Dir.glob(File.join(@boxes_dir, "definitions", "*")).
         select { |f| File.directory?(f) }.
         map { |d| File.basename(d) }
     end
