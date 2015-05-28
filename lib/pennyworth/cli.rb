@@ -27,7 +27,7 @@ module Pennyworth
 
       Use the global `--definitions-dir` option to specify the path to the
       directory containing Kiwi, Veewee and Vagrant definitions. The directory needs to
-      contain `kiwi/`, `veewee/` and `vagrant/` subdirectories. Default is `~/.pennyworth`.
+      contain `boxes/` and `vagrant/` subdirectories. Default is `~/.pennyworth`.
 
       Pennyworth writes a log file to `/tmp/pennyworth.log`.
 
