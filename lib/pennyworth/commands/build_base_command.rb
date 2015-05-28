@@ -71,6 +71,8 @@ module Pennyworth
       Cheetah.run "veewee", "kvm", "halt", image
       log "  Exporting image as box for vagrant..."
       Cheetah.run "veewee", "kvm", "export", image, "--force"
+    rescue Cheetah::ExecutionFailed => e
+      raise ExecutionFailed.new(e)
     end
 
     def build_kiwi(image, tmp_dir)
