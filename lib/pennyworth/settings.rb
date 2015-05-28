@@ -26,8 +26,8 @@ module Pennyworth
       @definitions_dir = File.expand_path("~/.pennyworth")
     end
 
-    def kiwi_dir
-      File.join(@definitions_dir, "/kiwi")
+    def boxes_dir
+      File.join(@definitions_dir, "/boxes")
     end
 
     def vagrant_dir

@@ -18,7 +18,7 @@
 module Pennyworth
   class BuildBaseCommand < BaseCommand
 
-    def initialize(kiwi_dir)
+    def initialize(boxes_dir)
       super
     end
 
@@ -29,7 +29,7 @@ module Pennyworth
       images = process_base_image_parameter(local_base_images, image_name)
       log "Creating base images..."
       images.each do |image|
-        Dir.chdir kiwi_dir do
+        Dir.chdir(boxes_dir) do
           log
           log "--- #{image} ---"
           source_state = read_box_sources_state(image)
@@ -38,10 +38,7 @@ module Pennyworth
             log "  Sources not changed, skipping build"
           else
             log "  Building base image..."
-            base_image_create(File.join(kiwi_dir, "definitions", image), tmp_dir)
-            log "  Exporting image as box for vagrant..."
-            base_image_export(File.join(kiwi_dir, image), tmp_dir)
-            base_image_cleanup_build(tmp_dir)
+            base_image_create(image, tmp_dir)
 
             box_state[image] = {
               "sources" => source_state,
@@ -55,9 +52,31 @@ module Pennyworth
 
     private
 
-    # Creates a KVM image from the according Kiwi description.
-    # See pennyworth/kiwi/definitions for the definitions we use.
-    def base_image_create(description_dir, tmp_dir)
+    # Creates a KVM image from the according Kiwi or Veewe description.
+    def base_image_create(image, tmp_dir)
+      description_dir = File.join(boxes_dir, "definitions", image)
+
+      if File.exists?(File.join(description_dir, "config.xml"))
+        build_kiwi(image, tmp_dir)
+      elsif File.exists?(File.join(description_dir, "definition.rb"))
+        build_veewee(image)
+      else
+        raise BuildFailed, "Unknown definition format in '#{description_dir}'. " \
+          "Supported are Kiwi and Veewee definitions"
+      end
+    end
+
+    def build_veewee(image)
+      Cheetah.run "veewee", "kvm", "build", image, "--force", "--auto"
+      Cheetah.run "veewee", "kvm", "halt", image
+      log "  Exporting image as box for vagrant..."
+      Cheetah.run "veewee", "kvm", "export", image, "--force"
+    rescue Cheetah::ExecutionFailed => e
+      raise ExecutionFailed.new(e)
+    end
+
+    def build_kiwi(image, tmp_dir)
+      description_dir = File.join(boxes_dir, "definitions", image)
       FileUtils.mkdir_p(tmp_dir)
       logfile = "#{tmp_dir}/kiwi-terminal-output.log"
       log "    The build log is available under #{logfile}"
@@ -65,17 +84,20 @@ module Pennyworth
         Cheetah.run "sudo", "/usr/sbin/kiwi", "--build", description_dir,
           "--destdir", tmp_dir, "--logfile", "#{logfile}",
           :stdout => :capture
-        rescue Cheetah::ExecutionFailed => e
-          raise ExecutionFailed.new(e)
-        end
+      rescue Cheetah::ExecutionFailed => e
+        raise ExecutionFailed.new(e)
+      end
+      log "  Exporting image as box for vagrant..."
+      base_image_export(image, tmp_dir)
+      base_image_cleanup_build(tmp_dir)
     end
 
-    def base_image_export(kiwi_dir, tmp_dir)
+    def base_image_export(name, tmp_dir)
       Dir.chdir(tmp_dir) do
         image = Dir.glob("*.box").first
         if image
           from_file = File.join(tmp_dir, image)
-          to_file = kiwi_dir.gsub(/\/$/, "") + ".box"
+          to_file = File.join(boxes_dir, name).gsub(/\/$/, "") + ".box"
           begin
             Cheetah.run "sudo", "mv", from_file, to_file, :stdout => :capture
           rescue Cheetah::ExecutionFailed => e

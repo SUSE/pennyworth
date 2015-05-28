@@ -6,7 +6,7 @@ It provides a very basic openSUSE 13.1 machine.
 
 ## Base Image
 
-The base image is defined in `examples/kiwi/definitions/base_opensuse13.1_kvm`.
+The base image is defined in `examples/boxes/definitions/base_opensuse13.1_kvm`.
 It can be build with:
 
 `$ bin/pennyworth -d examples/ build-base`

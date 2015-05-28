@@ -19,7 +19,7 @@ require "spec_helper.rb"
 
 describe Pennyworth::BuildBaseCommand do
 
-  let(:tmp_dir) { "/tmp/kiwi-vagrant-build-environment" }
+  let(:tmp_dir) { "/tmp/vagrant-build-environment" }
   let(:expected_content) {
     <<-EOT
 ---
@@ -41,8 +41,8 @@ EOT
   context "with non-existing box state file" do
     before(:each) do
       Pennyworth::Cli.settings = Pennyworth::Settings.new
-      @kiwi_dir = File.join(test_data_dir, "kiwi")
-      @cmd = Pennyworth::BuildBaseCommand.new(@kiwi_dir)
+      @boxes_dir = File.join(test_data_dir, "boxes")
+      @cmd = Pennyworth::BuildBaseCommand.new(@boxes_dir)
     end
 
     it "reads box sources state of one box" do
@@ -59,7 +59,7 @@ EOT
     end
 
     it "writes box state file" do
-      box_state_file = File.join(@kiwi_dir, "box_state.yaml")
+      box_state_file = File.join(@boxes_dir, "box_state.yaml")
 
       box_state = {}
       [ "base_opensuse13.1_kvm", "base_opensuse12.3_kvm" ].each do |box|
@@ -92,26 +92,36 @@ EOT
       # Don't actually build
       allow(@cmd).to receive(:base_image_create)
       allow(@cmd).to receive(:base_image_export)
-      allow(@cmd).to receive(:base_image_cleanup_build)
 
       allow(@cmd).to receive(:log) # Don't print to stdout
 
       @cmd.execute(tmp_dir, "base_opensuse13.1_kvm")
       @cmd.execute(tmp_dir, "base_opensuse12.3_kvm")
 
-      box_state_file = File.join(@kiwi_dir, "box_state.yaml")
+      box_state_file = File.join(@boxes_dir, "box_state.yaml")
 
       expect(File.read(box_state_file)).to eq expected_content
 
       FileUtils.rm(box_state_file) if File.exist?(box_state_file)
+    end
+
+    it "triggers kiwi builds" do
+      expect(@cmd).to receive(:build_kiwi)
+      allow(@cmd).to receive(:base_image_cleanup_build)
+      @cmd.execute(tmp_dir, "base_opensuse13.1_kvm")
+    end
+
+    it "triggers veewee builds" do
+      expect(@cmd).to receive(:build_veewee)
+      @cmd.execute(tmp_dir, "veewee_definition")
     end
   end
 
   context "with existing box state file" do
     before(:each) do
       Pennyworth::Cli.settings = Pennyworth::Settings.new
-      @kiwi_dir = File.join(test_data_dir, "kiwi2")
-      @cmd = Pennyworth::BuildBaseCommand.new(@kiwi_dir)
+      @boxes_dir = File.join(test_data_dir, "boxes2")
+      @cmd = Pennyworth::BuildBaseCommand.new(@boxes_dir)
     end
 
     it "reads box state file" do
@@ -129,8 +139,6 @@ EOT
       allow(@cmd).to receive(:write_box_state_file) # Don't actually write data
 
       expect(@cmd).to receive(:base_image_create)
-      expect(@cmd).to receive(:base_image_export)
-      expect(@cmd).to receive(:base_image_cleanup_build)
       @cmd.execute(tmp_dir, "base_opensuse13.1_kvm")
     end
 

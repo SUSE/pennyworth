@@ -1,0 +1,11 @@
+---
+base_opensuse13.1_kvm:
+  sources:
+    config.sh: 00cd92ac20df539d7d6f7930a339c622
+    config.xml: 43dd3b9cd11bc9d882f8f82ac108b74a
+    root/home/vagrant/.ssh/authorized_keys: b440b5086dd12c3fd8abb762476b9f40
+  target: 115469c104dcc69455f321eb086ffb11
+veewee_definition:
+  sources:
+    definition.rb: d41d8cd98f00b204e9800998ecf8427e
+  target: 

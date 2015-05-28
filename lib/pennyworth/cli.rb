@@ -26,8 +26,8 @@ module Pennyworth
       provide a well-defined test environment for automated tests.
 
       Use the global `--definitions-dir` option to specify the path to the
-      directory containing Kiwi and Vagrant definitions. The directory needs to
-      contain `kiwi/` and `vagrant/` subdirectories. Default is `~/.pennyworth`.
+      directory containing Kiwi, Veewee and Vagrant definitions. The directory needs to
+      contain `boxes/` and `vagrant/` subdirectories. Default is `~/.pennyworth`.
 
       Pennyworth writes a log file to `/tmp/pennyworth.log`.
 
@@ -141,13 +141,13 @@ module Pennyworth
     LONGDESC
     arg_name "IMAGE_NAME", :optional
     command "build-base" do |c|
-      c.flag [:kiwi_tmp_dir, :k], :type => String, :required => false,
-        :desc => "Temporary KIWI directory for building the Vagrant box.",
-        :arg_name => "KIWI-TMP-Dir"
+      c.flag [:temp_dir, :t], :type => String, :required => false,
+        :desc => "Temporary directory for building the Vagrant box.",
+        :arg_name => "TMP-Dir"
       c.action do |global_options,options,args|
         image_name = args.shift
-        tmp_dir = options[:kiwi_tmp_dir] || "/tmp/pennyworth-kiwi-builds"
-        BuildBaseCommand.new(Cli.settings.kiwi_dir).execute(tmp_dir, image_name)
+        tmp_dir = options[:temp_dir] || "/tmp/pennyworth-builds"
+        BuildBaseCommand.new(Cli.settings.boxes_dir).execute(tmp_dir, image_name)
       end
     end
 
@@ -165,7 +165,7 @@ module Pennyworth
         image_name = args.shift
         VagrantCommand.setup_environment(@@settings.vagrant_dir)
         if options[:url]
-          kiwi_dir = File.expand_path("~/.pennyworth/kiwi")
+          boxes_dir = File.expand_path("~/.pennyworth/boxes")
           remote_url = options[:url]
           opts = {
             local: false,
@@ -175,12 +175,12 @@ module Pennyworth
             STDERR.puts "You need to specify a definitions directory when not using --url."
             exit 1
           end
-          kiwi_dir = Cli.settings.kiwi_dir
+          boxes_dir = Cli.settings.boxes_dir
           opts = {
             local: true
           }
         end
-        ImportBaseCommand.new(kiwi_dir, remote_url).execute(image_name, opts)
+        ImportBaseCommand.new(boxes_dir, remote_url).execute(image_name, opts)
       end
     end
 
@@ -238,7 +238,7 @@ module Pennyworth
     command :list do |c|
       c.action do |global_options,options,args|
         VagrantCommand.setup_environment(@@settings.vagrant_dir)
-        ListCommand.new(Cli.settings.kiwi_dir).execute
+        ListCommand.new(Cli.settings.boxes_dir).execute
       end
     end
 

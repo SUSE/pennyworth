@@ -18,7 +18,7 @@
 module Pennyworth
   class ListCommand < BaseCommand
     def execute
-      if @kiwi_dir
+      if @boxes_dir
         puts "Vagrant box definitions managed by pennyworth:"
         local_base_images.each do |b|
           puts "  #{b}"
