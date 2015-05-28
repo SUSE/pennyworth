@@ -91,8 +91,12 @@ module Pennyworth
       end
 
       config["packages"]["remote"].each do |url|
-        log "  * Downloading and installing #{url}..."
-        zypper_install(url)
+        if url.match(/vagrant_/) && !is_vagrant_installed?
+          log "  * Downloading and installing #{url}..."
+          zypper_install(url)
+        else
+          log "  * You already have a valid version of #{@vagrant_version[0]}"
+        end
       end
     end
 
@@ -106,6 +110,12 @@ module Pennyworth
       Cheetah.run "sudo", "/sbin/udevadm", "trigger"
     end
 
+    def is_vagrant_installed?
+      @vagrant = %x(rpm -q vagrant)
+      @vagrant_version = @vagrant.lines.select{|plugin| plugin.start_with?("vagrant")}
+
+      !@vagrant.match(/vagrant-[1-].[7-].[2-]/).nil?
+    end
     def install_vagrant_plugin
       log "Installing libvirt plugin for Vagrant..."
 

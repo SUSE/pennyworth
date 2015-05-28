@@ -47,4 +47,31 @@ EOF
       setup_command.show_warning_for_unsupported_platforms
     end
   end
+
+  describe "#is_vagrant_installed?" do
+    context "when a valid version of vagrant already exists" do
+      it "returns true" do
+        expect(Cheetah).to receive(:run).with("rpm", "-q", "vagrant", stdout: :capture).and_return("vagrant-1.7.2-1.x86_64")
+
+        expect(subject.is_vagrant_installed?).to be_truthy
+      end
+    end
+
+    context "when no valid version of vagrant already exists" do
+      it "returns false" do
+        expect(Cheetah).to receive(:run).with("rpm", "-q", "vagrant", stdout: :capture).and_return("vagrant-1.7.0.x86_64")
+
+        expect(subject.is_vagrant_installed?).to be_falsey
+      end
+    end
+
+    context "when no version of vagrant is installed" do
+      it "returns false" do
+        expect(Cheetah).to receive(:run).with("rpm", "-q", "vagrant", stdout: :capture).and_return("package vagrant is not installed)")
+
+        expect(subject.is_vagrant_installed?).to be_falsey
+      end
+    end
+  end
+
 end
