@@ -74,4 +74,31 @@ EOF
     end
   end
 
+  describe "#is_vagrant_libvirt_installed?" do
+    context "when a valid version of vagrant-libvirt already exists" do
+      it "returns true" do
+        expect(Cheetah).to receive(:run).with("vagrant", "plugin", "list", stdout: :capture).and_return("vagrant-libvirt (0.0.28)\nvagrant-share (1.1.3, system)")
+
+        expect(subject.is_vagrant_libvirt_installed?).to be_truthy
+      end
+    end
+
+    context "when no valid version of vagrant-libvirt already exists" do
+      it "returns false" do
+        expect(Cheetah).to receive(:run).with("vagrant", "plugin", "list", stdout: :capture).and_return(
+            "vagrant-libvirt (0.0.28)\nvagrant-share (1.1.3, system)"
+          )
+
+        expect(subject.is_vagrant_libvirt_installed?).to be_falsey
+      end
+    end
+
+    context "when no version of vagrant-libvirt is installed" do
+      it "returns false" do
+        expect(Cheetah).to receive(:run).with("vagrant", "plugin", "list", stdout: :capture).and_return("vagrant-share (1.1.3, system)")
+
+        expect(subject.is_vagrant_libvirt_installed?).to be_falsey
+      end
+    end
+  end
 end
