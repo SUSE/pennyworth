@@ -62,6 +62,23 @@ module Pennyworth
       File.read(os_release_file) if File.exist?(os_release_file)
     end
 
+    def vagrant_installed?
+      @vagrant = Cheetah.run "rpm", "-q", "vagrant", stdout: :capture
+      @vagrant_version = @vagrant.lines.select { |plugin| plugin.start_with?("vagrant") }
+
+      !@vagrant.match(/vagrant-[1-]\.[7-]\.[2-]/).nil?
+    end
+
+    def vagrant_libvirt_installed?
+      @vagrant_libvirt = Cheetah.run "vagrant", "plugin", "list", stdout: :capture
+      @vagrant_libvirt_version = @vagrant_libvirt.lines.select { |plugin| plugin.start_with?(
+        "vagrant-libvirt"
+        )
+      }
+
+      !@vagrant_libvirt.match(/vagrant-libvirt \(\d\.\d\.29|[3-9]\d\)/).nil?
+    end
+
     private
 
     def zypper_install(package)
@@ -91,8 +108,12 @@ module Pennyworth
       end
 
       config["packages"]["remote"].each do |url|
-        log "  * Downloading and installing #{url}..."
-        zypper_install(url)
+        if url.match(/vagrant_/) && !vagrant_installed?
+          log "  * Downloading and installing #{url}..."
+          zypper_install(url)
+        else
+          log "  * You already have a valid version of #{@vagrant_version[0]}"
+        end
       end
     end
 
@@ -107,9 +128,12 @@ module Pennyworth
     end
 
     def install_vagrant_plugin
-      log "Installing libvirt plugin for Vagrant..."
-
-      Cheetah.run "vagrant", "plugin", "install", "vagrant-libvirt"
+      if !vagrant_libvirt_installed?
+        log "Installing libvirt plugin for Vagrant..."
+        Cheetah.run "vagrant", "plugin", "install", "vagrant-libvirt"
+      else
+        log "  * You already have a valid version of #{@vagrant_libvirt_version[0]}"
+      end
     end
 
     def add_user_to_groups
