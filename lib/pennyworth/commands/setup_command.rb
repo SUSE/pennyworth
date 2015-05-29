@@ -94,22 +94,18 @@ module Pennyworth
 
     def install_packages
       log "Installing packages:"
-
       packages = config["packages"]["local"]
 
       if config["packages"][base_system]
         packages += config["packages"][base_system]
       end
 
+      config["packages"]["remote"].reject! { |url| url.match(/vagrant_/) && vagrant_installed? }
+      packages += config["packages"]["remote"]
+
       packages.each do |name|
         log "  * Installing #{name}..."
         zypper_install(name)
-      end
-
-      config["packages"]["remote"].each do |url|
-        if url.match(/vagrant_/) && !vagrant_installed?
-          log "  * Downloading and installing #{url}..."
-          zypper_install(url)
       end
     end
 
