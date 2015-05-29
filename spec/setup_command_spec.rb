@@ -14,6 +14,7 @@
 #
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
+require 'spec_helper'
 require_relative "../lib/pennyworth/commands/setup_command.rb"
 
 describe Pennyworth::SetupCommand do
