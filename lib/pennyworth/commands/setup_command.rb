@@ -110,9 +110,6 @@ module Pennyworth
         if url.match(/vagrant_/) && !vagrant_installed?
           log "  * Downloading and installing #{url}..."
           zypper_install(url)
-        else
-          log "  * You already have a valid version of #{@vagrant_version[0]}"
-        end
       end
     end
 
@@ -130,8 +127,6 @@ module Pennyworth
       if !vagrant_libvirt_installed?
         log "Installing libvirt plugin for Vagrant..."
         Cheetah.run "vagrant", "plugin", "install", "vagrant-libvirt"
-      else
-        log "  * You already have a valid version of #{@vagrant_libvirt_version[0]}"
       end
     end
 
