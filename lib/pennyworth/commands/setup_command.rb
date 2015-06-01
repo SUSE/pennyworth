@@ -48,7 +48,7 @@ module Pennyworth
 
       if os_release
         version = os_release[/^VERSION_ID="(.*)"/, 1]
-        distribution = os_release[/^NAME="(.*)"/, 1]
+        distribution = os_release[/^NAME=(.*)/, 1]
       end
 
       if !os_release || !supported_os.include?("#{distribution} #{version}")

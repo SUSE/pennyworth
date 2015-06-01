@@ -37,7 +37,7 @@ EOF
 
     it "shows no warning for supported SLES 12 distribution" do
       sles12_release_file = <<-EOF
-NAME="SLES"
+NAME=SLES
 VERSION="12"
 VERSION_ID="12"
 PRETTY_NAME="SUSE Linux Enterprise Server 12"
