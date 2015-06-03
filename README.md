@@ -333,6 +333,12 @@ VM
 : Virtual machine ran in KVM. Pennyworth supports running VMs described in a
 Vagrantfile as well as non vagrant managed ones.
 
+## Release Cycle
+
+As for now we don't have a time based release cycle. We update and publish the
+gem as needed. However don't hesitate to report bugs or better yet submit fixes
+as pull requests. We will make sure to update the gem with the latest code.
+
 ## Further information
 
 Further information like a [FAQ](https://github.com/SUSE/pennyworth/wiki/Debugging)
