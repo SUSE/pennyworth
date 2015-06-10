@@ -63,14 +63,24 @@ module Pennyworth
     end
 
     def vagrant_installed?
-      vagrant = Cheetah.run "rpm", "-q", "vagrant", stdout: :capture
+      begin
+        vagrant = Cheetah.run "rpm", "-q", "vagrant", stdout: :capture
+      rescue
+        return false
+      end
+
       @vagrant_version = vagrant.lines.select { |plugin| plugin.start_with?("vagrant") }
 
       !vagrant.match(/vagrant-[1-]\.[7-]\.[2-]/).nil?
     end
 
     def vagrant_libvirt_installed?
-      vagrant_libvirt = Cheetah.run "vagrant", "plugin", "list", stdout: :capture
+      begin
+        vagrant_libvirt = Cheetah.run "vagrant", "plugin", "list", stdout: :capture
+      rescue
+        return false
+      end
+
       @vagrant_libvirt_version = vagrant_libvirt.lines.select { |plugin|
         plugin.start_with?("vagrant-libvirt")
       }
