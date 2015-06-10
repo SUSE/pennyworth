@@ -71,8 +71,8 @@ EOF
 
     context "when no version of vagrant is installed" do
       it "returns false" do
-        expect(Cheetah).to receive(:run).with("rpm", "-q", "vagrant", stdout: :capture)
-          .and_raise
+        expect(Cheetah).to receive(:run).with("rpm", "-q", "vagrant", stdout: :capture).
+          and_raise
 
         expect(subject.vagrant_installed?).to be_falsey
       end
@@ -101,8 +101,8 @@ EOF
 
     context "when no version of vagrant-libvirt is installed" do
       it "returns false" do
-        expect(Cheetah).to receive(:run).with("vagrant", "plugin", "list", stdout: :capture)
-          .and_raise
+        expect(Cheetah).to receive(:run).with("vagrant", "plugin", "list", stdout: :capture).
+          and_raise
 
         expect(subject.vagrant_libvirt_installed?).to be_falsey
       end
