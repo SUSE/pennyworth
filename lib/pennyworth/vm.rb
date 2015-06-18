@@ -34,7 +34,23 @@ module Pennyworth
     end
 
     def run_command(*args)
-      command_runner.run(*args)
+      opts = args.last.is_a?(Hash) ? args.pop : {}
+
+      if !opts.has_key?(:stderr)
+        check_stderr_output = !(opts[:fail_on_stderr_output] == false)
+        stderr = StringIO.new
+        opts[:stderr] = stderr
+      end
+
+      output = command_runner.run(*args, opts)
+
+      if check_stderr_output && !stderr.string.empty?
+        raise Pennyworth::StderrOutputReceived,
+          "Received unexpected output on STDERR. Set the :fail_on_stderr_output option to false " \
+          "if that is expected. \nThe output was:\n\n#{stderr.string}"
+      end
+
+      output
     end
 
     def inject_file(source, destination, opts = {})
