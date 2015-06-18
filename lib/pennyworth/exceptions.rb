@@ -25,6 +25,7 @@ module Pennyworth
   class HostFileError < StandardError; end
   class LockError < StandardError; end
 
+  class StderrOutputReceived < StandardError; end
   class ExecutionFailed < StandardError
     def initialize(e)
       @message = e.message

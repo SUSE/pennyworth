@@ -28,6 +28,50 @@ describe Pennyworth::VM do
 
       subject.run_command("ls")
     end
+
+    it "captures the stderr by default" do
+      expect(command_runner).to receive(:run) do |command, opts|
+        expect(command).to eq("foo")
+        expect(opts[:stderr]).to be_a(StringIO)
+      end
+
+      subject.run_command("foo")
+    end
+
+    it "allows for setting a custom stderr behavior" do
+      expect(command_runner).to receive(:run).with("foo", stderr: :capture)
+
+      subject.run_command("foo", stderr: :capture)
+    end
+
+    context "with stderr output" do
+      before(:each) do
+        expect(command_runner).to receive(:run) do |_command, opts|
+          expect(opts[:stderr]).to be_a(StringIO)
+
+          opts[:stderr].puts "some stderr output!"
+        end
+      end
+
+      it "raises an error by default" do
+        expect {
+          subject.run_command("foo")
+        }.to raise_error(Pennyworth::StderrOutputReceived)
+      end
+
+      it "does not raise an error if 'fail_on_stderr_output' is set to false" do
+        expect {
+          subject.run_command("foo", fail_on_stderr_output: false)
+        }.to_not raise_error
+      end
+
+      it "does not raise an error if a custom stderr option was set" do
+        io = StringIO.new
+        expect {
+          subject.run_command("foo", stderr: io)
+        }.to_not raise_error
+      end
+    end
   end
 
   describe "#extract_file" do
