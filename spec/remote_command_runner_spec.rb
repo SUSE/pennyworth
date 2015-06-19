@@ -36,22 +36,12 @@ describe Pennyworth::RemoteCommandRunner do
     it "executes commands as given user" do
       expect(Cheetah).to receive(:run).
         with(
-        "ssh", "-o", "UserKnownHostsFile=/dev/null", "-o", "StrictHostKeyChecking=no",
-        "root@1.2.3.4", "LC_ALL=C", "su", "-l", "vagrant", "-c", "ls", "-l", "/etc/hosts",
-        stdout: :capture).
-        and_return(ssh_output)
+          "ssh", "-q", "-o", "UserKnownHostsFile=/dev/null", "-o", "StrictHostKeyChecking=no",
+          "root@1.2.3.4", "LC_ALL=C", "su", "-l", "vagrant", "-c", "ls", "-l", "/etc/hosts",
+          any_args
+        ).and_return(ssh_output)
 
-      output = command_runner.run("ls", "-l", "/etc/hosts", as: "vagrant", stdout: :capture)
-
-      expect(output).to eq (ssh_output)
-    end
-
-    it "raises ExecutionFailed in case of errors" do
-      expect(Cheetah).to receive(:run).and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
-
-      expect {
-        command_runner.run("foo")
-      }.to raise_error(Pennyworth::ExecutionFailed)
+      command_runner.run("ls", "-l", "/etc/hosts", as: "vagrant")
     end
   end
 
