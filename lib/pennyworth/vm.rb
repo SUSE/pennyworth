@@ -21,6 +21,10 @@ module Pennyworth
   class VM
     attr_accessor :ip, :runner
 
+    class CommandResult
+      attr_accessor :stdout, :stderr, :exit_code, :cmd, :error
+    end
+
     def initialize(runner)
       @runner = runner
     end
@@ -33,8 +37,29 @@ module Pennyworth
       @runner.stop
     end
 
-    def run_command(*args)
-      command_runner.run(*args)
+    def run(*args)
+      opts = args.last.is_a?(Hash) ? args.pop : {}
+
+      opts.merge!(
+        stdout: :capture,
+        stderr: :capture
+      )
+
+      result = CommandResult.new
+      result.cmd = args.join(" ")
+      begin
+        stdout, stderr = command_runner.run(*args, opts)
+        result.exit_code = 0
+        result.stdout = stdout
+        result.stderr = stderr
+      rescue Cheetah::ExecutionFailed => e
+        result.error = e
+        result.exit_code = e.status.exitstatus
+        result.stdout = e.stdout
+        result.stderr = e.stderr
+      end
+
+      result
     end
 
     def inject_file(source, destination, opts = {})
