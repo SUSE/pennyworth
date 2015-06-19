@@ -46,6 +46,7 @@ module Pennyworth
 
       Cheetah.run(
         "ssh",
+        "-q",
         "-o",
         "UserKnownHostsFile=/dev/null",
         "-o",
