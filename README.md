@@ -297,13 +297,41 @@ with the running machine (via SSH). It supports the following methods:
     Stops or disconnects the system. This stops running boxes or images and disconnects from
     running systems.
 
-  * `run_command(command, *args, options = {})`
-    `run_command(command_and_args, options = {})`
+  * `run(command, *args, options = {})`
+    `run(command_and_args, options = {})`
 
-    Executes a command on the running machine. The execution is implemented
-    using [Cheetah](https://github.com/opensuse/cheetah) and the `run_command`
-    method behaves mostly the same as
-    [`Cheetah.run`](http://rubydoc.info/github/openSUSE/cheetah/master/Cheetah.run).
+    Executes a command on the running machine. A VM::CommandResult instance is
+    returned which can be used with special RSpec matchers to define the
+    expected behavior. Examples:
+
+      # Expect a certain exit code
+      expect(@vm.run("ls -l")).to have_exit_code(0)
+
+      # Expect exit code 0 and no stderr
+      expect(result).to succeed
+
+      # Expect a certain stdout
+      expect(result).to succeed.and have_stdout(/foo.*bar/)
+      expect(result).to succeed.and have_stdout("foo bar")
+
+      # Expect exit code 0, but some stderr output
+      expect(result).to succeed.with_stderr
+
+      # Expect the stdout to include a certain string
+      expect(result).to include_stdout("foo bar")
+
+      # Expect exit code != 0
+      expect(result).to fail
+
+      # Expect a specific exit code
+      expect(result).to fail.with_exit_code(15)
+
+      # Expect specific stderr
+      expect(result).to have_stderr(/This.*error/)
+      expect(result).to have_stderr("This is an error")
+
+      # Expect stderr to include a certain string
+      expect(result).to include_stderr("Warning"
 
   * `inject_file(source, destination)`
 
