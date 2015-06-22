@@ -22,11 +22,11 @@ describe Pennyworth::VM do
   let(:runner) { double(command_runner: command_runner) }
   subject { Pennyworth::VM.new(runner) }
 
-  describe "#run" do
+  describe "#run_command" do
     it "lets the CommandRunner run the command" do
       expect(command_runner).to receive(:run)
 
-      subject.run("ls")
+      subject.run_command("ls")
     end
   end
 

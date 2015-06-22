@@ -37,7 +37,7 @@ module Pennyworth
       @runner.stop
     end
 
-    def run(*args)
+    def run_command(*args)
       opts = args.last.is_a?(Hash) ? args.pop : {}
 
       opts.merge!(
