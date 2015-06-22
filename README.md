@@ -297,18 +297,18 @@ with the running machine (via SSH). It supports the following methods:
     Stops or disconnects the system. This stops running boxes or images and disconnects from
     running systems.
 
-  * `run(command, *args, options = {})`
-    `run(command_and_args, options = {})`
+  * `run_command(command, *args, options = {})`
+    `run_command(command_and_args, options = {})`
 
     Executes a command on the running machine. A VM::CommandResult instance is
     returned which can be used with special RSpec matchers to define the
     expected behavior. Examples:
 
-      # Expect a certain exit code
-      expect(@vm.run("ls -l")).to have_exit_code(0)
-
       # Expect exit code 0 and no stderr
       expect(result).to succeed
+
+      # Expect exit code 0, ignoring any stderr
+      expect(@vm.run_command("ls -l")).to succeed.with_or_without_stderr
 
       # Expect a certain stdout
       expect(result).to succeed.and have_stdout(/foo.*bar/)
