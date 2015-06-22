@@ -21,7 +21,7 @@ module Pennyworth
     attr_reader :command_runner
 
     def cleanup_directory(dir)
-      command_runner.run("test -d #{dir} && rm -r #{dir}")
+      command_runner.run("test -d #{dir} && rm -r #{dir} || true")
     end
   end
 end

@@ -38,6 +38,7 @@ require_relative "remote_command_runner"
 require_relative "settings"
 require_relative "local_runner"
 require_relative "local_command_runner"
+require_relative "matchers"
 
 module Pennyworth
   module SpecHelper

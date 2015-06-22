@@ -16,7 +16,5 @@
 # you may find current contact information at www.suse.com
 
 module Pennyworth
-
-  VERSION = "0.1.0"
-
+  VERSION = "0.2.0"
 end

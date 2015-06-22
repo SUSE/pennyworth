@@ -39,8 +39,6 @@ module Pennyworth
           "bash", "-c", *args, options
         )
       end
-    rescue Cheetah::ExecutionFailed => e
-      raise ExecutionFailed.new(e)
     end
 
     # Copy a local file to the remote system.

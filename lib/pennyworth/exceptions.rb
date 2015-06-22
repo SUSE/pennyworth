@@ -24,16 +24,4 @@ module Pennyworth
   class InvalidHostError < StandardError; end
   class HostFileError < StandardError; end
   class LockError < StandardError; end
-
-  class ExecutionFailed < StandardError
-    def initialize(e)
-      @message = e.message
-      @message += "\nStandard output:\n #{e.stdout}\n"
-      @message += "\nError output:\n #{e.stderr}\n"
-    end
-
-    def to_s
-      @message
-    end
-  end
 end

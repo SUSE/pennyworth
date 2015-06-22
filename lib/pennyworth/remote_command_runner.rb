@@ -46,6 +46,7 @@ module Pennyworth
 
       Cheetah.run(
         "ssh",
+        "-q",
         "-o",
         "UserKnownHostsFile=/dev/null",
         "-o",
@@ -55,8 +56,6 @@ module Pennyworth
         *args,
         options
       )
-    rescue Cheetah::ExecutionFailed => e
-      raise ExecutionFailed.new(e)
     end
 
     # Copy a local file to the remote system.
