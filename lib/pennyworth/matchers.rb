@@ -15,12 +15,6 @@
 # To contact SUSE about this file by physical or electronic mail,
 # you may find current contact information at www.suse.com
 
-RSpec::Matchers.define :have_exit_code do |expected|
-  match do |result|
-    result.exit_code == expected
-  end
-end
-
 RSpec::Matchers.define :fail do
   match do |result|
     if @exit_code
@@ -127,9 +121,13 @@ RSpec::Matchers.define :succeed do
     @allow_stderr = true
   end
 
+  chain :with_or_without_stderr do
+    @ignore_stderr = true
+  end
+
   match do |result|
     return false if result.exit_code != 0
-    return false if !result.stderr.empty? && !@allow_stderr
+    return false if !@ignore_stderr && !result.stderr.empty? && !@allow_stderr
     return false if result.stderr.empty? && @allow_stderr
 
     true

@@ -19,20 +19,6 @@ require "pennyworth/spec"
 require "pennyworth/vm"
 
 describe "VM matchers" do
-  describe "have_exit_code" do
-    let(:result) { command_result("", "", 0) }
-
-    it "passes" do
-      expect(result).to have_exit_code(0)
-    end
-
-    it "fails" do
-      expect {
-        expect(result).to have_exit_code(1)
-      }.to raise_error(/to have exit code 1/)
-    end
-  end
-
   describe "succeed" do
     it "passes" do
       expect(command_result("", "", 0)).to succeed
@@ -42,6 +28,16 @@ describe "VM matchers" do
       expect {
         expect(command_result("", "", 1)).to succeed
       }.to raise_error(/Expected.*the command.*but it returned with exit code 1/m)
+    end
+
+    context "with .with_or_without_stderr" do
+      it "passes if there is stderr" do
+        expect(command_result("", "foo", 0)).to succeed.with_or_without_stderr
+      end
+
+      it "passes if there is no stderr" do
+        expect(command_result("", "", 0)).to succeed.with_or_without_stderr
+      end
     end
 
     context "with stderr output" do
