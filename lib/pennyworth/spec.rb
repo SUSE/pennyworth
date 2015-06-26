@@ -44,7 +44,8 @@ module Pennyworth
   module SpecHelper
     def start_system(opts)
       opts = {
-        skip_ssh_setup: false
+        skip_ssh_setup: false,
+        stop: true
       }.merge(opts)
       username = opts[:username] || "root"
       if opts[:box]
@@ -65,9 +66,12 @@ module Pennyworth
 
       system = VM.new(runner)
 
-      # Make sure to stop the machine again when the example group is done
-      self.class.after(:all) do
-        system.stop
+      # Make sure to stop the machine again when the example group is
+      # done unless 'stop' option is set to false.
+      if opts[:stop]
+        self.class.after(:all) do
+          system.stop
+        end
       end
 
       measure("Boot machine '#{opts[:box] || opts[:image] || opts[:host]}'") do
