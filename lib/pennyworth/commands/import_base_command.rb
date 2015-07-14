@@ -92,7 +92,7 @@ module Pennyworth
     end
 
     def base_image_clean(box)
-      Cheetah.run "virsh", "-c", "qemu:///system", "vol-delete", "#{box}_vagrant_box_image.img", "--pool=default"
+      Cheetah.run "virsh", "-c", "qemu:///system", "vol-delete", "#{box}_vagrant_box_image_0.img", "--pool=default"
       Cheetah.run "virsh", "-c", "qemu:///system", "pool-refresh", "--pool=default"
       @vagrant.destroy
     rescue
