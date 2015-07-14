@@ -95,7 +95,7 @@ module Pennyworth
       Cheetah.run "virsh", "-c", "qemu:///system", "vol-delete", "#{box}_vagrant_box_image_0.img", "--pool=default"
       Cheetah.run "virsh", "-c", "qemu:///system", "pool-refresh", "--pool=default"
       @vagrant.destroy
-    rescue
+    rescue Cheetah::ExecutionFailed
     end
 
     # Imports the box into the Vagrant pool so that it can be used for the test
