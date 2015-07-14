@@ -111,6 +111,7 @@ module Pennyworth
 
     def destroy
       @vagrant.run "destroy"
+    rescue Cheetah::ExecutionFailed
     end
 
     def add_box box, box_path
