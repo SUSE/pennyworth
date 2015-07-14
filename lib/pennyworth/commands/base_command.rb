@@ -30,7 +30,12 @@ module Pennyworth
       return [] if !@remote_url || @remote_url.empty?
 
       uri = URI.parse(URLs.join(@remote_url, subdir, "import_state.yaml"))
-      response = Net::HTTP.get_response(uri)
+      begin
+        response = Net::HTTP.get_response(uri)
+      rescue StandardError => e
+        STDERR.puts "Error accessing #{uri.to_s}: #{e}"
+        exit 1
+      end
       if response.is_a?(Net::HTTPSuccess)
         index = YAML.load(response.body)
         index.keys
