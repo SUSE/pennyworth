@@ -186,4 +186,43 @@ base_opensuse12.3_kvm: e4e743b5340686d8488dbce54b5644d8
       @cmd.execute("base_opensuse13.1_kvm", :local => true)
     end
   end
+
+  describe "#virsh_image_name" do
+    let(:box) { "base_opensuse_tumbleweed" }
+
+    before(:each) do
+      @boxes_dir = File.join(test_data_dir, "boxes")
+      @cmd = Pennyworth::ImportBaseCommand.new(@boxes_dir, "http://example.com/pennyworth/")
+    end
+
+    it "returns the image name if virsh lists it" do
+      output = <<-EOF
+ Name                 Path
+------------------------------------------------------------------------------
+ base_opensuse_tumbleweed_kvm_vagrant_box_image_0.img /var/lib/libvirt/images/base_opensuse_tumbleweed_kvm_vagrant_box_image_0.img
+ vagrant_opensuse_tumbleweed.img /var/lib/libvirt/images/vagrant_opensuse_tumbleweed.img
+
+EOF
+      expect(Cheetah).to receive(:run).with(
+        "virsh", "-c", "qemu:///system", "vol-list", "--pool=default", stdout: :capture
+      ).and_return(output)
+
+      expect(@cmd.virsh_image_name(box)).to eq(
+        "base_opensuse_tumbleweed_kvm_vagrant_box_image_0.img"
+      )
+    end
+
+    it "returns nil if the image name is not in the virsh list" do
+      output = <<-EOF
+ Name                 Path
+------------------------------------------------------------------------------
+
+EOF
+      expect(Cheetah).to receive(:run).with(
+        "virsh", "-c", "qemu:///system", "vol-list", "--pool=default", stdout: :capture
+      ).and_return(output)
+
+      expect(@cmd.virsh_image_name(box)).to eq(nil)
+    end
+  end
 end

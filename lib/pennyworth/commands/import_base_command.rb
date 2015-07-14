@@ -84,6 +84,13 @@ module Pennyworth
       end
     end
 
+    def virsh_image_name(box)
+      output = Cheetah.run(
+        "virsh", "-c", "qemu:///system", "vol-list", "--pool=default", stdout: :capture
+      )
+      output[/^ (#{box}\S*)/, 1]
+    end
+
     private
 
     def fetch_remote_box_state_file
@@ -92,10 +99,14 @@ module Pennyworth
     end
 
     def base_image_clean(box)
-      Cheetah.run "virsh", "-c", "qemu:///system", "vol-delete", "#{box}_vagrant_box_image.img", "--pool=default"
-      Cheetah.run "virsh", "-c", "qemu:///system", "pool-refresh", "--pool=default"
-      @vagrant.destroy
-    rescue
+      image = virsh_image_name(box)
+      if image
+        Cheetah.run(
+          "virsh", "-c", "qemu:///system", "vol-delete", image, "--pool=default"
+        )
+        Cheetah.run "virsh", "-c", "qemu:///system", "pool-refresh", "--pool=default"
+        @vagrant.destroy
+      end
     end
 
     # Imports the box into the Vagrant pool so that it can be used for the test
