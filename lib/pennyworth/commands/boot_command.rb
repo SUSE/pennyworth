@@ -18,7 +18,7 @@
 module Pennyworth
   class BootCommand < Command
     def execute(image)
-      runner = ImageRunner.new(image)
+      runner = ImageRunner.new(image, "root")
       log "Starting image #{runner.name}"
 
       ip = VM.new(runner).start

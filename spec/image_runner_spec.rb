@@ -29,9 +29,6 @@ describe Pennyworth::ImageRunner do
       </domain>
     EOF
   }
-  let(:lease_file) {
-    ["1390553648 52:54:01:60:3c:95 192.168.122.186 vagrant-opensuse 52:54:01:60:3c:95"]
-  }
   let(:runner) { Pennyworth::ImageRunner.new("/path/to/image", "root") }
 
   describe "runner" do
@@ -52,9 +49,13 @@ describe Pennyworth::ImageRunner do
       expect(libvirt).to receive(:lookup_domain_by_name) { system }
 
       expect(system).to receive(:xml_desc) { libvirt_xml }
-      expect(File).to receive(:readlines) { lease_file }
 
       allow(runner).to receive(:cleanup)
+      expect(Cheetah).to receive(:run) do |*cmd|
+        expect(cmd.first[0]).to eq("arp")
+
+        "192.168.122.186"
+      end
 
       expect(runner.start).to eq("192.168.122.186")
     end

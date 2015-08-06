@@ -70,11 +70,15 @@ module Pennyworth
       ip_address = nil
 
       # Loop until the VM has got an IP address we can return
-      lease_file = "/var/lib/libvirt/dnsmasq/default.leases"
       300.times do
-        match = File.readlines(lease_file).grep(/#{mac}/).first
-        if match
-          ip_address = match.split[2]
+        ip_address = Cheetah.run(
+          ["arp", "-n"],
+          ["grep", mac],
+          ["cut", "-d", " ", "-f", "1"],
+          stdout: :capture
+        ).chomp
+
+        if ip_address.length > 0
           break
         end
 
@@ -84,6 +88,4 @@ module Pennyworth
       ip_address
     end
   end
-
-
 end
