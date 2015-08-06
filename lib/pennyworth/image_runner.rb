@@ -88,6 +88,4 @@ module Pennyworth
       ip_address
     end
   end
-
-
 end
