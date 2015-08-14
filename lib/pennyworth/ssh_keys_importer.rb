@@ -91,7 +91,7 @@ module Pennyworth
               retry
             end
           when 4
-            raise RuntimeError, "An unknown error occured while trying to upload " \
+            raise RuntimeError, "An unknown error occurred while trying to upload " \
               "the SSH keys."
           when 127
             raise CommandNotFoundError, "Error: Please install expect before running" \
