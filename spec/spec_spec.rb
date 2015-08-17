@@ -95,5 +95,17 @@ describe Pennyworth::SpecHelper do
 
       start_system(opts.merge(local: true))
     end
+
+    context "when 'stop' option is set to false" do
+      it "does not stop the machine after the tests" do
+        runner = double
+        expect(runner).to receive(:start)
+        expect(Pennyworth::VagrantRunner).to receive(:new).and_return(runner)
+        expect(Pennyworth::SshKeysImporter).to receive(:import)
+
+        expect(self.class).to_not receive(:after)
+        start_system(box: system_one, stop: false)
+      end
+    end
   end
 end
