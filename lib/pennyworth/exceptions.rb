@@ -24,4 +24,5 @@ module Pennyworth
   class InvalidHostError < StandardError; end
   class HostFileError < StandardError; end
   class LockError < StandardError; end
+  class ExecutionFailed < StandardError; end
 end
