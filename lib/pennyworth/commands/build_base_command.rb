@@ -67,10 +67,11 @@ module Pennyworth
     end
 
     def build_veewee(image)
-      Cheetah.run "veewee", "kvm", "build", image, "--force", "--auto"
-      Cheetah.run "veewee", "kvm", "halt", image
+      bundle_prefix = ["bundle", "exec"] if File.exists?("Gemfile")
+      Cheetah.run [*bundle_prefix, "veewee", "kvm", "build", image, "--force", "--auto"].compact
+      Cheetah.run [*bundle_prefix, "veewee", "kvm", "halt", image].compact
       log "  Exporting image as box for vagrant..."
-      Cheetah.run "veewee", "kvm", "export", image, "--force"
+      Cheetah.run [*bundle_prefix, "veewee", "kvm", "export", image, "--force"].compact
     rescue Cheetah::ExecutionFailed => e
       raise ExecutionFailed.new(e)
     end
