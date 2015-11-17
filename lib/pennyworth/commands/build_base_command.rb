@@ -67,7 +67,7 @@ module Pennyworth
     end
 
     def build_veewee(image)
-      bundle_prefix = ["bundle", "exec"] if File.exists?("Gemfile")
+      bundle_prefix = ["bundle", "exec"] if File.exist?("Gemfile")
       Cheetah.run [*bundle_prefix, "veewee", "kvm", "build", image, "--force", "--auto"].compact
       Cheetah.run [*bundle_prefix, "veewee", "kvm", "halt", image].compact
       log "  Exporting image as box for vagrant..."
