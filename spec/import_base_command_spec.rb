@@ -188,7 +188,7 @@ base_opensuse12.3_kvm: e4e743b5340686d8488dbce54b5644d8
   end
 
   describe "#virsh_image_name" do
-    let(:box) { "base_opensuse_tumbleweed" }
+    let(:box) { "base_opensuse_tumbleweed_kvm" }
 
     before(:each) do
       @boxes_dir = File.join(test_data_dir, "boxes")
@@ -199,6 +199,7 @@ base_opensuse12.3_kvm: e4e743b5340686d8488dbce54b5644d8
       output = <<-EOF
  Name                 Path
 ------------------------------------------------------------------------------
+ base_opensuse_tumbleweed_kvm.img /var/lib/libvirt/images/base_opensuse_tumbleweed_kvm.img
  base_opensuse_tumbleweed_kvm_vagrant_box_image_0.img /var/lib/libvirt/images/base_opensuse_tumbleweed_kvm_vagrant_box_image_0.img
  vagrant_opensuse_tumbleweed.img /var/lib/libvirt/images/vagrant_opensuse_tumbleweed.img
 

@@ -88,7 +88,7 @@ module Pennyworth
       output = Cheetah.run(
         "virsh", "-c", "qemu:///system", "vol-list", "--pool=default", stdout: :capture
       )
-      output[/^ (#{box}\S*)/, 1]
+      output[/^ (#{box}_vagrant\S*)/, 1]
     end
 
     private
