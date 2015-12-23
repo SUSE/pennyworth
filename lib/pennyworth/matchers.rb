@@ -70,10 +70,10 @@ RSpec::Matchers.define :include_stderr do |expected|
   end
 
   failure_message do |result|
-    "Expected stderr '#{result.stdout}' to include '#{expected}'"
+    "Expected stderr '#{result.stderr}' to include '#{expected}'"
   end
   failure_message_when_negated do |result|
-    "Expected stderr '#{result.stdout}' to not include '#{expected}'"
+    "Expected stderr '#{result.stderr}' to not include '#{expected}'"
   end
 end
 RSpec::Matchers.define_negated_matcher :not_include_stderr, :include_stderr
