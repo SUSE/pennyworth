@@ -44,7 +44,6 @@ Gem::Specification.new do |s|
   s.add_dependency "gli", "~> 2.11"
   s.add_dependency "cheetah", "~> 0.4"
   s.add_dependency "colorize", "~> 0.7"
-  s.add_dependency "nokogiri", "~> 1.6"
   s.add_dependency "ruby-libvirt", "~> 0.4"
 
   s.files        = `git ls-files`.split("\n")
