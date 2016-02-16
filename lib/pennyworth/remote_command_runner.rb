@@ -139,5 +139,24 @@ module Pennyworth
     rescue Cheetah::ExecutionFailed => e
       raise ExecutionFailed.new(e)
     end
+
+    def has_file?(path)
+      begin
+        Cheetah.run(
+          "ssh",
+          "-q",
+          "-o",
+          "UserKnownHostsFile=/dev/null",
+          "-o",
+          "StrictHostKeyChecking=no",
+          "#{@username}@#{@ip}",
+          "LC_ALL=C",
+          "test -f #{path}"
+        )
+        return true
+      rescue Cheetah::ExecutionFailed
+        return false
+      end
+    end
   end
 end

@@ -114,4 +114,17 @@ describe Pennyworth::LocalCommandRunner do
       command_runner.inject_directory(@source_dir, @target, owner: "user", group: "group")
     end
   end
+
+  describe "#has_file?" do
+    it "succeeds if file is there" do
+      file = given_dummy_file
+
+      expect(command_runner.has_file?(file)).to be(true)
+    end
+
+    it "fails if file is not there" do
+      file = File.join(given_directory, "not-there")
+      expect(command_runner.has_file?(file)).to be(false)
+    end
+  end
 end
