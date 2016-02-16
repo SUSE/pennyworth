@@ -26,6 +26,7 @@ require "digest"
 require "net/http"
 require "find"
 require "open-uri"
+require "rexml/document"
 
 module Pennyworth
 end

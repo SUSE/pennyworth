@@ -20,6 +20,7 @@ require "libvirt"
 require "socket"
 require "open-uri"
 require "yaml"
+require "rexml/document"
 
 require_relative "exceptions"
 require_relative "helper"
