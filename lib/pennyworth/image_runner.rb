@@ -65,8 +65,8 @@ module Pennyworth
       @connection.create_domain_xml(domain_config)
       system = @connection.lookup_domain_by_name(@name)
 
-      domain_xml = Nokogiri::XML(system.xml_desc)
-      mac = domain_xml.xpath("//domain/devices/interface/mac").attr("address")
+      domain_xml = REXML::Document.new(system.xml_desc)
+      mac = domain_xml.elements["//domain/devices/interface/mac"].attributes["address"]
       ip_address = nil
 
       # Loop until the VM has got an IP address we can return
