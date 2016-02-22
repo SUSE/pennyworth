@@ -74,6 +74,10 @@ module Pennyworth
       command_runner.inject_directory(source, destination, opts)
     end
 
+    def has_file?(path)
+      command_runner.has_file?(path)
+    end
+
     def cleanup_directory(dir)
       runner.cleanup_directory(dir)
     end

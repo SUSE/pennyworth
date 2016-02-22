@@ -53,4 +53,12 @@ describe Pennyworth::VM do
       subject.inject_directory("/tmp/hosts", "/etc")
     end
   end
+
+  describe "#has_file?" do
+    it "lets the CommandRunner check the file" do
+      expect(command_runner).to receive(:has_file?).with("one")
+
+      subject.has_file?("one")
+    end
+  end
 end

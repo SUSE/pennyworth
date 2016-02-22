@@ -71,5 +71,12 @@ module Pennyworth
       FileUtils.cp_r(source, destination)
       FileUtils.chown_R(opts[:owner], opts[:group], destination)
     end
+
+    def has_file?(path)
+      Cheetah.run("test", "-f", path)
+      return true
+    rescue Cheetah::ExecutionFailed
+      return false
+    end
   end
 end
