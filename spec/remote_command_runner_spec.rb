@@ -105,17 +105,17 @@ describe Pennyworth::RemoteCommandRunner do
 
   describe "#has_file?" do
     it "succeeds if file is there" do
-      expect(Cheetah).to receive(:run).with("ssh", anything(), anything(),
-        anything(), anything(), anything(), anything(), anything(),
+      expect(Cheetah).to receive(:run).with("ssh", anything, anything,
+        anything, anything, anything, anything, anything,
         "test -f one").and_return(nil)
 
       command_runner.has_file?("one")
     end
 
     it "fails if file is not there" do
-      expect(Cheetah).to receive(:run).with("ssh", anything(), anything(),
-        anything(), anything(), anything(), anything(), anything(),
-        "test -f one").and_raise(Cheetah::ExecutionFailed.new(nil,nil,nil,nil))
+      expect(Cheetah).to receive(:run).with("ssh", anything, anything,
+        anything, anything, anything, anything, anything,
+        "test -f one").and_raise(Cheetah::ExecutionFailed.new(nil, nil, nil, nil))
 
       command_runner.has_file?("one")
     end

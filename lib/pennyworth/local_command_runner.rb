@@ -73,12 +73,10 @@ module Pennyworth
     end
 
     def has_file?(path)
-      begin
-        Cheetah.run("test", "-f", path)
-        return true
-      rescue Cheetah::ExecutionFailed
-        return false
-      end
+      Cheetah.run("test", "-f", path)
+      return true
+    rescue Cheetah::ExecutionFailed
+      return false
     end
   end
 end
