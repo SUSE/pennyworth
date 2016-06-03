@@ -25,4 +25,5 @@ group :test do
   gem 'given_filesystem'
   gem 'guard'
   gem 'guard-rspec'
+  gem "listen", "< 3.1"
 end
