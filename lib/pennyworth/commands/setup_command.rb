@@ -132,6 +132,7 @@ module Pennyworth
     def install_vagrant_plugin
       if !vagrant_libvirt_installed?
         log "Installing libvirt plugin for Vagrant..."
+        Cheetah.run "vagrant", "plugin", "install", "--plugin-version=0.0.3", "fog-libvirt"
         Cheetah.run "vagrant", "plugin", "install", "--plugin-version=0.0.30", "vagrant-libvirt"
       end
     end
