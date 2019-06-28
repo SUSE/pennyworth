@@ -1,0 +1,8 @@
+language: ruby
+dist: xenial
+before_install:
+  sudo apt-get install -y libvirt-dev
+script: bundle exec rspec spec
+branches:
+  only:
+  - master
