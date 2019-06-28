@@ -36,11 +36,6 @@ suseInsertService sshd
 baseSetRunlevel 3
 
 #======================================
-# SuSEconfig
-#--------------------------------------
-suseConfig
-
-#======================================
 # Vagrant
 #--------------------------------------
 date > /etc/vagrant_box_build_time
@@ -56,10 +51,11 @@ printf "%b" "
 UseDNS no
 " >> /etc/ssh/sshd_config
 
+chmod 600 /home/vagrant/.ssh/authorized_keys
+
 #======================================
 # Fixes for base images
 #--------------------------------------
-
 echo 'solver.allowVendorChange = true' >> /etc/zypp/zypp.conf
 echo 'solver.onlyRequires = true' >> /etc/zypp/zypp.conf
 
@@ -67,9 +63,9 @@ echo 'solver.onlyRequires = true' >> /etc/zypp/zypp.conf
 rm /var/log/YaST2/config_diff_*.log
 rm /etc/zypp/repos.d/dir-*.repo
 
-# avoid mac address configured into system, this results in getting
-# eth1 instead of eth0 in virtualized environments sometimes
-rm -f /etc/udev/rules.d/70-persistent-net.rules
+# create these files to prevent non-deterministic behavior on rebuilds or single inspections
+touch /var/lib/zypp/AutoInstalled
+touch /var/lib/zypp/LastDistributionFlavor
 
 # Disable cron jobs in order to prevent created files breaking the tests
 rm /etc/cron.daily/*
@@ -77,7 +73,13 @@ rm /etc/cron.daily/*
 #======================================
 # Repositories
 #--------------------------------------
-zypper --gpg-auto-import-keys ar --refresh --name "Main Repository (OSS)" http://download.opensuse.org/distribution/13.1/repo/oss/ download.opensuse.org-oss
+zypper --non-interactive --gpg-auto-import-keys refresh
+
+#==========================================
+# remove package docs
+#------------------------------------------
+rm -rf /usr/share/doc/packages/*
+rm -rf /usr/share/doc/manual/*
 
 #======================================
 # Umount kernel filesystems
