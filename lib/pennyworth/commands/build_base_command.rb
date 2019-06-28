@@ -85,8 +85,8 @@ module Pennyworth
       logfile = "#{tmp_dir}/kiwi-terminal-output.log"
       log "    The build log is available under #{logfile}"
       begin
-        Cheetah.run "sudo", "/usr/sbin/kiwi", "--build", description_dir,
-          "--destdir", tmp_dir, "--logfile", "#{logfile}",
+        Cheetah.run "sudo", "/usr/bin/kiwi-ng", "--logfile", logfile, "system",
+          "build", "--description", description_dir, "--target-dir", tmp_dir,
           :stdout => :capture
       rescue Cheetah::ExecutionFailed => e
         raise ExecutionFailed.new(e)
