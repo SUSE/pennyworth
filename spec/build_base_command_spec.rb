@@ -43,6 +43,7 @@ EOT
       Pennyworth::Cli.settings = Pennyworth::Settings.new
       @boxes_dir = File.join(test_data_dir, "boxes")
       @cmd = Pennyworth::BuildBaseCommand.new(@boxes_dir)
+      allow(Pennyworth::Libvirt).to receive(:ensure_libvirt_env_started)
     end
 
     it "reads box sources state of one box" do
@@ -122,6 +123,7 @@ EOT
       Pennyworth::Cli.settings = Pennyworth::Settings.new
       @boxes_dir = File.join(test_data_dir, "boxes2")
       @cmd = Pennyworth::BuildBaseCommand.new(@boxes_dir)
+      allow(Pennyworth::Libvirt).to receive(:ensure_libvirt_env_started)
     end
 
     it "reads box state file" do
@@ -134,7 +136,6 @@ EOT
     end
 
     it "rebuilds box with changed sources" do
-      allow(Pennyworth::Libvirt).to receive(:ensure_libvirt_env_started)
       allow(@cmd).to receive(:log) # Don't print to stdout
       allow(@cmd).to receive(:write_box_state_file) # Don't actually write data
 
@@ -143,7 +144,6 @@ EOT
     end
 
     it "doesn't rebuild box with unchanged sources" do
-      allow(Pennyworth::Libvirt).to receive(:ensure_libvirt_env_started)
       allow(@cmd).to receive(:log) # Don't print to stdout
       allow(@cmd).to receive(:write_box_state_file) # Don't actually write data
 
